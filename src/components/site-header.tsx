@@ -153,7 +153,8 @@ export function SiteHeader() {
           <div className="ml-auto flex items-center gap-2 lg:ml-4">
             <Link
               href="/asisten"
-              className="group flex h-9 items-center gap-2 border border-hijau-800 bg-hijau-900 px-3 text-kertas transition-colors hover:bg-hijau-700"
+              className="group flex h-9 items-center gap-2 border border-hijau-800 bg-hijau-900 px-2 text-kertas transition-colors hover:bg-hijau-700 sm:px-3"
+              aria-label="Buka Asisten Sari"
             >
               <span aria-hidden="true" className="text-kunyit">
                 <svg viewBox="0 0 20 20" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.4">
@@ -161,7 +162,7 @@ export function SiteHeader() {
                   <path d="M15.5 14.5v3M14 16h3" strokeLinecap="round" />
                 </svg>
               </span>
-              <span className="font-mono text-[0.6875rem] uppercase tracking-[0.1em]">
+              <span className="hidden whitespace-nowrap font-mono text-[0.6875rem] uppercase tracking-[0.1em] sm:inline">
                 Tanya Sari
               </span>
             </Link>
