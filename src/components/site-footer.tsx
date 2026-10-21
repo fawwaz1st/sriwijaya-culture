@@ -2,93 +2,83 @@ import Link from "next/link";
 import { statistikArsip } from "@/lib/arsip";
 
 /**
- * Footer diperlakukan sebagai kolofon buku: siapa yang menyusun,
- * dari mana datanya, dan apa batasannya. Bukan tempat menaruh empat
- * kolom tautan sosial yang tidak pernah diklik.
+ * Footer sebagai kolofon galeri: satu baris identitas, lalu tiga kolom
+ * informasi. Tidak ada empat kolom tautan sosial yang tidak pernah diklik.
  */
 export function SiteFooter() {
   const s = statistikArsip();
-  const tahun = 2026;
 
   return (
-    <footer className="mt-20 border-t border-garis bg-hijau-950 text-kertas/70">
-      <div className="mx-auto max-w-[1440px] px-4 py-12 sm:px-6 lg:px-10">
-        <div className="grid gap-10 lg:grid-cols-[1.4fr_1fr_1fr]">
-          <div>
-            <p className="label-arsip text-kunyit-muda/80">Kolofon</p>
-            <p className="mt-3 max-w-[38ch] font-display text-2xl leading-tight text-kertas">
-              Arsip terbuka tentang kota yang dibentuk oleh sungai.
-            </p>
-            <p className="mt-4 max-w-[46ch] text-sm leading-relaxed text-kertas/60">
-              Sriwijaya Culture mengumpulkan {s.destinasi} destinasi, {s.umkm} usaha
-              lokal, dan {s.artikel} catatan sejarah. Setiap klaim menunjuk sumber.
-              Yang belum pasti ditandai belum pasti, bukan ditulis sebagai fakta.
-            </p>
-            <dl className="mt-6 flex flex-wrap gap-x-6 gap-y-3">
-              <div>
-                <dt className="label-arsip text-kertas/40">Rekaman</dt>
-                <dd className="tabular mt-1 font-mono text-sm text-kertas">
-                  {s.destinasi + s.umkm + s.artikel}
-                </dd>
-              </div>
-              <div>
-                <dt className="label-arsip text-kertas/40">Sumber</dt>
-                <dd className="tabular mt-1 font-mono text-sm text-kertas">{s.sumber}</dd>
-              </div>
-              <div>
-                <dt className="label-arsip text-kertas/40">Terverifikasi</dt>
-                <dd className="tabular mt-1 font-mono text-sm text-kertas">
-                  {s.persenTerverifikasi}%
-                </dd>
-              </div>
-            </dl>
-          </div>
+    <footer className="border-t border-garis-malam bg-malam">
+      <div className="mx-auto max-w-[1600px] px-5 py-14 sm:px-8 lg:px-12">
+        <p className="display max-w-[16ch] text-[clamp(2rem,5vw,3.5rem)] text-terang">
+          Kota ini dibentuk oleh sungai.
+        </p>
 
-          <nav aria-label="Tautan arsip">
-            <p className="label-arsip text-kertas/40">Isi Arsip</p>
-            <ul className="mt-3 space-y-2 text-sm">
+        <div className="mt-12 grid gap-10 border-t border-garis-malam pt-8 sm:grid-cols-2 lg:grid-cols-4">
+          <div>
+            <p className="meta">Isi arsip</p>
+            <ul className="mt-3 space-y-1.5 text-[0.8125rem] text-terang-2">
               {[
                 { href: "/destinasi", label: "Destinasi wisata" },
-                { href: "/umkm", label: "Direktori usaha lokal" },
+                { href: "/umkm", label: "Usaha lokal" },
                 { href: "/artikel", label: "Sejarah dan budaya" },
                 { href: "/asisten", label: "Asisten Sari" },
-                { href: "/metodologi", label: "Metodologi dan sumber" },
-                { href: "/tentang", label: "Tentang tim" },
               ].map((l) => (
                 <li key={l.href}>
-                  <Link href={l.href} className="tautan-arsip text-kertas/65 hover:text-kertas">
+                  <Link href={l.href} className="tautan hover:text-terang">
                     {l.label}
                   </Link>
                 </li>
               ))}
             </ul>
-          </nav>
+          </div>
 
           <div>
-            <p className="label-arsip text-kertas/40">Keterangan</p>
-            <ul className="mt-3 space-y-3 text-sm text-kertas/60">
+            <p className="meta">Tentang data</p>
+            <ul className="mt-3 space-y-1.5 text-[0.8125rem] text-terang-2">
               <li>
-                Foto dari Wikimedia Commons dengan lisensi Creative Commons.
-                Kredit per berkas ada di halaman metodologi.
+                <Link href="/metodologi" className="tautan hover:text-terang">
+                  Metodologi dan sumber
+                </Link>
               </li>
               <li>
-                Geometri peta dari OpenStreetMap contributors (ODbL), disederhanakan
-                untuk ditampilkan.
-              </li>
-              <li>
-                Situs ini tidak mengarang alamat, nomor telepon, harga, atau ulasan.
+                <Link href="/tentang" className="tautan hover:text-terang">
+                  Tentang tim
+                </Link>
               </li>
             </ul>
+            <dl className="mt-5 flex gap-5">
+              <div>
+                <dt className="meta">Rekaman</dt>
+                <dd className="tabular mt-1 font-mono text-sm text-terang">
+                  {s.destinasi + s.umkm + s.artikel}
+                </dd>
+              </div>
+              <div>
+                <dt className="meta">Sumber</dt>
+                <dd className="tabular mt-1 font-mono text-sm text-terang">{s.sumber}</dd>
+              </div>
+              <div>
+                <dt className="meta">Terverifikasi</dt>
+                <dd className="tabular mt-1 font-mono text-sm text-emas">{s.persenTerverifikasi}%</dd>
+              </div>
+            </dl>
+          </div>
+
+          <div className="sm:col-span-2">
+            <p className="meta">Keterangan</p>
+            <p className="mt-3 max-w-[44ch] text-[0.8125rem] leading-relaxed text-terang-2">
+              Foto dari Wikimedia Commons dengan lisensi Creative Commons. Kredit per
+              berkas ada di halaman masing-masing. Geometri peta dari OpenStreetMap
+              contributors (ODbL). Situs ini tidak mengarang alamat, harga, atau ulasan.
+            </p>
           </div>
         </div>
 
-        <div className="mt-10 flex flex-col gap-3 border-t border-kertas/15 pt-5 sm:flex-row sm:items-center sm:justify-between">
-          <p className="font-mono text-[0.6875rem] uppercase tracking-[0.14em] text-kertas/40">
-            © {tahun} Koding Seadanya · ITFEST 2026
-          </p>
-          <p className="font-mono text-[0.6875rem] uppercase tracking-[0.14em] text-kertas/40">
-            Dibangun dengan Next.js, TypeScript, dan data yang bisa ditelusuri
-          </p>
+        <div className="mt-10 flex flex-col gap-2 border-t border-garis-malam pt-5 sm:flex-row sm:items-center sm:justify-between">
+          <p className="meta">© 2026 Koding Seadanya · ITFEST 2026</p>
+          <p className="meta">Next.js · TypeScript · Vercel</p>
         </div>
       </div>
     </footer>

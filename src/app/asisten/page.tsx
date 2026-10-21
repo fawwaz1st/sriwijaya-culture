@@ -7,31 +7,22 @@ export const metadata: Metadata = {
     "Tanya tentang destinasi, usaha lokal, dan sejarah Palembang. Asisten ini hanya menjawab dari arsip dan menyebut sumbernya.",
 };
 
-/**
- * Halaman asisten.
- *
- * Halaman ini menjelaskan cara kerja asisten di atas, bukan di bawah.
- * Pengguna berhak tahu bahwa jawabannya dibatasi arsip sebelum ia
- * mulai mengetik.
- */
 export default function HalamanAsisten() {
   return (
-    <div className="mx-auto max-w-[1440px] px-4 py-10 sm:px-6 lg:px-10">
-      <header className="border-t border-tinta pt-4">
-        <p className="label-arsip">
-          <span className="mr-2 text-kunyit-ink">05</span>Asisten arsip
-        </p>
-        <div className="mt-2 grid gap-6 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] lg:gap-10">
-          <h1 className="judul-arsip max-w-[20ch] text-[clamp(2.25rem,5vw,3.75rem)]">
+    <div className="mx-auto max-w-[1600px] px-5 pb-20 pt-28 sm:px-8 lg:px-12">
+      <header>
+        <p className="meta-emas">Asisten arsip</p>
+        <div className="mt-3 flex flex-wrap items-end justify-between gap-x-10 gap-y-5">
+          <h1 className="display max-w-[16ch] text-[clamp(2.5rem,7vw,5.5rem)] text-terang">
             Asisten yang mengaku kalau tidak tahu.
           </h1>
-          <div className="self-end">
-            <p className="max-w-[48ch] text-sm leading-relaxed text-tinta-2">
+          <div className="max-w-[42ch] pb-2">
+            <p className="text-[0.875rem] leading-relaxed text-terang-2">
               Sari menjawab dengan mengambil dokumen dari arsip ini lebih dulu,
               lalu merangkai jawaban hanya dari dokumen tersebut. Setiap jawaban
               membawa nomor rujukan yang bisa kamu buka.
             </p>
-            <ul className="mt-3 grid grid-cols-2 gap-x-4 gap-y-1.5 border-t border-garis-2 pt-3">
+            <ul className="mt-4 grid grid-cols-2 gap-x-5 gap-y-2 border-t border-garis-malam pt-4">
               {[
                 ["Sumber", "Selalu disebut"],
                 ["Karangan", "Tidak diizinkan"],
@@ -39,10 +30,8 @@ export default function HalamanAsisten() {
                 ["Di luar arsip", "Ditolak"],
               ].map(([k, v]) => (
                 <li key={k} className="flex items-baseline justify-between gap-2">
-                  <span className="font-mono text-[0.5625rem] uppercase tracking-wider text-tinta-3">
-                    {k}
-                  </span>
-                  <span className="text-[0.6875rem] font-medium text-tinta">{v}</span>
+                  <span className="meta">{k}</span>
+                  <span className="text-[0.6875rem] font-medium text-terang">{v}</span>
                 </li>
               ))}
             </ul>
@@ -50,11 +39,11 @@ export default function HalamanAsisten() {
         </div>
       </header>
 
-      <div className="mt-8">
+      <div className="mt-10">
         <AsistenChat />
       </div>
 
-      <section className="mt-10 grid gap-0 border border-garis sm:grid-cols-3">
+      <section className="mt-12 grid gap-8 border-t border-garis-malam pt-8 sm:grid-cols-3">
         {[
           {
             n: "01",
@@ -72,10 +61,10 @@ export default function HalamanAsisten() {
             i: "Kalau konteks kosong, jawabannya adalah belum ada di arsip. Harga, jam buka, dan kontak tidak pernah dikarang.",
           },
         ].map((b) => (
-          <div key={b.n} className="border-b border-garis p-4 sm:border-b-0 sm:border-r sm:last:border-r-0">
-            <p className="tabular font-mono text-[0.625rem] text-kunyit-ink">{b.n}</p>
-            <p className="mt-1 font-display text-base leading-tight text-tinta">{b.j}</p>
-            <p className="mt-1.5 text-[0.75rem] leading-relaxed text-tinta-2">{b.i}</p>
+          <div key={b.n}>
+            <p className="tabular font-mono text-[0.625rem] text-emas">{b.n}</p>
+            <p className="mt-2 font-display text-lg leading-tight text-terang">{b.j}</p>
+            <p className="mt-2 text-[0.8125rem] leading-relaxed text-terang-2">{b.i}</p>
           </div>
         ))}
       </section>

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { AngkaBesar, BadgeVerifikasi, CatatanBelumPasti, JudulBagian } from "@/components/ui";
+import { Angka, BadgeVerifikasi } from "@/components/ui";
 import { ARTIKEL, DAFTAR_UMKM, DESTINASI, statistikArsip, statusVerifikasi } from "@/lib/arsip";
 import { persen } from "@/lib/format";
 
@@ -11,11 +11,11 @@ export const metadata: Metadata = {
 };
 
 /**
- * Halaman metodologi.
+ * Metodologi.
  *
- * Ini halaman yang membuat klaim di seluruh situs bisa diperiksa.
- * Karena itu isinya bukan kata pengantar, melainkan prosedur:
- * apa yang dihitung, dari mana, dan apa yang sengaja tidak dilakukan.
+ * Halaman ini yang membuat klaim di seluruh situs bisa diperiksa. Karena
+ * itu isinya prosedur, bukan kata pengantar: apa yang dihitung, dari mana,
+ * dan apa yang sengaja tidak dilakukan.
  */
 export default function HalamanMetodologi() {
   const s = statistikArsip();
@@ -27,44 +27,40 @@ export default function HalamanMetodologi() {
     ...DAFTAR_UMKM.flatMap((u) => u.sumber.map((x) => ({ ...x, induk: u.nama }))),
   ];
 
-  // Sumber unik berdasarkan URL, supaya angka tidak menggelembung.
   const unik = new Map<string, (typeof semuaSumber)[number]>();
   for (const x of semuaSumber) if (!unik.has(x.url)) unik.set(x.url, x);
-  const daftarUnik = [...unik.values()];
+  const daftarUnik = [...unik.values()].sort((a, b) => a.judul.localeCompare(b.judul, "id"));
 
   return (
-    <div className="mx-auto max-w-[1440px] px-4 py-10 sm:px-6 lg:px-10">
-      <header className="border-t border-tinta pt-4">
-        <p className="label-arsip">
-          <span className="mr-2 text-kunyit-ink">06</span>Metodologi
-        </p>
-        <div className="mt-2 flex flex-wrap items-end justify-between gap-x-8 gap-y-4">
-          <h1 className="judul-arsip max-w-[22ch] text-[clamp(2.25rem,5vw,3.75rem)]">
+    <div className="mx-auto max-w-[1600px] px-5 pb-20 pt-28 sm:px-8 lg:px-12">
+      <header>
+        <p className="meta-emas">Metodologi</p>
+        <div className="mt-3 flex flex-wrap items-end justify-between gap-x-10 gap-y-5">
+          <h1 className="display max-w-[16ch] text-[clamp(2.5rem,7vw,5.5rem)] text-terang">
             Bagaimana kami tahu, dan bagaimana kami salah.
           </h1>
-          <p className="max-w-[46ch] pb-1 text-sm leading-relaxed text-tinta-2">
+          <p className="max-w-[42ch] pb-2 text-[0.875rem] leading-relaxed text-terang-2">
             Setiap angka di situs ini bisa ditelusuri ke satu baris di halaman
             ini. Kalau tidak bisa, angkanya tidak kami tampilkan.
           </p>
         </div>
       </header>
 
-      <section className="mt-8 grid grid-cols-2 gap-y-5 border border-garis bg-kertas-2 px-4 py-5 sm:grid-cols-3 lg:grid-cols-6">
-        <AngkaBesar nilai={s.sumber} label="Rujukan" catatan="Seluruh entri" />
-        <AngkaBesar nilai={daftarUnik.length} label="Unik" catatan="Setelah deduplikasi" />
-        <AngkaBesar nilai={v.tinggi} label="Tingkat tinggi" catatan="Saling menguatkan" />
-        <AngkaBesar nilai={v.sedang} label="Satu sumber" catatan="Belum ada pembanding" />
-        <AngkaBesar nilai={v.perlu} label="Perlu konfirmasi" catatan="Ditandai di UI" />
-        <AngkaBesar nilai={s.persenTerverifikasi} satuan="%" label="Rasio" catatan="Tinggi / total" />
+      <section className="mt-10 grid grid-cols-2 gap-x-6 gap-y-6 border-y border-garis-malam py-6 sm:grid-cols-3 lg:grid-cols-6">
+        <Angka nilai={s.sumber} label="Rujukan" />
+        <Angka nilai={daftarUnik.length} label="Unik" />
+        <Angka nilai={v.tinggi} label="Tingkat tinggi" />
+        <Angka nilai={v.sedang} label="Satu sumber" />
+        <Angka nilai={v.perlu} label="Perlu konfirmasi" />
+        <Angka nilai={s.persenTerverifikasi} satuan="%" label="Rasio" />
       </section>
 
-      <section className="mt-12">
-        <JudulBagian
-          nomor="01"
-          judul="Enam aturan yang tidak kami langgar"
-          keterangan="Aturan ini yang membuat arsip bisa dipercaya. Kalau sebuah entri melanggar salah satunya, entri itu tidak masuk."
-        />
-        <ol className="mt-6 grid gap-0 border border-garis md:grid-cols-2">
+      <section className="mt-14">
+        <p className="meta-emas">Aturan data</p>
+        <h2 className="display mt-2 max-w-[22ch] text-[clamp(1.9rem,4vw,3rem)] text-terang">
+          Enam aturan yang tidak kami langgar.
+        </h2>
+        <ol className="mt-8 grid gap-x-10 gap-y-6 md:grid-cols-2">
           {[
             {
               j: "Setiap klaim menunjuk sumber",
@@ -76,7 +72,7 @@ export default function HalamanMetodologi() {
             },
             {
               j: "Legenda diberi label legenda",
-              i: "Cerita rakyat seperti Tan Bun An dan Siti Fatimah ditulis di kotak terpisah dan tidak disebut peristiwa sejarah.",
+              i: "Cerita rakyat seperti Tan Bun An dan Siti Fatimah ditulis di bagian terpisah dan tidak disebut peristiwa sejarah.",
             },
             {
               j: "Tidak mengisi data yang belum ada",
@@ -91,27 +87,21 @@ export default function HalamanMetodologi() {
               i: "Tidak ada pendaftaran yang berpura-pura menyimpan data permanen. Tidak ada tombol yang tidak melakukan apa pun.",
             },
           ].map((r, i) => (
-            <li
-              key={r.j}
-              className="border-b border-garis p-4 md:border-r md:[&:nth-child(2n)]:border-r-0"
-            >
-              <p className="tabular font-mono text-[0.625rem] text-kunyit-ink">
-                {String(i + 1).padStart(2, "0")}
-              </p>
-              <p className="mt-1 font-display text-base leading-tight text-tinta">{r.j}</p>
-              <p className="mt-1.5 text-[0.8125rem] leading-relaxed text-tinta-2">{r.i}</p>
+            <li key={r.j} className="border-t border-garis-malam pt-4">
+              <p className="tabular font-mono text-[0.625rem] text-emas">{String(i + 1).padStart(2, "0")}</p>
+              <p className="mt-2 font-display text-lg leading-tight text-terang">{r.j}</p>
+              <p className="mt-1.5 text-[0.8125rem] leading-relaxed text-terang-2">{r.i}</p>
             </li>
           ))}
         </ol>
       </section>
 
-      <section className="mt-12">
-        <JudulBagian
-          nomor="02"
-          judul="Tiga tingkat, tiga arti"
-          keterangan="Badge yang sama dipakai di seluruh situs, jadi kamu bisa membaca keyakinan kami sebelum membuka detail."
-        />
-        <div className="mt-5 grid gap-0 border border-garis sm:grid-cols-3">
+      <section className="mt-14">
+        <p className="meta-emas">Tingkat verifikasi</p>
+        <h2 className="display mt-2 max-w-[20ch] text-[clamp(1.9rem,4vw,3rem)] text-terang">
+          Tiga tingkat, tiga arti.
+        </h2>
+        <div className="mt-8 grid gap-8 sm:grid-cols-3">
           {[
             {
               t: "tinggi",
@@ -128,18 +118,15 @@ export default function HalamanMetodologi() {
             {
               t: "perlu-konfirmasi",
               j: "Perlu konfirmasi",
-              i: "Angka beredar di internet tanpa sumber resmi. Ditampilkan dengan peringatan, atau tidak ditampilkan sama sekali.",
+              i: "Angka beredar di internet tanpa sumber resmi. Ditampilkan dengan peringatan, atau tidak sama sekali.",
               n: v.perlu,
             },
-          ].map((x, i) => (
-            <div
-              key={x.t}
-              className={`border-b border-garis p-4 sm:border-b-0 ${i < 2 ? "sm:border-r" : ""}`}
-            >
+          ].map((x) => (
+            <div key={x.t} className="border-t border-garis-malam pt-4">
               <BadgeVerifikasi tingkat={x.t} />
-              <p className="mt-2 font-display text-lg leading-tight text-tinta">{x.j}</p>
-              <p className="mt-1.5 text-[0.8125rem] leading-relaxed text-tinta-2">{x.i}</p>
-              <p className="tabular mt-3 border-t border-garis-2 pt-2 font-mono text-[0.625rem] text-tinta-3">
+              <p className="mt-2 font-display text-lg leading-tight text-terang">{x.j}</p>
+              <p className="mt-1.5 text-[0.8125rem] leading-relaxed text-terang-2">{x.i}</p>
+              <p className="tabular mt-3 font-mono text-[0.625rem] text-terang-3">
                 {x.n} rujukan · {persen(x.n, v.total)}%
               </p>
             </div>
@@ -147,96 +134,95 @@ export default function HalamanMetodologi() {
         </div>
       </section>
 
-      <section className="mt-12">
-        <JudulBagian
-          nomor="03"
-          judul="Yang sengaja tidak kami lakukan"
-          keterangan="Mengakui batas lebih berguna daripada berpura-pura lengkap."
-        />
-        <div className="mt-5 grid gap-4 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]">
-          <div className="space-y-3">
-            <CatatanBelumPasti judul="Harga tiket dan jam buka">
-              Beberapa destinasi hanya menampilkan teks tanpa angka pasti, karena
-              sumbernya bukan pengelola resmi. Kami tidak mengubah ketidakpastian
-              menjadi angka bulat.
-            </CatatanBelumPasti>
-            <CatatanBelumPasti judul="Ulasan pengunjung">
-              Tidak ada ulasan di situs ini. Ulasan yang tidak bisa diverifikasi
-              lebih berbahaya daripada tidak ada ulasan.
-            </CatatanBelumPasti>
-            <CatatanBelumPasti judul="Alamat dan kontak UMKM">
-              Verifikasi lapangan tidak bisa dilakukan lewat kode. Nama usaha
-              boleh tampil karena terdokumentasi publik, kontak tidak.
-            </CatatanBelumPasti>
+      <section className="mt-14">
+        <p className="meta-emas">Batas</p>
+        <h2 className="display mt-2 max-w-[22ch] text-[clamp(1.9rem,4vw,3rem)] text-terang">
+          Yang sengaja tidak kami lakukan.
+        </h2>
+        <div className="mt-8 grid gap-8 lg:grid-cols-2">
+          <div className="space-y-4">
+            {[
+              {
+                j: "Harga tiket dan jam buka",
+                i: "Beberapa destinasi hanya menampilkan teks tanpa angka pasti, karena sumbernya bukan pengelola resmi. Kami tidak mengubah ketidakpastian menjadi angka bulat.",
+              },
+              {
+                j: "Ulasan pengunjung",
+                i: "Tidak ada ulasan di situs ini. Ulasan yang tidak bisa diverifikasi lebih berbahaya daripada tidak ada ulasan.",
+              },
+              {
+                j: "Alamat dan kontak UMKM",
+                i: "Verifikasi lapangan tidak bisa dilakukan lewat kode. Nama usaha boleh tampil karena terdokumentasi publik, kontak tidak.",
+              },
+            ].map((x) => (
+              <div key={x.j} className="border border-warn/35 bg-warn/8 p-4">
+                <p className="status text-warn">{x.j}</p>
+                <p className="mt-2 text-[0.8125rem] leading-relaxed text-terang-2">{x.i}</p>
+              </div>
+            ))}
           </div>
-          <div className="border border-garis p-4">
-            <p className="label-arsip">Kredit foto</p>
-            <p className="mt-1.5 text-[0.8125rem] leading-relaxed text-tinta-2">
+          <div className="border-t border-garis-malam pt-4">
+            <p className="meta-emas">Kredit foto</p>
+            <p className="mt-2 text-[0.8125rem] leading-relaxed text-terang-2">
               Seluruh foto berasal dari Wikimedia Commons dengan lisensi Creative
               Commons. Berkas asli diunduh, dikonversi ke JPEG, dan dikompres.
               Kredit per berkas tercantum di halaman detail masing-masing.
             </p>
-            <p className="mt-2 text-[0.8125rem] leading-relaxed text-tinta-2">
+            <p className="mt-3 text-[0.8125rem] leading-relaxed text-terang-2">
               Geometri peta berasal dari OpenStreetMap contributors (ODbL) dan
               disederhanakan dengan Douglas-Peucker agar muat tanpa server peta.
             </p>
-            <p className="mt-3 border-t border-garis-2 pt-2 font-mono text-[0.5625rem] uppercase tracking-wider text-tinta-3">
-              Sumber data diperiksa terakhir: 20 Oktober 2026
+            <p className="mt-4 border-t border-garis-malam pt-3 font-mono text-[0.5625rem] uppercase tracking-[0.1em] text-terang-3">
+              Data diperiksa terakhir 20 Oktober 2026
             </p>
           </div>
         </div>
       </section>
 
-      <section className="mt-12">
-        <JudulBagian
-          nomor="04"
-          judul={`${daftarUnik.length} sumber unik`}
-          keterangan="Diurutkan berdasarkan judul. Setiap baris bisa dibuka."
-        />
-        <ol className="mt-5 border-t border-garis-2">
-          {daftarUnik
-            .slice()
-            .sort((a, b) => a.judul.localeCompare(b.judul, "id"))
-            .map((x, i) => (
-              <li
-                key={x.url}
-                className="grid grid-cols-[2rem_1fr] gap-2 border-b border-garis-2 py-2.5 sm:grid-cols-[2.5rem_1fr_auto]"
-              >
-                <span className="tabular pt-0.5 font-mono text-[0.5625rem] text-tinta-4">
-                  {String(i + 1).padStart(2, "0")}
+      <section className="mt-14">
+        <p className="meta-emas">Daftar rujukan</p>
+        <h2 className="display mt-2 text-[clamp(1.9rem,4vw,3rem)] text-terang">
+          {daftarUnik.length} sumber unik.
+        </h2>
+        <ol className="mt-6 border-t border-garis-malam">
+          {daftarUnik.map((x, i) => (
+            <li
+              key={x.url}
+              className="grid grid-cols-[2.5rem_1fr_auto] items-start gap-3 border-b border-garis-malam py-3"
+            >
+              <span className="tabular pt-0.5 font-mono text-[0.5625rem] text-terang-3">
+                {String(i + 1).padStart(2, "0")}
+              </span>
+              <div className="min-w-0">
+                <a
+                  href={x.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="tautan text-[0.8125rem] font-medium leading-snug text-terang"
+                >
+                  {x.judul}
+                </a>
+                <p className="mt-0.5 font-mono text-[0.5625rem] uppercase tracking-[0.1em] text-terang-3">
+                  {x.penulis} · dipakai di {x.induk}
+                </p>
+              </div>
+              {x.verifikasi && (
+                <span className="hidden sm:block">
+                  <BadgeVerifikasi tingkat={x.verifikasi} />
                 </span>
-                <div className="min-w-0">
-                  <a
-                    href={x.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="tautan-arsip text-[0.8125rem] font-medium leading-snug text-tinta"
-                  >
-                    {x.judul}
-                  </a>
-                  <p className="mt-0.5 font-mono text-[0.5625rem] uppercase tracking-wider text-tinta-3">
-                    {x.penulis} · dipakai di {x.induk}
-                  </p>
-                </div>
-                {x.verifikasi && (
-                  <span className="hidden sm:block">
-                    <BadgeVerifikasi tingkat={x.verifikasi} />
-                  </span>
-                )}
-              </li>
-            ))}
+              )}
+            </li>
+          ))}
         </ol>
       </section>
 
-      <section className="mt-12 border-t border-garis pt-4">
-        <p className="text-[0.8125rem] leading-relaxed text-tinta-2">
-          Menemukan kesalahan? Arsip ini terbuka untuk koreksi. Buka{" "}
-          <Link href="/tentang" className="tautan-arsip font-medium text-tinta">
-            halaman tentang
-          </Link>{" "}
-          untuk melihat siapa yang menyusunnya dan bagaimana menghubungi tim.
-        </p>
-      </section>
+      <p className="mt-10 border-t border-garis-malam pt-5 text-[0.8125rem] leading-relaxed text-terang-2">
+        Menemukan kesalahan? Arsip ini terbuka untuk koreksi. Buka{" "}
+        <Link href="/tentang" className="tautan font-medium text-terang">
+          halaman tentang
+        </Link>{" "}
+        untuk melihat siapa yang menyusunnya.
+      </p>
     </div>
   );
 }

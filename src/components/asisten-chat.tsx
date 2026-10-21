@@ -149,68 +149,62 @@ export function AsistenChat() {
   const kueriTerakhir = [...pesan].reverse().find((p) => p.peran === "pengguna")?.teks ?? "";
   const rujukan = kueriTerakhir ? rujukanUntuk(kueriTerakhir) : [];
 
+
   return (
-    <div className="grid border border-garis lg:grid-cols-[minmax(0,1fr)_320px] lg:items-start">
-      {/* --- Kolom percakapan --- */}
-      <div className="flex min-h-[520px] min-w-0 flex-col border-b border-garis lg:border-b-0 lg:border-r">
-        <div className="flex items-center justify-between gap-3 border-b border-garis bg-kertas-2 px-4 py-2">
-          <p className="label-arsip flex items-center gap-2">
+    <div className="grid border border-garis-malam lg:grid-cols-[minmax(0,1fr)_320px] lg:items-start">
+      <div className="flex min-h-[540px] min-w-0 flex-col border-b border-garis-malam lg:border-b-0 lg:border-r">
+        <div className="flex items-center justify-between gap-3 border-b border-garis-malam bg-malam-2 px-4 py-2.5">
+          <p className="meta flex items-center gap-2">
             <span
               aria-hidden="true"
-              className={cn("h-1.5 w-1.5 rounded-full", sibuk ? "denyut bg-kunyit" : "bg-ok")}
+              className={cn("h-1.5 w-1.5 rounded-full", sibuk ? "denyut bg-emas" : "bg-ok")}
             />
             Asisten Sari
           </p>
-          <p className="font-mono text-[0.5625rem] uppercase tracking-wider text-tinta-3">
-            {mode === "arsip-langsung"
-              ? "Mode arsip langsung"
-              : mode
-                ? `Model: ${mode}`
-                : "Siap"}
+          <p className="meta text-terang-3">
+            {mode === "arsip-langsung" ? "Mode arsip langsung" : mode ? `Model: ${mode}` : "Siap"}
           </p>
         </div>
 
-        <div className="gulir-tipis min-h-0 flex-1 overflow-y-auto px-4 py-4" aria-live="polite">
+        <div className="gulir-tipis min-h-0 flex-1 overflow-y-auto px-4 py-5" aria-live="polite">
           {pesan.length === 0 && (
-            <div className="mx-auto max-w-[46ch] py-8 text-center">
-              <p className="font-display text-2xl leading-tight text-tinta">
+            <div className="mx-auto max-w-[44ch] py-8">
+              <p className="font-display text-2xl leading-tight text-terang">
                 Tanya apa saja tentang arsip ini.
               </p>
-              <p className="mt-2 text-[0.8125rem] leading-relaxed text-tinta-2">
+              <p className="mt-2 text-[0.8125rem] leading-relaxed text-terang-2">
                 Sari hanya menjawab dari isi arsip, dan selalu menyebut nomor
                 sumber. Kalau jawabannya belum ada, ia akan mengatakannya.
               </p>
             </div>
           )}
 
-          <ol className="space-y-4">
+          <ol className="space-y-5">
             {pesan.map((m) =>
               m.peran === "pengguna" ? (
                 <li key={m.id} className="flex justify-end">
-                  <p className="max-w-[85%] border border-hijau-800 bg-hijau-900 px-3 py-2 text-[0.875rem] leading-relaxed text-kertas">
+                  <p className="max-w-[85%] bg-terang px-3.5 py-2.5 text-[0.875rem] leading-relaxed text-malam">
                     {m.teks}
                   </p>
                 </li>
               ) : (
-                <li key={m.id} className="flex gap-2">
-                  <span className="label-arsip flex-none pt-1 text-kunyit-ink">Sari</span>
+                <li key={m.id} className="flex gap-2.5">
+                  <span className="meta-emas mt-1 flex-none">Sari</span>
                   <div className="min-w-0 flex-1">
-                    <p className="whitespace-pre-wrap text-[0.875rem] leading-relaxed text-tinta">
+                    <p className="whitespace-pre-wrap text-[0.875rem] leading-relaxed text-terang">
                       {m.teks}
                     </p>
                     {m.sumber.length > 0 && (
-                      <ul className="mt-2 space-y-1 border-t border-garis-2 pt-2">
+                      <ul className="mt-3 space-y-1 border-t border-garis-malam pt-2">
                         {m.sumber.map((s) => (
                           <li key={s.no}>
                             <Link
                               href={s.href}
-                              className="group flex items-baseline gap-1.5 text-[0.75rem] leading-snug text-tinta-2 hover:text-tinta"
+                              className="group flex items-baseline gap-2 text-[0.75rem] leading-snug text-terang-2 hover:text-emas"
                             >
-                              <span className="tabular font-mono text-[0.5625rem] text-kunyit-ink">
-                                [{s.no}]
-                              </span>
+                              <span className="tabular font-mono text-[0.5625rem] text-emas">[{s.no}]</span>
                               <span className="min-w-0 truncate">{s.judul}</span>
-                              <span className="ml-auto flex-none font-mono text-[0.5rem] uppercase tracking-wider text-tinta-4">
+                              <span className="ml-auto flex-none font-mono text-[0.5rem] uppercase tracking-[0.1em] text-terang-3">
                                 {s.jenis}
                               </span>
                             </Link>
@@ -224,38 +218,36 @@ export function AsistenChat() {
             )}
 
             {sibuk && (
-              <li className="flex gap-2">
-                <span className="label-arsip flex-none pt-1">Sari</span>
+              <li className="flex gap-2.5">
+                <span className="meta-emas mt-1 flex-none">Sari</span>
                 <span className="flex gap-1 pt-2" aria-label="Sedang menyusun jawaban">
-                  <span className="h-1.5 w-1.5 rounded-full bg-tinta-4 denyut" />
-                  <span className="h-1.5 w-1.5 rounded-full bg-tinta-4 denyut [animation-delay:200ms]" />
-                  <span className="h-1.5 w-1.5 rounded-full bg-tinta-4 denyut [animation-delay:400ms]" />
+                  <span className="h-1.5 w-1.5 rounded-full bg-terang-3 denyut" />
+                  <span className="h-1.5 w-1.5 rounded-full bg-terang-3 denyut [animation-delay:200ms]" />
+                  <span className="h-1.5 w-1.5 rounded-full bg-terang-3 denyut [animation-delay:400ms]" />
                 </span>
               </li>
             )}
           </ol>
 
           {galat && (
-            <div className="mt-4 border border-bahaya/40 bg-[#fbeeec] p-3">
-              <p className="font-mono text-[0.625rem] uppercase tracking-wider text-bahaya">
-                Koneksi gagal
-              </p>
-              <p className="mt-1 text-[0.8125rem] leading-relaxed text-tinta-2">{galat}</p>
+            <div className="mt-4 border border-bahaya/40 bg-bahaya/8 p-3">
+              <p className="status text-bahaya">Koneksi gagal</p>
+              <p className="mt-1.5 text-[0.8125rem] leading-relaxed text-terang-2">{galat}</p>
             </div>
           )}
           <div ref={ujung} />
         </div>
 
         {pesan.length === 0 && (
-          <div className="border-t border-garis-2 px-4 py-3">
-            <p className="label-arsip mb-2">Coba mulai dari</p>
+          <div className="border-t border-garis-malam px-4 py-3">
+            <p className="meta mb-2">Coba mulai dari</p>
             <ul className="flex flex-wrap gap-1.5">
               {SAPAAN.map((s) => (
                 <li key={s}>
                   <button
                     type="button"
                     onClick={() => kirim(s)}
-                    className="border border-garis px-2 py-1 text-left text-[0.75rem] leading-snug text-tinta-2 transition-colors hover:border-hijau-800 hover:bg-kertas-2 hover:text-tinta"
+                    className="border border-garis-malam px-2 py-1 text-left text-[0.75rem] leading-snug text-terang-2 transition-colors hover:border-emas hover:text-terang"
                   >
                     {s}
                   </button>
@@ -270,7 +262,7 @@ export function AsistenChat() {
             e.preventDefault();
             kirim(input);
           }}
-          className="border-t border-garis bg-kertas-2 p-3"
+          className="border-t border-garis-malam bg-malam-2 p-3"
         >
           <div className="flex items-end gap-2">
             <label htmlFor="sari-input" className="sr-only">
@@ -289,13 +281,13 @@ export function AsistenChat() {
               }}
               rows={2}
               placeholder="Contoh: destinasi mana yang cocok untuk belajar sejarah Sriwijaya?"
-              className="gulir-tipis min-h-[52px] flex-1 resize-none border border-garis-3 bg-kertas px-2.5 py-2 text-[0.875rem] leading-relaxed text-tinta placeholder:text-tinta-4 focus:border-hijau-700 focus:outline-none"
+              className="gulir-tipis min-h-[54px] flex-1 resize-none border border-malam-5 bg-transparent px-3 py-2.5 text-[0.875rem] leading-relaxed text-terang placeholder:text-terang-3 focus:border-emas focus:outline-none"
             />
             {sibuk ? (
               <button
                 type="button"
                 onClick={hentikan}
-                className="h-[52px] flex-none border border-garis-3 px-3 font-mono text-[0.625rem] uppercase tracking-wider text-tinta-2 hover:bg-kertas"
+                className="h-[54px] flex-none border border-malam-5 px-3.5 font-mono text-[0.625rem] uppercase tracking-[0.1em] text-terang-2 hover:border-terang"
               >
                 Stop
               </button>
@@ -303,15 +295,15 @@ export function AsistenChat() {
               <button
                 type="submit"
                 disabled={!input.trim()}
-                className="flex h-[52px] flex-none items-center gap-2 border border-hijau-900 bg-hijau-900 px-3 font-mono text-[0.625rem] uppercase tracking-wider text-kertas transition-colors hover:bg-hijau-700 disabled:cursor-not-allowed disabled:border-garis-3 disabled:bg-kertas-3 disabled:text-tinta-4"
+                className="flex h-[54px] flex-none items-center gap-2 bg-emas px-3.5 font-mono text-[0.625rem] uppercase tracking-[0.1em] text-malam transition-colors hover:bg-emas-muda disabled:cursor-not-allowed disabled:bg-malam-4 disabled:text-terang-3"
               >
                 Kirim
                 <span aria-hidden="true">→</span>
               </button>
             )}
           </div>
-          <div className="mt-1.5 flex items-center justify-between gap-2">
-            <p className="font-mono text-[0.5625rem] uppercase tracking-wider text-tinta-4">
+          <div className="mt-2 flex items-center justify-between gap-2">
+            <p className="font-mono text-[0.5625rem] uppercase tracking-[0.1em] text-terang-3">
               {input.length}/600 · Enter untuk kirim
             </p>
             {pesan.length > 0 && (
@@ -322,7 +314,7 @@ export function AsistenChat() {
                   setMode(null);
                   setGalat(null);
                 }}
-                className="font-mono text-[0.5625rem] uppercase tracking-wider text-tinta-3 hover:text-tinta"
+                className="font-mono text-[0.5625rem] uppercase tracking-[0.1em] text-terang-3 hover:text-terang"
               >
                 Bersihkan
               </button>
@@ -331,24 +323,23 @@ export function AsistenChat() {
         </form>
       </div>
 
-      {/* --- Kolom rujukan --- */}
-      <aside className="min-w-0 self-start bg-kertas-2 lg:sticky lg:top-[4.5rem]">
-        <div className="flex items-center justify-between border-b border-garis px-3 py-2">
-          <p className="label-arsip">Rujukan arsip</p>
-          <p className="tabular font-mono text-[0.5625rem] text-tinta-3">
+      <aside className="min-w-0 self-start bg-malam-2 lg:sticky lg:top-[4.5rem]">
+        <div className="flex items-center justify-between border-b border-garis-malam px-3.5 py-2.5">
+          <p className="meta">Rujukan arsip</p>
+          <p className="tabular font-mono text-[0.5625rem] text-terang-3">
             {String(rujukan.length).padStart(2, "0")}
           </p>
         </div>
 
         {rujukan.length === 0 ? (
-          <div className="px-3 py-4">
-            <p className="text-[0.75rem] leading-relaxed text-tinta-3">
+          <div className="px-3.5 py-4">
+            <p className="text-[0.75rem] leading-relaxed text-terang-3">
               Rujukan muncul setelah kamu bertanya. Sari hanya memakai dokumen
               yang ada di daftar ini.
             </p>
-            <div className="mt-4 border-t border-garis-2 pt-3">
-              <p className="label-arsip">Isi arsip</p>
-              <ul className="mt-1.5 space-y-1 font-mono text-[0.625rem] uppercase tracking-wider text-tinta-3">
+            <div className="mt-5 border-t border-garis-malam pt-4">
+              <p className="meta">Isi arsip</p>
+              <ul className="mt-2 space-y-1 font-mono text-[0.625rem] uppercase tracking-[0.1em] text-terang-3">
                 <li>10 destinasi</li>
                 <li>7 usaha lokal</li>
                 <li>8 catatan sejarah</li>
@@ -357,22 +348,20 @@ export function AsistenChat() {
             </div>
           </div>
         ) : (
-          <ul className="gulir-tipis max-h-[460px] overflow-y-auto">
+          <ul className="gulir-tipis max-h-[440px] overflow-y-auto">
             {rujukan.map((r) => (
-              <li key={r.no} className="border-b border-garis-2">
-                <Link href={r.href} className="group block px-3 py-2.5 hover:bg-kertas">
+              <li key={r.no} className="border-b border-garis-malam last:border-b-0">
+                <Link href={r.href} className="group block px-3.5 py-3 hover:bg-malam-3">
                   <p className="flex items-baseline gap-1.5">
-                    <span className="tabular font-mono text-[0.5625rem] text-kunyit-ink">
-                      [{r.no}]
-                    </span>
-                    <span className="font-mono text-[0.5rem] uppercase tracking-wider text-tinta-4">
+                    <span className="tabular font-mono text-[0.5625rem] text-emas">[{r.no}]</span>
+                    <span className="font-mono text-[0.5rem] uppercase tracking-[0.1em] text-terang-3">
                       {r.jenis}
                     </span>
                   </p>
-                  <p className="mt-0.5 text-[0.8125rem] font-medium leading-tight text-tinta group-hover:text-hijau-700">
+                  <p className="mt-1 text-[0.8125rem] font-medium leading-tight text-terang group-hover:text-emas">
                     {r.judul}
                   </p>
-                  <p className="mt-0.5 font-mono text-[0.5625rem] uppercase tracking-wider text-tinta-3">
+                  <p className="mt-0.5 font-mono text-[0.5rem] uppercase tracking-[0.1em] text-terang-3">
                     {r.meta}
                   </p>
                 </Link>
@@ -381,8 +370,8 @@ export function AsistenChat() {
           </ul>
         )}
 
-        <div className="border-t border-garis px-3 py-2">
-          <p className="font-mono text-[0.5rem] uppercase leading-relaxed tracking-wider text-tinta-4">
+        <div className="border-t border-garis-malam px-3.5 py-2.5">
+          <p className="font-mono text-[0.5rem] uppercase leading-relaxed tracking-[0.1em] text-terang-3">
             Pencarian kata kunci berbobot atas 25 rekaman. Tidak ada data yang
             dikirim keluar selain pertanyaan dan potongan arsip yang relevan.
           </p>
@@ -392,7 +381,6 @@ export function AsistenChat() {
   );
 }
 
-/** Ambil dokumen arsip yang relevan untuk ditampilkan sebagai rujukan. */
 function rujukanUntuk(kueri: string): Rujukan[] {
   return cariDokumen(kueri, 4).map((h, i) => ({
     no: i + 1,
@@ -403,12 +391,6 @@ function rujukanUntuk(kueri: string): Rujukan[] {
   }));
 }
 
-/**
- * Baca stream UIMessage dari AI SDK dan kembalikan teks lengkapnya.
- *
- * Formatnya baris "data: {json}". Yang diambil hanya bagian text-delta,
- * karena itu satu-satunya bagian yang ditampilkan di antarmuka ini.
- */
 async function bacaStreamUI(
   res: Response,
   saatPotongan: (teks: string) => void,
@@ -440,7 +422,7 @@ async function bacaStreamUI(
           saatPotongan(teks);
         }
       } catch {
-        // Potongan bukan JSON diabaikan, bukan membuat seluruh jawaban gagal.
+        // Potongan bukan JSON diabaikan, bukan membuat jawaban gagal.
       }
     }
   }

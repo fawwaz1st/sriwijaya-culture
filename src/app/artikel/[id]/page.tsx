@@ -1,47 +1,34 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { PenandaBagian, Tombol } from "@/components/ui";
+import { Foto } from "@/components/foto";
+import { Tombol } from "@/components/ui";
 import { ARTIKEL, artikelTerkait, cariArtikel, cariDestinasi } from "@/lib/arsip";
 import { tanggalPanjang } from "@/lib/format";
-import { warnaKategori } from "@/lib/warna";
 
 export function generateStaticParams() {
   return ARTIKEL.map((a) => ({ id: a.id }));
 }
 
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}): Promise<Metadata> {
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   const { id } = await params;
   const a = cariArtikel(id);
   if (!a) return { title: "Artikel tidak ditemukan" };
   return {
     title: a.judul,
     description: a.ringkas,
-    openGraph: {
-      title: a.judul,
-      description: a.ringkas,
-      images: [{ url: a.gambar, alt: a.gambarCaption }],
-    },
+    openGraph: { title: a.judul, description: a.ringkas, images: [{ url: a.gambar }] },
   };
 }
 
 /**
  * Artikel panjang.
  *
- * Lebar baca dikunci 68 karakter. Judul bagian bernomor supaya pembaca
- * bisa kembali ke posisi tertentu. Daftar isi dibuat dari data bagian,
- * jadi tidak mungkin basi.
+ * Foto pembuka penuh dengan judul menimpa. Isi memakai latar kertas dan
+ * lebar baca 66 karakter. Daftar isi menempel di kiri pada layar lebar,
+ * dibuat dari data bagian sehingga tidak mungkin basi.
  */
-export default async function DetailArtikel({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
+export default async function DetailArtikel({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const a = cariArtikel(id);
   if (!a) notFound();
@@ -59,199 +46,181 @@ export default async function DetailArtikel({
   const menit = Math.max(1, Math.round(kata / 200));
 
   return (
-    <article className="mx-auto max-w-[1440px] px-4 py-8 sm:px-6 lg:px-10">
-      <nav
-        aria-label="Remah roti"
-        className="flex items-center gap-2 font-mono text-[0.625rem] uppercase tracking-wider text-tinta-3"
-      >
-        <Link href="/artikel" className="hover:text-tinta">
-          Sejarah
-        </Link>
-        <span aria-hidden="true">/</span>
-        <span className="line-clamp-1 text-tinta">{a.judul}</span>
-      </nav>
+    <article>
+      <header className="relative">
+        <div className="relative max-h-[72svh] overflow-hidden">
+          <Foto
+            src={a.gambar}
+            alt={a.gambarCaption}
+            prioritas
+            sizes="100vw"
+            className="max-h-[72svh] w-full object-cover"
+          />
+          <div className="absolute inset-0 bg-linear-to-t from-malam via-malam/30 to-malam/50" />
+        </div>
 
-      <header className="mt-4 border-t border-tinta pt-4">
-        <p className="label-arsip">
-          <span
-            className="mr-2 inline-block px-1.5 py-0.5 text-kertas"
-            style={{ background: warnaKategori(a.kategori) }}
-          >
-            {a.kategori}
-          </span>
-          {tanggalPanjang(a.tanggal)} · {menit} menit baca · {a.sumber.length} sumber
-        </p>
-        <h1 className="judul-arsip mt-3 max-w-[26ch] text-[clamp(2rem,4.6vw,3.5rem)]">{a.judul}</h1>
-        <p className="prosa mt-4 max-w-[62ch] text-lg text-tinta-2">{a.ringkas}</p>
-        <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-garis-2 pt-3">
-          <p className="font-mono text-[0.625rem] uppercase tracking-wider text-tinta-3">
-            {a.penulis}
-          </p>
-          <span className="h-3 w-px bg-garis" aria-hidden="true" />
-          <p className="font-mono text-[0.625rem] uppercase tracking-wider text-tinta-3">
-            Status: {a.status === "terverifikasi-sebagian" ? "Terverifikasi sebagian" : a.status}
-          </p>
+        <div className="absolute inset-x-0 bottom-0">
+          <div className="mx-auto max-w-[1100px] px-5 pb-8 sm:px-8">
+            <nav
+              aria-label="Remah roti"
+              className="flex items-center gap-2 font-mono text-[0.5625rem] uppercase tracking-[0.12em] text-terang-2"
+            >
+              <Link href="/artikel" className="hover:text-terang">
+                Sejarah
+              </Link>
+              <span aria-hidden="true">/</span>
+              <span className="line-clamp-1 text-terang">{a.kategori}</span>
+            </nav>
+            <p className="meta-emas mt-3">
+              {a.kategori} · {tanggalPanjang(a.tanggal)} · {menit} menit baca · {a.sumber.length} sumber
+            </p>
+            <h1 className="display mt-2 max-w-[24ch] text-[clamp(2rem,6vw,4.5rem)] text-terang">{a.judul}</h1>
+          </div>
         </div>
       </header>
 
-      <div className="mt-6 grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)_minmax(0,1fr)]">
-        {/* Daftar isi menempel. */}
-        <aside className="hidden lg:block lg:sticky lg:top-20 lg:self-start">
-          <p className="label-arsip border-b border-garis pb-2">Daftar isi</p>
-          <ol className="mt-2">
-            {a.bagian.map((b, i) => (
-              <li key={i}>
-                <a
-                  href={`#bagian-${i + 1}`}
-                  className="group flex gap-2 border-b border-garis-2 py-1.5 text-[0.75rem] leading-snug text-tinta-2 hover:text-tinta"
-                >
-                  <span className="tabular flex-none font-mono text-[0.5625rem] text-kunyit-ink">
-                    {String(i + 1).padStart(2, "0")}
-                  </span>
-                  <span className="min-w-0">{b.subjudul}</span>
-                </a>
-              </li>
-            ))}
-            <li>
-              <a
-                href="#sumber"
-                className="flex gap-2 py-1.5 text-[0.75rem] leading-snug text-tinta-2 hover:text-tinta"
-              >
-                <span className="tabular flex-none font-mono text-[0.5625rem] text-kunyit-ink">•</span>
-                Sumber
-              </a>
-            </li>
-          </ol>
-        </aside>
+      <div className="kertas">
+        <div className="mx-auto max-w-[1100px] px-5 py-12 sm:px-8 lg:py-16">
+          <p className="baca max-w-[58ch] text-[1.125rem] leading-relaxed text-gelap">{a.ringkas}</p>
 
-        <div className="min-w-0">
-          <figure className="mb-6">
-            <div className="relative aspect-[16/9] overflow-hidden border border-garis">
-              <Image
-                src={a.gambar}
-                alt={a.gambarCaption}
-                fill
-                priority
-                sizes="(max-width: 1024px) 100vw, 60vw"
-                className="object-cover"
-              />
-            </div>
-            <figcaption className="mt-1.5 font-mono text-[0.5625rem] uppercase tracking-wider text-tinta-3">
-              {a.gambarCaption}
-            </figcaption>
-          </figure>
+          <div className="mt-6 flex flex-wrap items-center gap-x-4 gap-y-2 border-y border-garis-kertas py-3">
+            <p className="meta">{a.penulis}</p>
+            <span className="h-3 w-px bg-garis-kertas" aria-hidden="true" />
+            <p className="meta">
+              {a.status === "terverifikasi-sebagian" ? "Terverifikasi sebagian" : a.status}
+            </p>
+            <p className="meta ml-auto">{a.gambarCaption}</p>
+          </div>
 
-          <p className="prosa text-[1.0625rem] leading-[1.75] text-tinta">{a.pendahuluan}</p>
-
-          {a.bagian.map((b, i) => (
-            <section key={i} id={`bagian-${i + 1}`} className="mt-8 scroll-mt-24">
-              <h2 className="flex items-baseline gap-2 border-t border-garis pt-4 font-display text-xl leading-tight text-tinta sm:text-2xl">
-                <span className="tabular font-mono text-[0.6875rem] text-kunyit-ink">
-                  {String(i + 1).padStart(2, "0")}
-                </span>
-                {b.subjudul}
-              </h2>
-              <div className="prosa mt-2">
-                {b.paragraf.map((p, j) => (
-                  <p key={j}>{p}</p>
+          <div className="mt-10 grid gap-10 lg:grid-cols-[180px_minmax(0,1fr)] lg:gap-12">
+            <aside className="hidden lg:block lg:sticky lg:top-20 lg:self-start">
+              <p className="meta-emas">Daftar isi</p>
+              <ol className="mt-3">
+                {a.bagian.map((b, i) => (
+                  <li key={i}>
+                    <a
+                      href={`#bagian-${i + 1}`}
+                      className="flex gap-2 border-b border-garis-kertas py-2 text-[0.75rem] leading-snug text-gelap-2 hover:text-gelap"
+                    >
+                      <span className="tabular shrink-0 font-mono text-[0.5625rem] text-emas-tinta">
+                        {String(i + 1).padStart(2, "0")}
+                      </span>
+                      {b.subjudul}
+                    </a>
+                  </li>
                 ))}
-              </div>
-            </section>
-          ))}
+              </ol>
+            </aside>
 
-          <section className="mt-10 border-l-2 border-kunyit bg-kertas-2 py-3 pl-4 pr-3">
-            <p className="label-arsip-kuat">Kesimpulan</p>
-            <p className="prosa mt-2 text-tinta">{a.kesimpulan}</p>
-          </section>
+            <div className="min-w-0">
+              <p className="baca text-[1.0625rem] leading-[1.75] text-gelap">{a.pendahuluan}</p>
 
-          <section id="sumber" className="mt-10 scroll-mt-24">
-            <PenandaBagian nomor="—" teks="Sumber" />
-            <ol className="border-t border-garis-2">
-              {a.sumber.map((s, i) => (
-                <li key={i} className="border-b border-garis-2 py-2.5">
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="min-w-0">
+              {a.bagian.map((b, i) => (
+                <section key={i} id={`bagian-${i + 1}`} className="mt-10 scroll-mt-24">
+                  <h2 className="flex items-baseline gap-3 border-t border-garis-kertas pt-5 font-display text-xl leading-tight text-gelap sm:text-2xl">
+                    <span className="tabular shrink-0 font-mono text-[0.6875rem] text-emas-tinta">
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
+                    {b.subjudul}
+                  </h2>
+                  <div className="baca mt-3">
+                    {b.paragraf.map((p, j) => (
+                      <p key={j}>{p}</p>
+                    ))}
+                  </div>
+                </section>
+              ))}
+
+              <section className="mt-10 border-l-2 border-emas pl-5">
+                <p className="meta-emas">Kesimpulan</p>
+                <p className="baca mt-2 text-gelap">{a.kesimpulan}</p>
+              </section>
+
+              <section id="sumber" className="mt-10 scroll-mt-24">
+                <p className="meta-emas">Sumber</p>
+                <ol className="mt-3 border-t border-garis-kertas">
+                  {a.sumber.map((s, i) => (
+                    <li key={i} className="border-b border-garis-kertas py-3">
                       <a
                         href={s.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="tautan-arsip text-[0.875rem] font-medium text-tinta"
+                        className="tautan text-[0.875rem] font-medium text-gelap"
                       >
                         {s.judul}
                       </a>
-                      <p className="mt-0.5 font-mono text-[0.5625rem] uppercase tracking-wider text-tinta-3">
+                      <p className="mt-0.5 font-mono text-[0.5625rem] uppercase tracking-[0.1em] text-gelap-3">
                         {s.penulis}
                         {s.tahun ? ` · ${s.tahun}` : ""}
                       </p>
                       {s.catatan && (
-                        <p className="mt-1 text-[0.75rem] leading-snug text-tinta-3">{s.catatan}</p>
+                        <p className="mt-1 text-[0.75rem] leading-snug text-gelap-3">{s.catatan}</p>
                       )}
-                    </div>
-                  </div>
-                </li>
-              ))}
-            </ol>
-          </section>
+                    </li>
+                  ))}
+                </ol>
+              </section>
 
-          <div className="mt-8 flex flex-wrap gap-2 border-t border-garis pt-4">
-            <Tombol href="/destinasi" panah>
-              Jelajahi destinasi
-            </Tombol>
-            <Tombol href={`/artikel/${berikut.id}`} varian="garis">
-              Artikel berikutnya
-            </Tombol>
+              <div className="mt-10 flex flex-wrap gap-2 border-t border-garis-kertas pt-6">
+                <Tombol href="/destinasi" varian="gelap" panah>
+                  Jelajahi destinasi
+                </Tombol>
+                <Tombol href={`/artikel/${berikut.id}`} varian="garis-gelap">
+                  Artikel berikutnya
+                </Tombol>
+              </div>
+            </div>
           </div>
         </div>
-
-        {/* Kolom kanan: destinasi yang disebut artikel ini. */}
-        <aside className="hidden lg:block">
-          {destinasi.length > 0 && (
-            <div className="lg:sticky lg:top-20">
-              <p className="label-arsip border-b border-garis pb-2">Destinasi terkait</p>
-              <ul className="mt-2 space-y-2">
-                {destinasi.map((d) => (
-                  <li key={d.id}>
-                    <Link href={`/destinasi/${d.id}`} className="group block">
-                      <div className="relative aspect-[3/2] overflow-hidden border border-garis">
-                        <Image
-                          src={d.gambar[0].src}
-                          alt={d.gambar[0].caption}
-                          fill
-                          sizes="240px"
-                          className="object-cover"
-                        />
-                      </div>
-                      <p className="mt-1 text-[0.75rem] font-medium leading-tight text-tinta group-hover:text-hijau-700">
-                        {d.nama}
-                      </p>
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-        </aside>
       </div>
 
-      {terkait.length > 0 && (
-        <section className="mt-14">
-          <div className="border-t border-tinta pt-4">
-            <p className="label-arsip">
-              <span className="mr-2 text-kunyit-ink">04</span>Bacaan lain
-            </p>
-            <ul className="mt-4 grid gap-0 border border-garis md:grid-cols-3">
-              {terkait.map((t) => (
-                <li
-                  key={t.id}
-                  className="border-b border-garis md:border-b-0 md:border-r md:last:border-r-0"
-                >
-                  <Link href={`/artikel/${t.id}`} className="group flex h-full flex-col p-4">
-                    <p className="label-arsip text-[0.5625rem]">{t.kategori}</p>
-                    <p className="mt-1 font-display text-base leading-snug text-tinta group-hover:text-hijau-700">
-                      {t.judul}
+      {destinasi.length > 0 && (
+        <section className="border-t border-garis-malam py-14">
+          <div className="mx-auto max-w-[1600px] px-5 sm:px-8 lg:px-12">
+            <p className="meta-emas">Destinasi yang disebut</p>
+            <ul className="mt-5 grid grid-cols-2 gap-4 lg:grid-cols-4">
+              {destinasi.map((d) => (
+                <li key={d.id}>
+                  <Link href={`/destinasi/${d.id}`} className="group block">
+                    <div className="overflow-hidden">
+                      <Foto
+                        src={d.gambar[0].src}
+                        alt={d.gambar[0].caption}
+                        sizes="(max-width: 640px) 50vw, 25vw"
+                        className="w-full transition-[filter] duration-700 group-hover:brightness-110"
+                      />
+                    </div>
+                    <p className="meta mt-2">{d.kategori[0]}</p>
+                    <p className="mt-0.5 font-display text-base leading-tight text-terang group-hover:text-emas">
+                      {d.nama}
                     </p>
-                    <p className="mt-auto pt-2 font-mono text-[0.5625rem] uppercase tracking-wider text-tinta-3">
-                      {tanggalPanjang(t.tanggal)}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+      )}
+
+      {terkait.length > 0 && (
+        <section className="border-t border-garis-malam py-14">
+          <div className="mx-auto max-w-[1600px] px-5 sm:px-8 lg:px-12">
+            <p className="meta-emas">Bacaan lain</p>
+            <ul className="mt-5 grid gap-6 md:grid-cols-3">
+              {terkait.map((t) => (
+                <li key={t.id}>
+                  <Link href={`/artikel/${t.id}`} className="group block">
+                    <div className="overflow-hidden">
+                      <Foto
+                        src={t.gambar}
+                        alt={t.gambarCaption}
+                        sizes="(max-width: 768px) 100vw, 33vw"
+                        className="w-full transition-[filter] duration-700 group-hover:brightness-110"
+                      />
+                    </div>
+                    <p className="meta mt-2">{t.kategori}</p>
+                    <p className="mt-1 font-display text-lg leading-snug text-terang group-hover:text-emas">
+                      {t.judul}
                     </p>
                   </Link>
                 </li>

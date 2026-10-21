@@ -1,62 +1,49 @@
 import type { Metadata } from "next";
-import Image from "next/image";
-import { JudulBagian, Tombol } from "@/components/ui";
+import { Foto } from "@/components/foto";
+import { Tombol } from "@/components/ui";
 import { statistikArsip } from "@/lib/arsip";
 
 export const metadata: Metadata = {
   title: "Tentang",
   description:
-    "Sriwijaya Culture disusun oleh tim Koding Seadanya untuk ITFEST 2026. Dibangun dengan Next.js, TypeScript, dan AI SDK.",
+    "Sriwijaya Culture disusun oleh tim Koding Seadanya untuk ITFEST 2026. Dibangun dengan Next.js, TypeScript, dan Vercel AI SDK.",
 };
 
-/**
- * Halaman tentang.
- *
- * Dua bagian: apa yang situs ini (dan tidak) lakukan, lalu siapa yang
- * membuatnya. Tanpa foto tim berpose, tanpa "visi misi" yang bisa
- * dipakai proyek apa pun.
- */
 export default function HalamanTentang() {
   const s = statistikArsip();
 
   return (
-    <div className="mx-auto max-w-[1440px] px-4 py-10 sm:px-6 lg:px-10">
-      <header className="border-t border-tinta pt-4">
-        <p className="label-arsip">
-          <span className="mr-2 text-kunyit-ink">07</span>Tentang
-        </p>
-        <div className="mt-2 grid gap-6 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)] lg:gap-10">
-          <h1 className="judul-arsip max-w-[20ch] text-[clamp(2.25rem,5vw,3.75rem)]">
+    <div className="mx-auto max-w-[1600px] px-5 pb-20 pt-28 sm:px-8 lg:px-12">
+      <header>
+        <p className="meta-emas">Tentang</p>
+        <div className="mt-3 flex flex-wrap items-end justify-between gap-x-10 gap-y-5">
+          <h1 className="display max-w-[16ch] text-[clamp(2.5rem,7vw,5.5rem)] text-terang">
             Arsip kecil, dikerjakan dengan hati-hati.
           </h1>
-          <div className="self-end">
-            <p className="max-w-[46ch] text-sm leading-relaxed text-tinta-2">
-              Sriwijaya Culture adalah arsip digital tentang Kota Palembang:
-              {" "}{s.destinasi} destinasi, {s.umkm} usaha lokal, {s.artikel} catatan
-              sejarah, dan {s.peristiwa} tonggak waktu. Dibuat untuk ITFEST 2026,
-              tema Empowering Culture Through AI-Driven Innovation.
-            </p>
-          </div>
+          <p className="max-w-[42ch] pb-2 text-[0.875rem] leading-relaxed text-terang-2">
+            Sriwijaya Culture adalah arsip digital tentang Kota Palembang:{" "}
+            {s.destinasi} destinasi, {s.umkm} usaha lokal, {s.artikel} catatan sejarah,
+            dan {s.peristiwa} tonggak waktu. Dibuat untuk ITFEST 2026.
+          </p>
         </div>
       </header>
 
-      <div className="mt-8 grid gap-0 border border-garis lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
-        <div className="relative aspect-[4/3] border-b border-garis lg:aspect-auto lg:border-b-0 lg:border-r">
-          <Image
+      <div className="mt-10 grid gap-10 lg:grid-cols-2 lg:gap-14">
+        <div className="overflow-hidden">
+          <Foto
             src="/images/musi-1.jpg"
             alt="Sungai Musi di kawasan Palembang"
-            fill
-            priority
+            prioritas
             sizes="(max-width: 1024px) 100vw, 50vw"
-            className="foto-arsip object-cover"
+            className="w-full"
           />
-          <div className="absolute inset-0 bg-linear-to-t from-hijau-950/70 to-transparent" />
-          <p className="absolute bottom-3 left-3 right-3 font-display text-lg leading-tight text-kertas">
-            Kota ini dimulai dari sungai, dan masih dijelaskan oleh sungai.
+          <p className="mt-2 font-mono text-[0.5625rem] uppercase tracking-[0.1em] text-terang-3">
+            Sungai Musi · Wikimedia Commons, CC BY-SA 4.0
           </p>
         </div>
-        <div className="p-5 sm:p-7">
-          <p className="label-arsip">Yang situs ini lakukan</p>
+
+        <div className="flex flex-col justify-center">
+          <p className="meta-emas">Yang situs ini lakukan</p>
           <ul className="mt-3 space-y-2.5">
             {[
               "Mengumpulkan tempat, usaha, dan peristiwa yang bisa ditelusuri sumbernya.",
@@ -64,14 +51,14 @@ export default function HalamanTentang() {
               "Menyediakan asisten yang menjawab dari arsip dan menyebut rujukannya.",
               "Menampilkan peta dari koordinat asli, bukan ilustrasi dekoratif.",
             ].map((x) => (
-              <li key={x} className="flex gap-2.5 text-[0.8125rem] leading-relaxed text-tinta-2">
-                <span aria-hidden="true" className="mt-2 h-1 w-1 flex-none bg-ok" />
+              <li key={x} className="flex gap-2.5 text-[0.8125rem] leading-relaxed text-terang-2">
+                <span aria-hidden="true" className="mt-2 h-1 w-1 shrink-0 bg-ok" />
                 {x}
               </li>
             ))}
           </ul>
 
-          <p className="label-arsip mt-5 border-t border-garis-2 pt-4">Yang tidak</p>
+          <p className="meta-emas mt-6 border-t border-garis-malam pt-5">Yang tidak</p>
           <ul className="mt-3 space-y-2.5">
             {[
               "Tidak menjual tiket, tidak menerima pemesanan, tidak memasang iklan.",
@@ -79,8 +66,8 @@ export default function HalamanTentang() {
               "Tidak menyimpan data pribadi pengunjung.",
               "Tidak mengarang alamat, nomor telepon, atau harga.",
             ].map((x) => (
-              <li key={x} className="flex gap-2.5 text-[0.8125rem] leading-relaxed text-tinta-2">
-                <span aria-hidden="true" className="mt-2 h-1 w-1 flex-none bg-bahaya" />
+              <li key={x} className="flex gap-2.5 text-[0.8125rem] leading-relaxed text-terang-2">
+                <span aria-hidden="true" className="mt-2 h-1 w-1 shrink-0 bg-bahaya" />
                 {x}
               </li>
             ))}
@@ -88,44 +75,35 @@ export default function HalamanTentang() {
         </div>
       </div>
 
-      <section className="mt-12">
-        <JudulBagian
-          nomor="01"
-          judul="Koding Seadanya"
-          keterangan="Tiga orang, satu arsip. Nama tim dipilih karena kami lebih suka menyelesaikan yang kecil dengan benar daripada menjanjikan yang besar."
-        />
-        <ul className="mt-5 grid gap-0 border border-garis sm:grid-cols-3">
+      <section className="mt-16">
+        <p className="meta-emas">Tim</p>
+        <h2 className="display mt-2 text-[clamp(1.9rem,4vw,3rem)] text-terang">Koding Seadanya.</h2>
+        <p className="mt-3 max-w-[56ch] text-[0.8125rem] leading-relaxed text-terang-2">
+          Tiga orang, satu arsip. Nama tim dipilih karena kami lebih suka
+          menyelesaikan yang kecil dengan benar daripada menjanjikan yang besar.
+        </p>
+        <ul className="mt-8 grid gap-6 sm:grid-cols-3">
           {[
             { nama: "M. Izzat Al Fawaz", kode: "062640833318", peran: "Pengembang utama" },
             { nama: "Abdur Rachman Abyan", kode: "062640833308", peran: "Data dan riset" },
             { nama: "Richa Karina", kode: "062640833326", peran: "Desain dan konten" },
           ].map((p, i) => (
-            <li
-              key={p.kode}
-              className={`border-b border-garis p-4 sm:border-b-0 ${i < 2 ? "sm:border-r" : ""}`}
-            >
-              <p className="tabular font-mono text-[0.625rem] text-kunyit-ink">
-                {String(i + 1).padStart(2, "0")}
-              </p>
-              <p className="mt-1 font-display text-lg leading-tight text-tinta">{p.nama}</p>
-              <p className="mt-1 font-mono text-[0.5625rem] uppercase tracking-wider text-tinta-3">
-                {p.peran}
-              </p>
-              <p className="tabular mt-2 border-t border-garis-2 pt-2 font-mono text-[0.5625rem] text-tinta-4">
-                {p.kode}
-              </p>
+            <li key={p.kode} className="border-t border-garis-malam pt-4">
+              <p className="tabular font-mono text-[0.625rem] text-emas">{String(i + 1).padStart(2, "0")}</p>
+              <p className="mt-2 font-display text-lg leading-tight text-terang">{p.nama}</p>
+              <p className="mt-1 font-mono text-[0.5625rem] uppercase tracking-[0.1em] text-terang-3">{p.peran}</p>
+              <p className="tabular mt-3 font-mono text-[0.5625rem] text-terang-3">{p.kode}</p>
             </li>
           ))}
         </ul>
       </section>
 
-      <section className="mt-12">
-        <JudulBagian
-          nomor="02"
-          judul="Dibangun dengan apa"
-          keterangan="Daftar ini jujur: semua yang tertulis di sini benar-benar dipakai, bukan daftar panjang untuk terlihat canggih."
-        />
-        <div className="mt-5 grid gap-0 border border-garis md:grid-cols-2">
+      <section className="mt-16">
+        <p className="meta-emas">Teknologi</p>
+        <h2 className="display mt-2 max-w-[22ch] text-[clamp(1.9rem,4vw,3rem)] text-terang">
+          Dibangun dengan apa.
+        </h2>
+        <div className="mt-8 grid gap-x-10 gap-y-6 md:grid-cols-2">
           {[
             {
               k: "Next.js 16 · App Router",
@@ -133,7 +111,7 @@ export default function HalamanTentang() {
             },
             {
               k: "TypeScript",
-              v: "Skema data ditegakkan di satu tempat. Kesalahan seperti field hilang atau tipe salah tertangkap saat build, bukan saat juri membuka halaman.",
+              v: "Skema data ditegakkan di satu tempat. Kesalahan seperti field hilang tertangkap saat build, bukan saat juri membuka halaman.",
             },
             {
               k: "Tailwind CSS v4",
@@ -152,44 +130,38 @@ export default function HalamanTentang() {
               v: "Peta dan garis waktu digambar dari koordinat dan tahun asli. Tidak ada gambar statis yang bisa basi.",
             },
           ].map((t, i) => (
-            <div
-              key={t.k}
-              className="border-b border-garis p-4 md:border-r md:[&:nth-child(2n)]:border-r-0"
-            >
-              <p className="tabular font-mono text-[0.5625rem] text-tinta-4">
+            <div key={t.k} className="border-t border-garis-malam pt-4">
+              <p className="tabular font-mono text-[0.5625rem] text-terang-3">
                 {String(i + 1).padStart(2, "0")}
               </p>
-              <p className="mt-1 font-display text-base leading-tight text-tinta">{t.k}</p>
-              <p className="mt-1.5 text-[0.8125rem] leading-relaxed text-tinta-2">{t.v}</p>
+              <p className="mt-1.5 font-display text-base leading-tight text-terang">{t.k}</p>
+              <p className="mt-1.5 text-[0.8125rem] leading-relaxed text-terang-2">{t.v}</p>
             </div>
           ))}
         </div>
       </section>
 
-      <section className="mt-12 border-t border-garis pt-5">
-        <div className="flex flex-wrap items-center justify-between gap-4">
-          <div>
-            <p className="label-arsip">Mulai dari sini</p>
-            <p className="mt-1 font-display text-xl leading-tight text-tinta">
-              Buka atlas, atau tanya Sari langsung.
-            </p>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            <Tombol href="/destinasi" panah>
-              Katalog destinasi
-            </Tombol>
-            <Tombol href="/asisten" varian="garis">
-              Tanya asisten
-            </Tombol>
-          </div>
+      <section className="mt-16 flex flex-wrap items-center justify-between gap-6 border-t border-garis-malam pt-8">
+        <div>
+          <p className="meta-emas">Mulai dari sini</p>
+          <p className="mt-2 font-display text-xl leading-tight text-terang">
+            Buka atlas, atau tanya Sari langsung.
+          </p>
         </div>
-        <p className="mt-6 text-[0.75rem] leading-relaxed text-tinta-3">
-          Data diperiksa terakhir 20 Oktober 2026. Kode sumber tersedia di
-          repositori publik. Untuk koreksi data, sertakan tautan sumber agar bisa
-          kami periksa.
-        </p>
+        <div className="flex flex-wrap gap-2">
+          <Tombol href="/destinasi" panah>
+            Katalog destinasi
+          </Tombol>
+          <Tombol href="/asisten" varian="garis">
+            Tanya asisten
+          </Tombol>
+        </div>
       </section>
+
+      <p className="mt-10 text-[0.75rem] leading-relaxed text-terang-3">
+        Data diperiksa terakhir 20 Oktober 2026. Kode sumber tersedia di repositori
+        publik. Untuk koreksi data, sertakan tautan sumber agar bisa kami periksa.
+      </p>
     </div>
   );
 }
-

@@ -6,214 +6,161 @@ import { useEffect, useState } from "react";
 import { cn } from "@/lib/cn";
 
 /**
- * Navigasi arsip.
+ * Navigasi galeri.
  *
- * Struktur: satu baris tipis berisi identitas + nomor arsip, lalu satu
- * baris navigasi yang menempel saat digulir. Tidak ada menu mega,
- * tidak ada dropdown. Arsip yang baik punya daftar isi yang jelas.
+ * Satu baris, tanpa baris identitas kedua. Menempel dengan latar yang
+ * menggelap setelah digulir, karena di atas foto terang teks putih butuh
+ * jaminan kontras.
  */
 
 const NAV = [
-  { href: "/destinasi", label: "Destinasi", kode: "01" },
-  { href: "/umkm", label: "Usaha Lokal", kode: "02" },
-  { href: "/artikel", label: "Sejarah", kode: "03" },
-  { href: "/metodologi", label: "Metodologi", kode: "04" },
-  { href: "/tentang", label: "Tentang", kode: "05" },
+  { href: "/destinasi", label: "Destinasi" },
+  { href: "/umkm", label: "Usaha" },
+  { href: "/artikel", label: "Sejarah" },
+  { href: "/metodologi", label: "Sumber" },
+  { href: "/tentang", label: "Tentang" },
 ] as const;
 
 export function SiteHeader() {
   const pathname = usePathname();
-  const [terbuka, setTerbuka] = useState(false);
-  const [tergulir, setTergulir] = useState(false);
+  const [buka, setBuka] = useState(false);
+  const [gulir, setGulir] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => setTergulir(window.scrollY > 8);
+    const onScroll = () => setGulir(window.scrollY > 40);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // Tutup menu saat rute berubah, dan kunci gulir saat menu terbuka.
-  // Ditutup lewat handler navigasi (bukan effect) supaya tidak memicu
-  // render berantai saat rute berubah.
   useEffect(() => {
-    if (!terbuka) return;
+    if (!buka) return;
     const asal = document.body.style.overflow;
     document.body.style.overflow = "hidden";
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setTerbuka(false);
-    };
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setBuka(false);
     window.addEventListener("keydown", onKey);
     return () => {
       document.body.style.overflow = asal;
       window.removeEventListener("keydown", onKey);
     };
-  }, [terbuka]);
+  }, [buka]);
 
-  const aktif = (href: string) =>
-    href === "/" ? pathname === "/" : pathname.startsWith(href);
+  const aktif = (href: string) => pathname === href || pathname.startsWith(href + "/");
 
   return (
-    <header className="sticky top-0 z-50">
-      {/* Baris identitas. Menghilang saat digulir untuk menghemat tinggi. */}
-      <div
-        className={cn(
-          "hidden border-b border-garis bg-hijau-950 text-kertas/70 transition-all duration-300 md:block",
-          tergulir ? "h-0 overflow-hidden opacity-0" : "h-8 opacity-100",
-        )}
-      >
-        <div className="mx-auto flex h-8 max-w-[1440px] items-center justify-between px-6 lg:px-10">
-          <p className="label-arsip text-kertas/60">
-            Arsip Digital · Kota Palembang · Sumatera Selatan
-          </p>
-          <p className="label-arsip flex items-center gap-3 text-kertas/60">
-            <span className="tabular">104.75° BT</span>
-            <span aria-hidden="true" className="text-kunyit/70">
-              /
-            </span>
-            <span className="tabular">2.99° LS</span>
-            <span aria-hidden="true" className="text-kunyit/70">
-              /
-            </span>
-            <span>ITFEST 2026</span>
-          </p>
-        </div>
-      </div>
+    <header
+      className={cn(
+        "fixed inset-x-0 top-0 z-50 transition-colors duration-500",
+        gulir || buka
+          ? "border-b border-garis-malam bg-malam/90 backdrop-blur-md"
+          : "border-b border-transparent bg-transparent",
+      )}
+    >
+      <div className="mx-auto flex h-16 max-w-[1600px] items-center gap-3 px-5 sm:px-8 lg:px-12">
+        <Link href="/" className="group flex items-center gap-2.5" aria-label="Sriwijaya Culture">
+          <svg viewBox="0 0 28 28" className="h-6 w-6 flex-none" aria-hidden="true">
+            <path
+              d="M2 17c4 0 4-3.2 8-3.2s4 3.2 8 3.2 4-2.4 8-2.4"
+              fill="none"
+              stroke="#d9a832"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+            />
+            <path
+              d="M2 22c4 0 4-3.2 8-3.2s4 3.2 8 3.2 4-2.4 8-2.4"
+              fill="none"
+              stroke="#f2efe8"
+              strokeOpacity=".35"
+              strokeWidth="1.2"
+              strokeLinecap="round"
+            />
+            <path d="M14 4v8M10 7.5l4-3.5 4 3.5" fill="none" stroke="#f2efe8" strokeWidth="1.2" strokeLinecap="round" />
+          </svg>
+          <span className="font-display text-[1.0625rem] font-medium tracking-[-0.02em] text-terang">
+            Sriwijaya Culture
+          </span>
+        </Link>
 
-      <div
-        className={cn(
-          "border-b bg-kertas/95 backdrop-blur-sm transition-shadow duration-300",
-          tergulir ? "border-garis shadow-lembar" : "border-garis-2",
-        )}
-      >
-        <div className="mx-auto flex h-16 max-w-[1440px] items-center gap-4 px-4 sm:px-6 lg:px-10">
+        <nav aria-label="Navigasi utama" className="ml-auto hidden md:block">
+          <ul className="flex items-center gap-1">
+            {NAV.map((item) => (
+              <li key={item.href}>
+                <Link
+                  href={item.href}
+                  aria-current={aktif(item.href) ? "page" : undefined}
+                  className={cn(
+                    "relative block px-3 py-2 text-[0.8125rem] transition-colors",
+                    aktif(item.href) ? "text-terang" : "text-terang-2 hover:text-terang",
+                  )}
+                >
+                  {item.label}
+                  <span
+                    aria-hidden="true"
+                    className={cn(
+                      "absolute inset-x-3 bottom-1 h-px origin-left bg-emas transition-transform duration-500",
+                      aktif(item.href) ? "scale-x-100" : "scale-x-0",
+                    )}
+                  />
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
+
+        <div className="ml-auto flex items-center gap-2 md:ml-2">
           <Link
-            href="/"
-            className="group flex min-w-0 items-center gap-3"
-            aria-label="Sriwijaya Culture, ke beranda"
+            href="/asisten"
+            className="flex h-9 items-center gap-2 border border-emas/40 px-2.5 text-emas transition-colors hover:border-emas hover:bg-emas/10 sm:px-3.5"
+            aria-label="Tanya Asisten Sari"
           >
-            {/* Tanda arsip: dua garis sungai di dalam kotak. Bukan logo bulat. */}
-            <span
-              aria-hidden="true"
-              className="relative grid h-9 w-9 flex-none place-items-center border border-hijau-800 bg-hijau-950"
-            >
-              <svg viewBox="0 0 36 36" className="h-9 w-9">
-                <path d="M4 21c5 0 5-4 10-4s5 4 10 4 5-3 8-3" fill="none" stroke="#d4a017" strokeWidth="1.4" />
-                <path d="M4 26c5 0 5-4 10-4s5 4 10 4 5-3 8-3" fill="none" stroke="#faf7f0" strokeOpacity=".5" strokeWidth="1.1" />
-                <path d="M18 5v9M13 9l5-4 5 4" fill="none" stroke="#faf7f0" strokeWidth="1.2" />
-              </svg>
-            </span>
-            <span className="min-w-0 leading-none">
-              <span className="block truncate font-display text-[1.0625rem] font-semibold tracking-[-0.02em] text-tinta">
-                Sriwijaya Culture
-              </span>
-              <span className="label-arsip mt-1 block text-[0.625rem] tracking-[0.18em]">
-                Arsip Terbuka Palembang
-              </span>
+            <svg viewBox="0 0 18 18" className="h-3.5 w-3.5 flex-none" fill="none" stroke="currentColor" strokeWidth="1.4" aria-hidden="true">
+              <path d="M9 2.2 10.5 6.4 14.8 8 10.5 9.6 9 13.8 7.5 9.6 3.2 8 7.5 6.4z" />
+            </svg>
+            <span className="hidden whitespace-nowrap font-mono text-[0.625rem] uppercase tracking-[0.12em] sm:inline">
+              Tanya Sari
             </span>
           </Link>
 
-          <nav aria-label="Navigasi utama" className="ml-auto hidden lg:block">
-            <ul className="flex items-stretch">
-              {NAV.map((item) => (
-                <li key={item.href}>
-                  <Link
-                    href={item.href}
-                    aria-current={aktif(item.href) ? "page" : undefined}
-                    className={cn(
-                      "group relative flex h-16 items-center gap-1.5 px-3 text-sm transition-colors",
-                      aktif(item.href)
-                        ? "text-tinta"
-                        : "text-tinta-2 hover:text-tinta",
-                    )}
-                  >
-                    <span
-                      aria-hidden="true"
-                      className={cn(
-                        "font-mono text-[0.5625rem] tracking-wider transition-colors",
-                        aktif(item.href) ? "text-kunyit-ink" : "text-tinta-4 group-hover:text-tinta-3",
-                      )}
-                    >
-                      {item.kode}
-                    </span>
-                    <span className="font-medium">{item.label}</span>
-                    <span
-                      aria-hidden="true"
-                      className={cn(
-                        "absolute inset-x-2 bottom-0 h-[2px] origin-left bg-hijau-800 transition-transform duration-300",
-                        aktif(item.href) ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100",
-                      )}
-                    />
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </nav>
-
-          <div className="ml-auto flex items-center gap-2 lg:ml-4">
-            <Link
-              href="/asisten"
-              className="group flex h-9 items-center gap-2 border border-hijau-800 bg-hijau-900 px-2 text-kertas transition-colors hover:bg-hijau-700 sm:px-3"
-              aria-label="Buka Asisten Sari"
-            >
-              <span aria-hidden="true" className="text-kunyit">
-                <svg viewBox="0 0 20 20" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.4">
-                  <path d="M10 2.5 11.7 7l4.5 1.7-4.5 1.7L10 15l-1.7-4.6L3.8 8.7 8.3 7z" />
-                  <path d="M15.5 14.5v3M14 16h3" strokeLinecap="round" />
-                </svg>
-              </span>
-              <span className="hidden whitespace-nowrap font-mono text-[0.6875rem] uppercase tracking-[0.1em] sm:inline">
-                Tanya Sari
-              </span>
-            </Link>
-
-            <button
-              type="button"
-              onClick={() => setTerbuka((v) => !v)}
-              aria-expanded={terbuka}
-              aria-controls="menu-mobile"
-              aria-label={terbuka ? "Tutup menu" : "Buka menu"}
-              className="grid h-9 w-9 place-items-center border border-garis-3 text-tinta transition-colors hover:bg-kertas-2 lg:hidden"
-            >
-              <svg viewBox="0 0 20 20" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.5">
-                {terbuka ? (
-                  <path d="M5 5l10 10M15 5L5 15" />
-                ) : (
-                  <path d="M3 6h14M3 10h14M3 14h14" />
-                )}
-              </svg>
-            </button>
-          </div>
+          <button
+            type="button"
+            onClick={() => setBuka((v) => !v)}
+            aria-expanded={buka}
+            aria-controls="menu-mobile"
+            aria-label={buka ? "Tutup menu" : "Buka menu"}
+            className="grid h-9 w-9 place-items-center border border-malam-5 text-terang transition-colors hover:border-terang-3 md:hidden"
+          >
+            <svg viewBox="0 0 20 20" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.5">
+              {buka ? <path d="M5 5l10 10M15 5L5 15" /> : <path d="M3 6h14M3 10h14M3 14h14" />}
+            </svg>
+          </button>
         </div>
       </div>
 
-      {/* Menu mobile: daftar isi penuh, bukan drawer melayang. */}
-      {terbuka && (
+      {buka && (
         <div
           id="menu-mobile"
-          className="fixed inset-x-0 bottom-0 top-16 z-40 overflow-y-auto border-t border-garis bg-kertas lg:hidden"
+          className="fixed inset-x-0 bottom-0 top-16 z-40 overflow-y-auto bg-malam md:hidden"
         >
-          <nav aria-label="Navigasi seluler" className="mx-auto max-w-[1440px] px-4 py-6">
-            <p className="label-arsip mb-3">Daftar Isi</p>
-            <ul className="border-t border-garis">
-              {[{ href: "/", label: "Beranda", kode: "00" }, ...NAV].map((item) => (
-                <li key={item.href} className="border-b border-garis">
+          <nav aria-label="Navigasi seluler" className="px-5 py-8">
+            <ul>
+              {[{ href: "/", label: "Beranda" }, ...NAV].map((item) => (
+                <li key={item.href} className="border-b border-garis-malam">
                   <Link
                     href={item.href}
+                    onClick={() => setBuka(false)}
                     aria-current={aktif(item.href) ? "page" : undefined}
-                    className="flex items-baseline gap-3 py-3.5"
+                    className="flex items-baseline justify-between gap-4 py-4"
                   >
-                    <span className="font-mono text-[0.625rem] text-tinta-3">{item.kode}</span>
                     <span
                       className={cn(
-                        "font-display text-2xl",
-                        aktif(item.href) ? "text-tinta" : "text-tinta-2",
+                        "font-display text-[1.75rem] leading-none",
+                        aktif(item.href) ? "text-emas" : "text-terang",
                       )}
                     >
                       {item.label}
                     </span>
                     {aktif(item.href) && (
-                      <span className="ml-auto h-1.5 w-1.5 rounded-full bg-kunyit" aria-hidden="true" />
+                      <span className="h-1.5 w-1.5 flex-none rounded-full bg-emas" aria-hidden="true" />
                     )}
                   </Link>
                 </li>
@@ -221,12 +168,11 @@ export function SiteHeader() {
             </ul>
             <Link
               href="/asisten"
-              className="mt-6 flex items-center justify-between border border-hijau-800 bg-hijau-900 px-4 py-3 text-kertas"
+              onClick={() => setBuka(false)}
+              className="mt-8 flex items-center justify-between border border-emas/40 px-4 py-3 text-emas"
             >
-              <span className="font-mono text-xs uppercase tracking-[0.12em]">Tanya Asisten Sari</span>
-              <span aria-hidden="true" className="text-kunyit">
-                →
-              </span>
+              <span className="font-mono text-[0.6875rem] uppercase tracking-[0.12em]">Tanya Asisten Sari</span>
+              <span aria-hidden="true">→</span>
             </Link>
           </nav>
         </div>

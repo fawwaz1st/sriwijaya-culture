@@ -3,106 +3,89 @@ import { cn } from "@/lib/cn";
 import { labelVerifikasi } from "@/lib/format";
 
 /* ============================================================================
-   Kepingan antarmuka yang dipakai berulang.
-
-   Semua di sini sengaja tanpa state supaya bisa dirender di server.
-   Kalau sebuah komponen butuh state, komponen itu punya berkas sendiri
-   dengan "use client" di atasnya.
+   Kepingan antarmuka.
+   Semua tanpa state, jadi bisa dirender di server.
    ========================================================================== */
 
 /**
- * Judul bagian.
+ * Kepala bagian.
  *
- * Bukan eyebrow kecil di atas judul. Nomor diletakkan besar di kolom
- * kiri dan berfungsi sebagai nomor halaman arsip, dengan judul
- * mengalir di sebelahnya. Jadi nomor itu membawa informasi posisi,
- * bukan hiasan yang bisa ditempel di bagian mana pun.
- *
- * `kode` dipakai sebagai penanda nyata: ia muncul di navigasi dan di
- * daftar isi, sehingga angkanya konsisten di seluruh situs.
+ * Tidak memakai eyebrow bernomor di setiap bagian. Kalau sebuah bagian
+ * memang bagian dari urutan, `nomor` diisi. Kalau tidak, biarkan kosong
+ * dan judulnya berdiri sendiri.
  */
-export function JudulBagian({
-  nomor,
+export function KepalaBagian({
   judul,
   keterangan,
   aksi,
-  terang = false,
+  nomor,
+  terang = true,
 }: {
-  nomor: string;
   judul: string;
   keterangan?: string;
   aksi?: React.ReactNode;
+  nomor?: string;
   terang?: boolean;
 }) {
   return (
-    <div className={cn("border-t pt-5", terang ? "border-kertas/25" : "border-tinta")}>
-      <div className="flex flex-wrap items-start gap-x-6 gap-y-4 sm:flex-nowrap">
-        {/* Nomor halaman arsip: besar, tabular, rata garis atas. */}
-        <p
-          aria-hidden="true"
+    <div className="flex flex-wrap items-end justify-between gap-x-8 gap-y-4">
+      <div className="min-w-0">
+        {nomor && (
+          <p className={cn("meta mb-2", terang ? "text-emas" : "text-emas-tinta")}>{nomor}</p>
+        )}
+        <h2
           className={cn(
-            "tabular flex-none font-mono text-[clamp(2.25rem,4.5vw,3.25rem)] font-medium leading-none tracking-[-0.04em]",
-            terang ? "text-kertas/25" : "text-kertas-4",
+            "display max-w-[22ch] text-[clamp(1.9rem,4.2vw,3.5rem)]",
+            terang ? "text-terang" : "text-gelap",
           )}
         >
-          {nomor}
-        </p>
-
-        <div className="min-w-0 flex-1">
-          <h2
+          {judul}
+        </h2>
+        {keterangan && (
+          <p
             className={cn(
-              "judul-arsip text-[clamp(1.6rem,3vw,2.4rem)]",
-              terang ? "text-kertas" : "text-tinta",
+              "mt-3 max-w-[52ch] text-[0.875rem] leading-relaxed",
+              terang ? "text-terang-2" : "text-gelap-2",
             )}
           >
-            {judul}
-          </h2>
-          {keterangan && (
-            <p
-              className={cn(
-                "mt-2 max-w-[62ch] text-sm leading-relaxed",
-                terang ? "text-kertas/60" : "text-tinta-2",
-              )}
-            >
-              {keterangan}
-            </p>
-          )}
-        </div>
-
-        {aksi && <div className="flex-none self-end sm:self-start">{aksi}</div>}
+            {keterangan}
+          </p>
+        )}
       </div>
+      {aksi && <div className="shrink-0">{aksi}</div>}
     </div>
   );
 }
 
-/** Tombol. Tiga varian saja, supaya hierarki tetap terbaca. */
+/** Tombol. Dua varian di latar gelap, dua di latar kertas. */
 export function Tombol({
   href,
   children,
-  varian = "utama",
+  varian = "terang",
   className,
   panah = false,
   ...rest
 }: {
   href: string;
   children: React.ReactNode;
-  varian?: "utama" | "garis" | "teks";
+  varian?: "terang" | "garis" | "gelap" | "garis-gelap";
   className?: string;
   panah?: boolean;
 } & Omit<React.ComponentProps<typeof Link>, "href" | "className" | "children">) {
   const dasar =
-    "group inline-flex items-center justify-center gap-2 font-mono text-[0.6875rem] uppercase tracking-[0.1em] transition-colors duration-200";
+    "group inline-flex items-center justify-center gap-2 font-mono text-[0.6875rem] uppercase tracking-[0.12em] transition-colors duration-300";
   const gaya = {
-    utama: "bg-hijau-900 px-4 py-2.5 text-kertas hover:bg-hijau-700 border border-hijau-900",
-    garis: "border border-garis-3 px-4 py-2.5 text-tinta hover:border-hijau-800 hover:bg-kertas-2",
-    teks: "text-hijau-800 hover:text-hijau-600 underline-offset-4 hover:underline",
+    terang: "bg-terang px-5 py-3 text-malam hover:bg-emas",
+    garis: "border border-terang/30 px-5 py-3 text-terang hover:border-terang",
+    gelap: "bg-gelap px-5 py-3 text-kertas hover:bg-emas-tinta",
+    "garis-gelap": "border border-gelap/25 px-5 py-3 text-gelap hover:border-gelap",
   }[varian];
 
   return (
     <Link href={href} className={cn(dasar, gaya, className)} {...rest}>
       {children}
       {panah && (
-        <span aria-hidden="true" className="transition-transform duration-200 group-hover:translate-x-0.5">
+        <span aria-hidden="true" className="transition-transform duration-300 group-hover:translate-x-1">
           →
         </span>
       )}
@@ -110,62 +93,68 @@ export function Tombol({
   );
 }
 
-/** Badge status verifikasi. Warna mengikuti tingkat keyakinan sumber. */
+/** Badge status verifikasi. */
 export function BadgeVerifikasi({ tingkat }: { tingkat: string }) {
   const warna =
-    tingkat === "tinggi"
-      ? "text-ok"
-      : tingkat === "sedang"
-        ? "text-warn"
-        : "text-bahaya";
+    tingkat === "tinggi" ? "text-ok" : tingkat === "sedang" ? "text-warn" : "text-bahaya";
   return <span className={cn("status", warna)}>{labelVerifikasi(tingkat)}</span>;
 }
 
-/**
- * Angka besar dengan label. Dipakai di beranda dan metodologi.
- * Angka selalu berasal dari data, tidak pernah ditulis manual di JSX.
- */
-export function AngkaBesar({
+/** Angka besar dengan label, untuk pita statistik. */
+export function Angka({
   nilai,
   label,
   satuan,
-  catatan,
+  terang = true,
 }: {
   nilai: string | number;
   label: string;
   satuan?: string;
-  catatan?: string;
+  terang?: boolean;
 }) {
   return (
-    <div className="flex flex-col justify-between gap-2 border-l border-garis-3 pl-3">
-      <p className="label-arsip">{label}</p>
-      <p className="tabular flex items-baseline gap-1 font-display text-[clamp(2rem,3.6vw,2.9rem)] font-semibold leading-none tracking-[-0.03em] text-tinta">
-        {nilai}
-        {satuan && (
-          <span className="font-mono text-[0.6875rem] font-normal tracking-normal text-tinta-3">
-            {satuan}
-          </span>
+    <div>
+      <p className={cn("meta", terang ? "text-terang-3" : "text-gelap-3")}>{label}</p>
+      <p
+        className={cn(
+          "tabular mt-1 flex items-baseline gap-1 font-display text-[clamp(1.5rem,2.6vw,2.25rem)] leading-none",
+          terang ? "text-terang" : "text-gelap",
         )}
+      >
+        {nilai}
+        {satuan && <span className="font-mono text-[0.625rem] tracking-normal opacity-60">{satuan}</span>}
       </p>
-      {catatan && <p className="text-[0.6875rem] leading-snug text-tinta-3">{catatan}</p>}
     </div>
   );
 }
 
-/** Baris metadata: kunci di kiri, nilai di kanan, garis rambut. */
+/** Baris metadata: kunci kiri, nilai kanan, garis rambut. */
 export function BarisMeta({
   k,
   v,
   mono = false,
+  terang = false,
 }: {
   k: string;
   v: React.ReactNode;
   mono?: boolean;
+  terang?: boolean;
 }) {
   return (
-    <div className="flex items-baseline justify-between gap-4 border-b border-garis-2 py-2 last:border-b-0">
-      <dt className="label-arsip flex-none text-[0.625rem]">{k}</dt>
-      <dd className={cn("text-right text-[0.8125rem] text-tinta", mono && "tabular font-mono text-xs")}>
+    <div
+      className={cn(
+        "flex items-baseline justify-between gap-4 border-b py-2.5 last:border-b-0",
+        terang ? "border-garis-malam" : "border-garis-kertas",
+      )}
+    >
+      <dt className={cn("meta shrink-0", terang ? "text-terang-3" : "text-gelap-3")}>{k}</dt>
+      <dd
+        className={cn(
+          "text-right text-[0.8125rem]",
+          terang ? "text-terang" : "text-gelap",
+          mono && "tabular font-mono text-xs",
+        )}
+      >
         {v}
       </dd>
     </div>
@@ -173,12 +162,10 @@ export function BarisMeta({
 }
 
 /**
- * Kotak catatan untuk hal yang belum pasti.
- *
- * Ini elemen inti produk, bukan komponen pelengkap: arsip yang jujur
- * harus punya tempat untuk mengatakan "kami belum tahu".
+ * Catatan ketidakpastian. Elemen inti produk: arsip yang jujur harus
+ * punya tempat untuk mengatakan "kami belum tahu".
  */
-export function CatatanBelumPasti({
+export function CatatanPasti({
   judul = "Belum terverifikasi",
   children,
 }: {
@@ -186,20 +173,14 @@ export function CatatanBelumPasti({
   children: React.ReactNode;
 }) {
   return (
-    <aside className="border border-warn/40 bg-[#fbf4e2] p-3">
-      <p className="flex items-center gap-1.5 font-mono text-[0.625rem] uppercase tracking-[0.1em] text-warn">
-        <svg viewBox="0 0 16 16" className="h-3 w-3" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true">
-          <circle cx="8" cy="8" r="6.4" />
-          <path d="M8 4.6v4.2M8 11.2v.6" strokeLinecap="round" />
-        </svg>
-        {judul}
-      </p>
-      <div className="mt-1.5 text-[0.8125rem] leading-relaxed text-tinta-2">{children}</div>
+    <aside className="border border-warn/35 bg-warn/8 p-4">
+      <p className="status text-warn">{judul}</p>
+      <div className="mt-2 text-[0.8125rem] leading-relaxed text-terang-2">{children}</div>
     </aside>
   );
 }
 
-/** Keadaan kosong: selalu menjelaskan kenapa kosong dan apa langkah berikutnya. */
+/** Keadaan kosong: selalu menjelaskan kenapa dan apa langkah berikutnya. */
 export function KeadaanKosong({
   judul,
   pesan,
@@ -210,22 +191,11 @@ export function KeadaanKosong({
   aksi?: React.ReactNode;
 }) {
   return (
-    <div className="tekstur-silang flex flex-col items-start gap-3 border border-garis px-5 py-10">
-      <p className="label-arsip">Hasil kosong</p>
-      <p className="font-display text-xl text-tinta">{judul}</p>
-      <p className="max-w-[48ch] text-sm text-tinta-2">{pesan}</p>
-      {aksi}
-    </div>
-  );
-}
-
-/** Pemecah halaman bernomor, gaya daftar isi cetak. */
-export function PenandaBagian({ nomor, teks }: { nomor: string; teks: string }) {
-  return (
-    <div className="flex items-center gap-3 py-3">
-      <span className="tabular font-mono text-[0.625rem] text-kunyit-ink">{nomor}</span>
-      <span className="h-px flex-1 bg-garis" aria-hidden="true" />
-      <span className="label-arsip text-[0.5625rem]">{teks}</span>
+    <div className="border border-garis-malam px-6 py-12">
+      <p className="meta">Hasil kosong</p>
+      <p className="mt-2 font-display text-xl text-terang">{judul}</p>
+      <p className="mt-2 max-w-[48ch] text-[0.8125rem] leading-relaxed text-terang-2">{pesan}</p>
+      {aksi && <div className="mt-5">{aksi}</div>}
     </div>
   );
 }
