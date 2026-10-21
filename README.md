@@ -1,163 +1,182 @@
 # Sriwijaya Culture
 
-Platform informasi pariwisata, budaya, dan usaha lokal Kota Palembang, Sumatera Selatan.
-Dibuat dengan HTML5, CSS3, dan Vanilla JavaScript. Tanpa Node.js, tanpa framework,
-tanpa backend, tanpa database, tanpa proses build.
+Arsip digital destinasi, usaha lokal, dan sejarah budaya Kota Palembang.
+Dibuat oleh tim **Koding Seadanya** untuk ITFEST 2026, tema
+*Empowering Culture Through AI-Driven Innovation*.
 
-## Cara menjalankan
+**Live:** https://sriwijaya-culture.vercel.app
 
-Buka `index.html` langsung di peramban. Tidak perlu server.
+---
 
-```
-c:\laragon\www\apps\SriwijayaCulture\index.html
-```
+## Apa yang situs ini lakukan
 
-Bila menggunakan Laragon, arahkan virtual host ke folder ini, atau cukup buka berkasnya.
+Sepuluh destinasi, tujuh usaha lokal, delapan catatan sejarah, dan
+sembilan belas tonggak waktu. Setiap klaim menunjuk sumber, dan klaim
+yang belum pasti ditandai, bukan ditulis sebagai fakta.
 
-## Struktur proyek
+Tiga hal yang membedakannya dari direktori wisata biasa:
 
-```
-SriwijayaCulture/
-├── index.html                 Beranda
-├── destinasi.html             Katalog destinasi wisata
-├── detail-destinasi.html      Detail satu destinasi (?id=)
-├── umkm.html                  Direktori UMKM
-├── detail-umkm.html           Detail satu usaha (?id=)
-├── artikel.html               Katalog artikel sejarah dan budaya
-├── detail-artikel.html        Artikel lengkap (?id=)
-├── tentang.html               Tentang kami
-├── akun.html                  Akun lokal dan daftar favorit
-├── metodologi.html            Metodologi data, batasan, kredit gambar
-├── admin.html                 Ringkasan isi data dan cek tautan
-│
-├── css/
-│   ├── style.css              Token warna, tipografi, navbar, footer, tombol, kartu
-│   ├── components.css         Galeri, peta, ulasan, produk, auth, asisten, tabel
-│   └── responsive.css         Media query 1024 / 820 / 640 / 420, landscape, cetak
-│
-├── js/
-│   ├── main.js                Utilitas, tema, navbar, footer, reveal, boot
-│   ├── data-destinasi.js      Dataset 10 destinasi
-│   ├── data-umkm.js           Dataset 7 entri UMKM
-│   ├── data-artikel.js        Dataset 7 artikel
-│   ├── akun.js                Akun lokal, hash kata sandi, favorit
-│   ├── render.js              Pembuat HTML kartu, galeri, peta, ulasan, sumber
-│   ├── asisten.js             Asisten Sari: pencarian kata kunci + semantik opsional
-│   ├── beranda.js             Isi dinamis beranda
-│   ├── destinasi.js           Pencarian destinasi
-│   ├── detail-destinasi.js    Halaman detail destinasi
-│   ├── umkm.js                Pencarian dan filter UMKM
-│   ├── detail-umkm.js         Halaman detail UMKM
-│   ├── artikel.js             Katalog artikel
-│   ├── detail-artikel.js      Halaman artikel lengkap
-│   ├── halaman-akun.js        Formulir masuk, daftar, dashboard favorit
-│   ├── metodologi.js          Tabel kredit gambar dan ringkasan data
-│   └── admin.js               Ringkasan konten dan pemeriksaan tautan
-│
-└── assets/
-    └── images/                23 foto berlisensi bebas dari Wikimedia Commons
-```
+1. **Peta dari koordinat asli.** Jalan dan sungai digambar dari
+   OpenStreetMap, diproyeksikan linier. Destinasi tanpa koordinat
+   terverifikasi tidak digambar, bukan ditebak posisinya.
+2. **Tingkat verifikasi per sumber.** Tiga tingkat, badge yang sama di
+   seluruh situs. Angka yang tidak bisa ditelusuri tidak ditampilkan.
+3. **Asisten yang mengaku kalau tidak tahu.** Sari hanya menjawab dari
+   arsip, menyebut nomor rujukan, dan menolak pertanyaan di luar topik.
 
-## Urutan pemuatan skrip
+---
 
-`main.js` harus dimuat lebih dulu karena mendefinisikan `SC.util`, `SC.ikon`,
-dan `SC.tema` yang dipakai modul lain. Urutan di setiap halaman:
+## Teknologi
+
+| Lapisan | Pilihan | Alasan |
+|---|---|---|
+| Framework | Next.js 16.4 (App Router) | Server component untuk katalog, rute dinamis untuk 25 rekaman, prerender 38 halaman |
+| Bahasa | TypeScript 5.9 | Skema data ditegakkan di satu tempat, kesalahan tertangkap saat build |
+| Styling | Tailwind CSS 4.3 | Token di CSS, kontras dihitung bukan dikira-kira |
+| AI | Vercel AI SDK 7 | Streaming jawaban, penyedia bisa diganti lewat env |
+| Pencarian | TF-IDF di server | 25 dokumen tidak butuh embedding 90 MB |
+| Deploy | Vercel | Edge cache, image optimization bawaan |
+
+---
+
+## Struktur
 
 ```
-main.js -> data-destinasi.js -> data-umkm.js -> data-artikel.js
-        -> akun.js -> render.js -> asisten.js -> <skrip halaman>
+src/
+├── app/
+│   ├── layout.tsx              Font, metadata, header, footer
+│   ├── page.tsx                Beranda
+│   ├── globals.css             Token warna, tipe, utilitas arsip
+│   ├── destinasi/              Katalog + detail (?kategori=)
+│   ├── umkm/                   Direktori + profil usaha
+│   ├── artikel/                Katalog + artikel panjang
+│   ├── asisten/                Halaman Asisten Sari
+│   ├── metodologi/             Aturan data, tingkat verifikasi, daftar sumber
+│   ├── tentang/                Tim dan teknologi
+│   ├── api/asisten/route.ts    Rantai 3 tingkat penyedia model
+│   ├── sitemap.ts robots.ts    SEO
+│   └── opengraph-image.tsx     OG image dari HTML
+├── components/
+│   ├── atlas-map.tsx           Peta SVG interaktif dari OSM
+│   ├── timeline.tsx            Garis waktu proporsional
+│   ├── asisten-chat.tsx        Antarmuka percakapan + panel rujukan
+│   ├── site-header.tsx         Navigasi
+│   ├── site-footer.tsx         Kolofon
+│   └── ui.tsx                  Tombol, badge, judul bagian, keadaan kosong
+└── lib/
+    ├── types.ts                Skema seluruh rekaman
+    ├── arsip.ts                Satu pintu masuk data + turunan angka
+    ├── geo.ts                  Proyeksi koordinat ke SVG
+    ├── retrieval.ts            Indeks TF-IDF + ambang relevansi
+    ├── asisten-prompt.ts       Aturan prompt, penjaga topik, jawaban langsung
+    ├── warna.ts                Warna kategori
+    ├── format.ts               Tanggal, angka, label verifikasi
+    └── data/                   Data arsip (dihasilkan dari sumber, lihat scripts/)
 ```
 
-Bila menambah halaman baru, ikuti urutan yang sama.
+---
 
-## Fitur utama
+## Menjalankan
 
-### 1. Detail destinasi wisata
-Setiap destinasi punya halaman sendiri dengan galeri foto, sejarah, daya tarik,
-aktivitas, informasi tiket dan jam beserta status verifikasi, peta, ulasan,
-sumber data, destinasi terkait, dan artikel terkait.
+```bash
+npm install
+npm run dev          # http://localhost:3000
+```
 
-### 2. Direktori UMKM
-Setiap usaha punya halaman sendiri dengan profil, produk unggulan, lokasi,
-kontak dan media sosial, ulasan, usaha terkait, dan destinasi di sekitarnya.
+Perintah lain:
 
-### 3. Artikel sejarah dan budaya
-Tujuh artikel dengan struktur lengkap: pendahuluan, pembahasan, kesimpulan,
-daftar sumber, tombol Jelajahi Destinasi, dan artikel terkait.
+```bash
+npm run build        # build produksi
+npm run lint         # ESLint
+npm run typecheck    # tsc --noEmit
+node scripts/check-env.mjs        # cek kesiapan deploy
+node scripts/verify-visual.mjs    # screenshot 11 rute x 3 viewport + cek overflow
+```
 
-### 4. Akun lokal
-Daftar dan masuk dengan hash SHA-256 lewat Web Crypto. Favorit destinasi,
-UMKM, dan artikel disimpan di `localStorage`. Tidak ada backend.
+---
 
-### 5. Asisten Sari
-Dua tingkat pencarian:
-- Tingkat 1, selalu aktif: pencarian kata kunci berbobot (TF-IDF sederhana)
-  atas seluruh data destinasi, UMKM, dan artikel. Berjalan tanpa internet.
-- Tingkat 2, opsional: pencarian semantik memakai model embedding
-  `Xenova/all-MiniLM-L6-v2` yang berjalan di browser dengan WebGPU atau
-  WebAssembly. Model diunduh dari Hugging Face saat pengguna menyalakannya.
+## Asisten Sari: cara kerja dan batasnya
 
-Asisten tidak mengarang jawaban. Semua kalimat disusun dari field data yang
-ada. Bila tidak ada dokumen cocok, asisten mengatakan belum ada datanya.
+Tiga tingkat, dicoba berurutan. Tujuannya satu: asisten tidak pernah
+menampilkan jawaban kosong.
 
-## Aturan data yang dipegang
+1. **Penyedia utama** (OpenRouter / Groq / Together), kalau kuncinya ada
+   dan bentuknya valid. Streaming token.
+2. **Endpoint tanpa kunci**, dipakai kalau tidak ada kunci valid. Batas
+   waktu keras 14 detik.
+3. **Arsip langsung**, jawaban disusun dari field data tanpa model.
+   Selalu berhasil.
 
-1. Setiap angka dan klaim ditelusuri ke sumber yang tercantum di halaman detail.
-2. Bila sumber berbeda, perbedaannya ditulis, bukan dipilih sepihak.
-3. Cerita rakyat diberi label legenda dan dipisahkan dari catatan sejarah.
-4. Alamat, nomor kontak, akun media sosial, harga, dan ulasan tidak diisi perkiraan.
-5. Entri contoh diberi label "Data demonstrasi".
+Sebelum model dipanggil, pertanyaan disaring lebih dulu:
+
+- **Penjaga topik** menolak pertanyaan di luar domain (politik, kripto,
+  resep, cuaca). Jawabannya "belum ada di arsip", tanpa rujukan palsu.
+- **Ambang relevansi** pada TF-IDF mencegah dokumen muncul hanya karena
+  satu kata kebetulan cocok.
+- **Jawaban langsung** untuk tiket dan jam buka, karena dua topik ini
+  paling sering ditanyakan dan paling berbahaya kalau dikarang.
+
+### Mengisi kunci
+
+```bash
+cp .env.example .env.local
+# lalu isi salah satu:
+# OPENROUTER_API_KEY=sk-or-v1-...
+# GROQ_API_KEY=gsk_...
+```
+
+Tanpa kunci, situs tetap berfungsi penuh. Panel asisten akan menampilkan
+label **Mode arsip langsung**, jadi pengguna tahu apa yang sedang terjadi.
+
+---
+
+## Aturan data
+
+Enam aturan yang dipegang seluruh isi arsip:
+
+1. Setiap klaim menunjuk sumber berupa URL yang bisa dibuka.
+2. Perbedaan antar sumber ditulis sebagai perbedaan, bukan dipilih diam-diam.
+3. Legenda rakyat diberi label legenda, dipisahkan dari catatan sejarah.
+4. Alamat, telepon, akun sosial, harga, dan ulasan tidak diisi perkiraan.
+5. Entri contoh diberi label "demonstrasi" di kartu dan halaman detail.
 6. Tidak ada formulir yang berpura-pura menyimpan data permanen.
 
-Contoh keputusan yang diambil dari aturan ini:
-- Songket Palembang adalah Warisan Budaya Takbenda Indonesia 2013. Inskripsi
-  UNESCO 2021 atas nama Malaysia, dan website ini menuliskannya demikian.
-- Benteng Kuto Besak: gagasan dari Sultan Mahmud Badaruddin I, pelaksanaan
-  pada masa Sultan Muhammad Bahauddin. Banyak artikel populer keliru di sini.
-- Tiket Pulau Kemaro, Benteng Kuto Besak, Monpera, dan Kampung Al-Munawar
-  tidak ditampilkan sebagai angka pasti karena sumbernya bukan pengelola resmi.
+Konsekuensi yang terlihat di produk:
 
-## Aksesibilitas dan kenyamanan
+- Pulau Kemaro tidak muncul di peta karena koordinatnya belum diverifikasi.
+- Kontak UMKM sebagian kosong, dengan penjelasan kenapa.
+- Tidak ada bintang rating di mana pun.
 
-- Kontras teks dihitung, bukan dikira-kira. Teks utama 13:1 di latar terang
-  dan 13,5:1 di latar gelap.
-- Tema gelap memakai latar hijau tua pekat dengan teks krem hangat untuk
-  mengurangi halation.
-- Target sentuh minimal 44 px pada tombol utama.
-- Fokus keyboard terlihat dengan outline 3 px.
-- `prefers-reduced-motion` dimatikan untuk animasi reveal dan transisi.
-- Navigasi keyboard pada galeri: panah kiri dan kanan, Escape menutup lightbox.
-- Tidak ada horizontal scrolling pada viewport 360 px, sudah diuji.
+---
 
-## Yang memerlukan koneksi internet
+## Aksesibilitas
 
-- Peta sematan OpenStreetMap.
-- Tombol Buka di Google Maps dan Lihat Rute.
-- Pencarian semantik asisten, karena model embedding diunduh dari Hugging Face.
+- Kontras teks diukur, bukan dikira-kira. Tinta utama 14.6:1, tinta
+  sekunder 6.6:1, tipe terkecil 4.6:1 terhadap latar.
+- Seluruh kontrol bisa dicapai papan tombol. Peta bisa dioperasikan
+  dengan Tab dan Enter.
+- `prefers-reduced-motion` mematikan seluruh animasi.
+- Setiap halaman punya satu `h1`, struktur heading berurutan.
+- Gambar punya `alt` deskriptif, bukan nama berkas.
 
-Sisa fitur berjalan tanpa internet. Website ini tidak mengklaim berjalan penuh
-secara offline.
+---
 
-## Pengujian yang sudah dilakukan
+## Kredit
 
-- Sintaks seluruh 17 berkas JavaScript diperiksa dengan `node --check`.
-- 11 halaman dimuat di Chromium melalui Playwright, 0 error konsol.
-- Pencarian destinasi: "ampera" menghasilkan 2 kartu, "pulau" 1 kartu,
-  kata acak menampilkan pesan kosong, kolom kosong menampilkan 10 kartu.
-- Galeri: tombol berikutnya, thumbnail, dan lightbox berfungsi.
-- Akun: pendaftaran, masuk, favorit, dan tampilan favorit di halaman akun.
-- Asisten: pertanyaan tiket, UMKM, dan pertanyaan di luar data memberi jawaban jujur.
-- Tema gelap aktif.
-- Responsif pada 360, 768, dan 1440 px tanpa horizontal scrolling.
+Foto dari Wikimedia Commons dengan lisensi Creative Commons. Kredit per
+berkas tercantum di halaman detail masing-masing dan di `/metodologi`.
+Geometri peta dari OpenStreetMap contributors (ODbL).
 
-## Lisensi gambar
+Data diperiksa terakhir 20 Oktober 2026.
 
-Seluruh foto berasal dari Wikimedia Commons dengan lisensi Creative Commons.
-Daftar lengkap berkas, objek, lisensi, dan penulis ada di halaman
-`metodologi.html#kredit`.
+---
 
-## Catatan
+## Tim
 
-Proyek ini dibuat untuk keperluan edukasi dan kompetisi. Bukan platform
-reservasi, bukan direktori usaha terverifikasi pemerintah, dan bukan layanan
-pemesanan penginapan.
+| Nama | Kode | Peran |
+|---|---|---|
+| M. Izzat Al Fawaz | 062640833318 | Pengembang utama |
+| Abdur Rachman Abyan | 062640833308 | Data dan riset |
+| Richa Karina | 062640833326 | Desain dan konten |
+
+Lisensi kode: MIT. Lisensi data dan foto mengikuti sumbernya masing-masing.

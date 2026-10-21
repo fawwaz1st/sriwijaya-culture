@@ -1,0 +1,175 @@
+import type { UIMessage } from "ai";
+import { cariDokumen, potonganRelevan, type Dokumen } from "@/lib/retrieval";
+
+/**
+ * Susunan prompt Asisten Sari.
+ *
+ * Aturan yang tidak bisa dinegosiasikan:
+ * 1. Hanya menjawab dari KONTEKS yang dikirim.
+ * 2. Kalau konteks tidak memuat jawaban, katakan belum ada di arsip.
+ * 3. Jangan mengarang harga, jam buka, alamat, atau nomor telepon.
+ * 4. Legenda disebut legenda, bukan sejarah.
+ * 5. Sebut nomor sumber supaya pembaca bisa memeriksa.
+ *
+ * Ini yang membedakan asisten arsip dari chatbot yang mengarang.
+ */
+
+export const SYSTEM_PROMPT = `Kamu adalah Sari, asisten arsip digital Sriwijaya Culture tentang Kota Palembang.
+
+ATURAN WAJIB, tidak boleh dilanggar:
+1. Jawab HANYA berdasarkan KONTEKS di bawah. Kamu tidak punya pengetahuan lain yang boleh dipakai.
+2. Kalau KONTEKS tidak memuat jawabannya, katakan dengan jelas: "Belum ada di arsip kami." Lalu sebutkan topik terdekat yang memang ada di konteks.
+3. JANGAN mengarang harga tiket, jam buka, alamat, nomor telepon, atau nama usaha. Kalau konteks bilang belum terverifikasi, sampaikan itu.
+4. Legenda rakyat disebut "legenda", bukan peristiwa sejarah. Jangan mencampur keduanya.
+5. Setiap kali memakai sebuah sumber, tulis nomornya dalam kurung siku, contoh [1] atau [2][3].
+6. Jawab dalam bahasa Indonesia yang tenang dan padat. Maksimal 4 kalimat kecuali pengguna meminta daftar.
+7. Kalau pengguna meminta rekomendasi, sebutkan nama yang ada di konteks beserta alasannya dalam satu kalimat.
+8. Jangan memakai emoji. Jangan memakai tanda pisah panjang (em dash) atau tanda pisah sedang (en dash). Pakai koma, titik, atau pecah kalimat.
+9. Tulis nama tempat persis seperti di konteks. Jangan menambah kota atau provinsi yang tidak disebut konteks.
+
+GAYA: seperti pustakawan yang ramah dan teliti. Tidak berlebihan, tidak menjual.`;
+
+export interface KonteksSumber {
+  no: number;
+  judul: string;
+  jenis: string;
+  href: string;
+  meta: string;
+}
+
+/**
+ * Penjaga topik.
+ *
+ * Retrieval kata kunci bisa mencocokkan kata umum yang kebetulan muncul
+ * di arsip ("pertama", "nama", "kota"). Untuk pertanyaan yang jelas di
+ * luar topik, lebih jujur menolak lebih dulu daripada menampilkan
+ * rujukan yang tidak berhubungan.
+ *
+ * Daftar ini sengaja pendek dan eksplisit. Ini bukan pengganti retrieval
+ * yang baik, hanya jaring pengaman untuk pertanyaan umum di luar domain.
+ */
+const PENANDA_LUAR_TOPIK = [
+  "presiden", "menteri", "partai", "pemilu", "resep", "rendang",
+  "crypto", "bitcoin", "saham", "python", "javascript", "react", "nextjs",
+  "cuaca", "jadwal bola", "skor bola", "film", "lagu",
+  "artis", "selebgram", "obat", "dokter", "diagnosis",
+  "pinjaman", "utang", "kripto", "investasi",
+];
+
+function diLuarTopik(kueri: string): boolean {
+  const q = kueri.toLowerCase();
+  return PENANDA_LUAR_TOPIK.some((p) => q.includes(p));
+}
+
+export function susunKonteks(kueri: string): {
+  teks: string;
+  sumber: KonteksSumber[];
+  kosong: boolean;
+  luarTopik: boolean;
+} {
+  if (diLuarTopik(kueri)) {
+    return { teks: "", sumber: [], kosong: true, luarTopik: true };
+  }
+
+  const hasil = cariDokumen(kueri, 5);
+
+  if (hasil.length === 0) {
+    return { teks: "", sumber: [], kosong: true, luarTopik: false };
+  }
+
+  const blok: string[] = [];
+  const sumber: KonteksSumber[] = [];
+
+  hasil.forEach((h, i) => {
+    const no = i + 1;
+    const d: Dokumen = h.dokumen;
+    sumber.push({
+      no,
+      judul: d.judul,
+      jenis: d.jenis,
+      href: d.href,
+      meta: d.meta,
+    });
+    blok.push(
+      `[${no}] ${d.jenis.toUpperCase()}: ${d.judul}\n` +
+        `Lokasi arsip: ${d.href}\n` +
+        `Keterangan: ${d.meta}\n` +
+        `Isi:\n${potonganRelevan(d, kueri)}`,
+    );
+  });
+
+  return { teks: blok.join("\n\n---\n\n"), sumber, kosong: false, luarTopik: false };
+}
+
+/** Ambil teks dari UIMessage (struktur parts, bukan content). */
+export function teksPesan(pesan: UIMessage): string {
+  return pesan.parts
+    .filter((p): p is { type: "text"; text: string } => p.type === "text")
+    .map((p) => p.text)
+    .join("")
+    .trim();
+}
+
+/** Sapaan awal, ditulis tangan, bukan hasil model. */
+export const SAPAAN = [
+  "Apa yang membedakan Jembatan Ampera dari jembatan lain?",
+  "Di mana saya bisa membeli songket asli?",
+  "Ceritakan asal-usul nama Sungai Musi.",
+  "Destinasi mana yang cocok untuk belajar sejarah Sriwijaya?",
+];
+
+/**
+ * Jawaban langsung untuk pertanyaan yang datanya sudah ada sebagai
+ * field terstruktur.
+ *
+ * Harga tiket dan jam buka adalah dua hal yang paling sering ditanyakan
+ * dan paling berbahaya untuk dikarang. Karena data itu sudah punya
+ * tingkat verifikasi sendiri, jawabannya bisa disusun tanpa model:
+ * sebut statusnya apa adanya, lalu arahkan ke halaman yang memuatnya.
+ */
+export function jawabanLangsung(
+  kueri: string,
+): { teks: string; sumber: KonteksSumber[] } | null {
+  const q = kueri.toLowerCase();
+  const tanyaTiket = /(tiket|harga|masuk|biaya|retribusi)/.test(q);
+  const tanyaJam = /(jam|buka|tutup|operasional)/.test(q);
+  if (!tanyaTiket && !tanyaJam) return null;
+
+  const hasil = cariDokumen(kueri, 4);
+  if (hasil.length === 0) return null;
+
+  const sumber: KonteksSumber[] = hasil.map((h, i) => ({
+    no: i + 1,
+    judul: h.dokumen.judul,
+    jenis: h.dokumen.jenis,
+    href: h.dokumen.href,
+    meta: h.dokumen.meta,
+  }));
+
+  const bagian: string[] = [];
+
+  for (const h of hasil.slice(0, 2)) {
+    const d = h.dokumen;
+    // Hanya dokumen destinasi yang punya field tiket dan jam terstruktur.
+    if (d.jenis !== "destinasi") continue;
+
+    const isi = d.teks;
+    if (tanyaTiket) {
+      const cocok = isi.match(/Tidak berlaku tiket[^\n]*|[^\n]*(?:tiket|harga|biaya)[^\n]*/i);
+      if (cocok) bagian.push(`Tiket ${d.judul}: ${cocok[0].trim()}`);
+    }
+    if (tanyaJam) {
+      const cocok = isi.match(/[^\n]*(?:24 jam|jam buka|buka|tutup)[^\n]*/i);
+      if (cocok) bagian.push(`Jam ${d.judul}: ${cocok[0].trim()}`);
+    }
+  }
+
+  if (bagian.length === 0) return null;
+
+  return {
+    teks:
+      bagian.join("\n\n") +
+      "\n\nKalau angka pasti belum ada di arsip, artinya pengelolanya belum bisa kami verifikasi. Kami tidak mengisi angka perkiraan. Cek halaman destinasi untuk status verifikasi terbaru.",
+    sumber,
+  };
+}
