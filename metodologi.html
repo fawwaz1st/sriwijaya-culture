@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Metodologi & Sumber Data - Sriwijaya Culture</title>
+  <meta name="description" content="Cara Sriwijaya Culture mengumpulkan data, menandai verifikasi, memakai gambar berlisensi bebas, dan batasan fitur.">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Metodologi & Sumber Data - Sriwijaya Culture">
+  <meta name="theme-color" content="#1a4a33">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+  <a class="skip-link" href="#konten">Lewati ke konten utama</a>
+  <div id="navMount"></div>
+  <main id="konten">
+    <section class="section">
+      <div class="container">
+        <nav class="breadcrumb"><a href="index.html">Beranda</a> &rsaquo; Metodologi &amp; Sumber Data</nav>
+        <div class="section-head">
+          <p class="kicker">Metodologi</p>
+          <h1>Bagaimana data di situs ini dikumpulkan</h1>
+          <p class="lead">Halaman ini menjelaskan aturan penulisan data, cara menandai tingkat verifikasi, sumber gambar, dan batasan teknis fitur.</p>
+        </div>
+        <div class="grid grid-2">
+          <div class="panel">
+            <h2 class="mt-0">Aturan penulisan data</h2>
+            <ul>
+              <li>Setiap angka dan klaim ditelusuri ke sumber yang tercantum di halaman detail.</li>
+              <li>Bila sumber berbeda, perbedaannya ditulis, bukan dipilih sepihak.</li>
+              <li>Cerita rakyat diberi label legenda dan dipisahkan dari catatan sejarah.</li>
+              <li>Alamat, nomor kontak, akun media sosial, harga, dan ulasan tidak diisi perkiraan.</li>
+              <li>Entri contoh diberi label <b>Data demonstrasi</b>.</li>
+            </ul>
+          </div>
+          <div class="panel">
+            <h2 class="mt-0">Tingkat verifikasi</h2>
+            <ul style="list-style:none;padding:0">
+              <li style="margin-bottom:8px"><span class="chip">Data terverifikasi</span><p class="small muted mb-0 mt-1">Didukung beberapa sumber yang saling menguatkan, misalnya laman pemerintah dan ensiklopedia.</p></li>
+              <li style="margin-bottom:8px"><span class="chip">Sumber tunggal</span><p class="small muted mb-0 mt-1">Satu sumber terpercaya, belum ada pembanding.</p></li>
+              <li><span class="chip chip-demo">Perlu konfirmasi</span><p class="small muted mb-0 mt-1">Angka beredar tanpa sumber resmi. Halaman menampilkan peringatan, bukan angka pasti.</p></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section class="section" style="background:var(--surface-2)">
+      <div class="container">
+        <div class="section-head"><p class="kicker">Sumber Utama</p><h2>Jenis sumber yang dipakai</h2></div>
+        <div class="grid grid-3">
+          <div class="panel"><h3 class="mt-0">Lembaga resmi</h3><p class="muted mb-0">Laman Kementerian Pariwisata dan Ekonomi Kreatif, Wikipedia bahasa Indonesia dan Inggris, serta kanal pemerintah daerah.</p></div>
+          <div class="panel"><h3 class="mt-0">Media</h3><p class="muted mb-0">Antara, RRI, detikSumbagsel, Kompas TV, dan Gatra, dengan tanggal pemberitaan bila tersedia.</p></div>
+          <div class="panel"><h3 class="mt-0">Akademik</h3><p class="muted mb-0">Jurnal dan repositori universitas, antara lain Jurnal Historia UIN Sunan Gunung Djati, JMPIS, Neliti, Eprints UNDIP, dan repositori UIN Raden Fatah.</p></div>
+        </div>
+      </div>
+    </section>
+    <section class="section" id="kredit">
+      <div class="container">
+        <div class="section-head"><p class="kicker">Kredit Gambar</p><h2>Foto berlisensi bebas</h2><p class="lead">Seluruh foto di situs ini berasal dari Wikimedia Commons dengan lisensi bebas. Berkas asli diunduh, dikompres, dan disimpan di folder <code>assets/images</code>.</p></div>
+        <div class="panel">
+          <div class="table-wrap">
+            <table class="mini-table">
+              <thead><tr><th>Berkas</th><th>Objek</th><th>Lisensi</th><th>Penulis</th></tr></thead>
+              <tbody id="tabelKredit"></tbody>
+            </table>
+          </div>
+          <p class="small muted mt-2 mb-0">Lisensi Creative Commons Attribution dan Attribution-ShareAlike memerlukan penyebutan penulis dan lisensi. Daftar di atas memenuhi kewajiban tersebut. Bila Anda pemilik karya dan ingin berkas dihapus, sampaikan melalui halaman Tentang Kami.</p>
+        </div>
+      </div>
+    </section>
+    <section class="section" style="background:var(--surface-2)">
+      <div class="container">
+        <div class="section-head"><p class="kicker">Batas Teknis</p><h2>Apa yang berjalan tanpa internet, dan apa yang tidak</h2></div>
+        <div class="grid grid-2">
+          <div class="panel"><h3 class="mt-0">Berjalan tanpa internet</h3><ul><li>Seluruh halaman, navigasi, pencarian, dan filter.</li><li>Galeri foto dan lightbox.</li><li>Akun lokal dan daftar favorit.</li><li>Asisten Sari pada mode pencarian kata kunci.</li></ul></div>
+          <div class="panel"><h3 class="mt-0">Memerlukan internet</h3><ul><li>Peta sematan OpenStreetMap.</li><li>Tombol Buka di Google Maps dan Lihat Rute.</li><li>Pencarian semantik asisten, karena model embedding diunduh dari Hugging Face.</li><li>Pemuatan gambar dari folder lokal tidak memerlukan internet, tetapi peta dan tombol peta memerlukannya.</li></ul></div>
+        </div>
+        <div class="legend-note mt-3"><b>Catatan jujur:</b> situs ini tidak mengklaim berjalan penuh secara offline. Fitur yang bergantung pada layanan luar diberi keterangan di tempatnya masing-masing.</div>
+      </div>
+    </section>
+  </main>
+  <div id="footerMount"></div>
+<script src="js/main.js"></script>
+<script src="js/data-destinasi.js"></script>
+<script src="js/data-umkm.js"></script>
+<script src="js/data-artikel.js"></script>
+<script src="js/akun.js"></script>
+<script src="js/render.js"></script>
+<script src="js/asisten.js"></script>
+<script src="js/metodologi.js"></script>
+</body>
+</html>

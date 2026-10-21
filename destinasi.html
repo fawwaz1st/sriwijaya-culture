@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Destinasi Wisata Palembang - Sriwijaya Culture</title>
+  <meta name="description" content="Cari destinasi wisata Palembang dan baca informasi sejarah, akses, jam kunjungan, tiket, peta, serta sumber data.">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Destinasi Wisata Palembang - Sriwijaya Culture">
+  <meta name="theme-color" content="#1a4a33">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+  <a class="skip-link" href="#konten">Lewati ke konten utama</a>
+  <div id="navMount"></div>
+  <main id="konten">
+    <section class="section" style="padding-bottom:20px">
+      <div class="container">
+        <nav class="breadcrumb"><a href="index.html">Beranda</a> &rsaquo; Destinasi Wisata</nav>
+        <div class="section-head tight">
+          <div>
+            <p class="kicker">Destinasi Wisata</p>
+            <h1>Temukan tempat yang ingin Anda jelajahi</h1>
+          </div>
+        </div>
+        <div class="panel">
+          <label class="sr-only" for="cariDestinasi">Cari nama destinasi wisata</label>
+          <div class="searchbar">
+            <input id="cariDestinasi" type="search" maxlength="80" placeholder="Cari nama destinasi wisata..." autocomplete="off">
+            <button id="hapusCari" type="button" class="btn btn-outline" hidden>Hapus pencarian</button>
+          </div>
+          <p class="small muted mt-1 mb-0">Coba: <b>ampera</b>, <b>pulau</b>, <b>religi</b>.</p>
+        </div>
+        <div id="filterAktif" class="flex mt-2" hidden></div>
+        <p id="jumlahHasil" class="small muted mt-2" aria-live="polite"></p>
+      </div>
+    </section>
+    <section class="section" style="padding-top:12px">
+      <div class="container">
+        <div id="gridDestinasi" class="grid grid-3" aria-live="polite"></div>
+        <div id="kosongDestinasi" class="empty" hidden></div>
+      </div>
+    </section>
+    <section class="section" style="background:var(--surface-2)">
+      <div class="container">
+        <div class="flex spread reveal" style="gap:20px">
+          <div>
+            <h2 style="margin-bottom:6px">Sebelum berkunjung</h2>
+            <p style="margin:0;color:var(--text-2);max-width:60ch">Jam dan tarif dapat berubah. Bila belum terverifikasi, halaman detail menyatakannya langsung.</p>
+          </div>
+          <a class="btn btn-outline btn-sm" href="metodologi.html">Metodologi &rarr;</a>
+        </div>
+      </div>
+    </section>
+  </main>
+  <div id="footerMount"></div>
+<script src="js/main.js"></script>
+<script src="js/data-destinasi.js"></script>
+<script src="js/data-umkm.js"></script>
+<script src="js/data-artikel.js"></script>
+<script src="js/akun.js"></script>
+<script src="js/render.js"></script>
+<script src="js/asisten.js"></script>
+<script src="js/destinasi.js"></script>
+</body>
+</html>

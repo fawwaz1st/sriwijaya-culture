@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Direktori UMKM Palembang - Sriwijaya Culture</title>
+  <meta name="description" content="Direktori usaha lokal Palembang. Cari berdasarkan nama usaha, kategori, wilayah, atau produk yang dijual.">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Direktori UMKM Palembang - Sriwijaya Culture">
+  <meta name="theme-color" content="#1a4a33">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+  <a class="skip-link" href="#konten">Lewati ke konten utama</a>
+  <div id="navMount"></div>
+  <main id="konten">
+    <section class="section" style="padding-bottom:20px">
+      <div class="container">
+        <nav class="breadcrumb"><a href="index.html">Beranda</a> &rsaquo; Direktori UMKM</nav>
+        <div class="section-head tight">
+          <div>
+            <p class="kicker">Direktori UMKM</p>
+            <h1>Usaha lokal Palembang</h1>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="searchbar">
+            <label class="sr-only" for="cariUMKM">Cari usaha atau produk</label>
+            <input id="cariUMKM" type="search" maxlength="80" placeholder="Cari nama usaha, produk, atau kata kunci..." autocomplete="off">
+            <button id="hapusCariUMKM" type="button" class="btn btn-outline" hidden>Hapus</button>
+          </div>
+          <div class="filters mt-2">
+            <div class="field">
+              <label for="filterKategori">Kategori usaha</label>
+              <select id="filterKategori"></select>
+            </div>
+            <button id="resetUMKM" type="button" class="btn btn-outline">Reset pencarian</button>
+          </div>
+          <p class="small muted mt-1 mb-0">Coba cari: <b>kapal selam</b>, <b>songket</b>, atau <b>cuko</b>.</p>
+        </div>
+        <div id="kategoriCepat" class="flex mt-2" aria-label="Kategori usaha"></div>
+        <p id="jumlahUMKM" class="small muted mt-2" aria-live="polite"></p>
+      </div>
+    </section>
+    <section class="section" style="padding-top:12px">
+      <div class="container">
+        <div id="gridUMKM" class="grid grid-3" aria-live="polite"></div>
+        <div id="kosongUMKM" class="empty" hidden></div>
+      </div>
+    </section>
+    <section class="section" style="background:var(--surface-2)">
+      <div class="container">
+        <div class="flex spread reveal" style="gap:20px">
+          <div>
+            <h2 style="margin-bottom:6px">Kenapa beberapa kartu berlabel demonstrasi?</h2>
+            <p style="margin:0;color:var(--text-2);max-width:60ch">Alamat, harga, dan kontak sengaja dikosongkan sampai diverifikasi. Tidak ada rating rekaan dan tidak ada formulir yang berpura-pura menyimpan data.</p>
+          </div>
+          <a class="btn btn-outline btn-sm" href="metodologi.html">Metodologi &rarr;</a>
+        </div>
+      </div>
+    </section>
+  </main>
+  <div id="footerMount"></div>
+<script src="js/main.js"></script>
+<script src="js/data-destinasi.js"></script>
+<script src="js/data-umkm.js"></script>
+<script src="js/data-artikel.js"></script>
+<script src="js/akun.js"></script>
+<script src="js/render.js"></script>
+<script src="js/asisten.js"></script>
+<script src="js/umkm.js"></script>
+</body>
+</html>

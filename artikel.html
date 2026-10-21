@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Artikel Sejarah & Budaya Palembang - Sriwijaya Culture</title>
+  <meta name="description" content="Artikel sejarah, budaya, dan warisan Palembang dengan sumber yang dapat diperiksa dan tautan ke destinasi terkait.">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Artikel Sejarah & Budaya Palembang - Sriwijaya Culture">
+  <meta name="theme-color" content="#1a4a33">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+  <a class="skip-link" href="#konten">Lewati ke konten utama</a>
+  <div id="navMount"></div>
+  <main id="konten">
+    <section class="section" style="padding-bottom:20px">
+      <div class="container">
+        <nav class="breadcrumb"><a href="index.html">Beranda</a> &rsaquo; Artikel Sejarah &amp; Budaya</nav>
+        <div class="section-head tight">
+          <div>
+            <p class="kicker">Artikel Sejarah & Budaya</p>
+            <h1>Kenali Palembang sebelum berkunjung</h1>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="searchbar">
+            <label class="sr-only" for="cariArtikel">Cari artikel</label>
+            <input id="cariArtikel" type="search" maxlength="80" placeholder="Cari judul atau topik artikel..." autocomplete="off">
+          </div>
+          <div class="filters mt-2">
+            <div class="field">
+              <label for="filterKategoriArtikel">Kategori</label>
+              <select id="filterKategoriArtikel"></select>
+            </div>
+          </div>
+        </div>
+        <div id="kategoriArtikel" class="flex mt-2" aria-label="Kategori artikel"></div>
+        <p id="jumlahArtikel" class="small muted mt-2" aria-live="polite"></p>
+      </div>
+    </section>
+    <section class="section" style="padding-top:12px">
+      <div class="container">
+        <div id="gridArtikel" class="grid grid-3" aria-live="polite"></div>
+        <div id="kosongArtikel" class="empty" hidden></div>
+      </div>
+    </section>
+    <section class="section" style="background:var(--surface-2)">
+      <div class="container">
+        <div class="flex spread reveal" style="gap:20px">
+          <div>
+            <h2 style="margin-bottom:6px">Catatan, interpretasi, dan legenda dibedakan</h2>
+            <p style="margin:0;color:var(--text-2);max-width:60ch">Prasasti dan dokumen ditulis dengan rujukan. Perbedaan pendapat disebut sebagai perbedaan. Cerita rakyat diberi label legenda.</p>
+          </div>
+          <a class="btn btn-outline btn-sm" href="metodologi.html">Metodologi &rarr;</a>
+        </div>
+      </div>
+    </section>
+  </main>
+  <div id="footerMount"></div>
+<script src="js/main.js"></script>
+<script src="js/data-destinasi.js"></script>
+<script src="js/data-umkm.js"></script>
+<script src="js/data-artikel.js"></script>
+<script src="js/akun.js"></script>
+<script src="js/render.js"></script>
+<script src="js/asisten.js"></script>
+<script src="js/artikel.js"></script>
+</body>
+</html>
