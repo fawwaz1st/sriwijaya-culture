@@ -40,7 +40,9 @@ const KUNCI_PENYIMPANAN = "sari-api-key";
 
 /** Hanya izinkan bentuk kunci yang dikenal, sebelum dikirim ke server. */
 function bentukKunciValid(k: string): boolean {
-  return /^(sk-or-v1-[a-f0-9]{64}|gsk_[A-Za-z0-9]{50}|sk-[A-Za-z0-9-_]{40,})$/.test(k.trim());
+  // Groq: kunci nyata bervariasi panjangnya (56 terlihat), jadi cukup
+  // prefiks + rentang wajar, bukan angka pasti.
+  return /^(sk-or-v1-[a-f0-9]{64}|gsk_[A-Za-z0-9]{40,80}|sk-[A-Za-z0-9-_]{40,})$/.test(k.trim());
 }
 
 export function AsistenChat() {
@@ -195,7 +197,7 @@ export function AsistenChat() {
       }
     } catch (e) {
       if ((e as Error).name !== "AbortError") {
-        setGalat("Sari tidak bisa dijangkau. Arsip tetap bisa dibaca lewat katalog.");
+        setGalat("Sari sedang tidak bisa dihubungi. Arsip tetap bisa dibaca lewat katalog.");
       }
     } finally {
       setSibuk(false);
@@ -239,7 +241,7 @@ export function AsistenChat() {
               type="button"
               onClick={() => setPanel((v) => !v)}
               aria-expanded={panel}
-              className="meta flex items-center gap-1.5 text-emas hover:text-emas-muda"
+              className="meta flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-emas transition-colors hover:bg-emas/10 hover:text-emas-muda"
             >
               {rujukanTerakhir.length} rujukan
               <span aria-hidden="true" className={cn("transition-transform", panel && "rotate-180")}>
@@ -256,7 +258,7 @@ export function AsistenChat() {
                 setPanel(false);
                 kotak.current?.focus();
               }}
-              className="meta text-terang-3 hover:text-terang"
+              className="meta rounded-md px-2.5 py-1.5 text-terang-3 transition-colors hover:bg-terang/8 hover:text-terang"
             >
               Mulai ulang
             </button>
@@ -294,7 +296,8 @@ export function AsistenChat() {
             <p className="mt-1.5 text-[0.8125rem] leading-relaxed text-terang-2">
               Punya kunci OpenRouter atau Groq? Tempel di sini untuk jawaban
               yang lebih cepat. Kunci disimpan di peramban ini saja dan tidak
-              pernah keluar selain ke server kami.
+              pernah keluar selain ke server kami. Tanpa kunci pun Sari
+              tetap menjawab — hanya lebih lambat.
             </p>
             <div className="mt-2.5 flex gap-2">
               <input
@@ -340,15 +343,19 @@ export function AsistenChat() {
       >
         {kosong ? (
           <div className="mx-auto flex h-full w-full max-w-[46rem] flex-col justify-center px-1 pb-10">
-            <p className="meta-emas">Asisten arsip · Palembang</p>
-            <h1 className="display mt-3 text-[clamp(2rem,5.2vw,3.5rem)] text-terang">
+            <div
+              aria-hidden="true"
+              className="pointer-events-none fixed inset-x-0 top-0 h-[420px] bg-[radial-gradient(ellipse_at_top,rgba(217,168,50,0.07),transparent_60%)]"
+            />
+            <p className="meta-emas relative">Asisten arsip · Palembang</p>
+            <h1 className="display relative mt-3 text-[clamp(2rem,5.2vw,3.5rem)] text-terang">
               Mau tahu apa tentang Palembang?
             </h1>
-            <p className="mt-3 max-w-[44ch] text-[0.875rem] leading-relaxed text-terang-2">
+            <p className="relative mt-3 max-w-[44ch] text-[0.875rem] leading-relaxed text-terang-2">
               Sari menjawab dari arsip situs ini dan menyertakan sumbernya.
             </p>
 
-            <div className="mt-7">
+            <div className="relative mt-7">
               <Composer
                 input={input}
                 setInput={setInput}
@@ -421,7 +428,7 @@ export function AsistenChat() {
 
               {galat && (
                 <div className="mt-5 border border-bahaya/40 bg-bahaya/8 p-3">
-                  <p className="status text-bahaya">Koneksi gagal</p>
+                  <p className="status text-bahaya">Sari sedang tidak bisa dihubungi</p>
                   <p className="mt-1.5 text-[0.8125rem] leading-relaxed text-terang-2">{galat}</p>
                 </div>
               )}
@@ -574,7 +581,7 @@ function SaranPertanyaan({ onPick }: { onPick: (t: string) => void }) {
             <button
               type="button"
               onClick={() => onPick(s)}
-              className="border border-garis-malam px-2.5 py-1.5 text-left text-[0.75rem] leading-snug text-terang-2 transition-colors hover:border-emas hover:text-terang"
+              className="rounded-full border border-garis-malam px-3 py-1.5 text-left text-[0.75rem] leading-snug text-terang-2 transition-colors hover:border-emas hover:text-terang"
             >
               {s}
             </button>

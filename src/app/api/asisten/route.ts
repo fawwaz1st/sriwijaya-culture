@@ -73,10 +73,10 @@ function kunciPengguna(header: string | null): Penyedia | null {
       },
     };
   }
-  if (/^gsk_[A-Za-z0-9]{50}$/.test(k)) {
+  if (/^gsk_[A-Za-z0-9]{40,80}$/.test(k)) {
     return {
       nama: "groq",
-      model: process.env.GROQ_MODEL || "llama-3.3-70b-versatile",
+      model: process.env.GROQ_MODEL || "openai/gpt-oss-120b",
       baseURL: "https://api.groq.com/openai/v1",
       apiKey: k,
     };
@@ -134,7 +134,7 @@ function penyediaUtama(): Penyedia | null {
   if (groq && groq.startsWith("gsk_")) {
     return {
       nama: "groq",
-      model: process.env.GROQ_MODEL || "llama-3.3-70b-versatile",
+      model: process.env.GROQ_MODEL || "openai/gpt-oss-120b",
       baseURL: "https://api.groq.com/openai/v1",
       apiKey: groq,
     };
@@ -310,19 +310,47 @@ export async function POST(req: Request) {
       const pesanModel = await convertToModelMessages(messages);
 
       /**
-       * Kunci milik pengguna diuji dengan panggilan kecil sebelum
-       * permintaan sesungguhnya. Kunci yang salah auth harus turun ke
-       * tingkat 2, tapi begitu respons streaming dikembalikan, fallback
-       * sudah tidak bisa jalan — itulah bug asalnya: kunci dummy
-       * menghasilkan stream kosong tanpa pesan galat.
+       * Panggil penyedia utama.
+       *
+       * Model bisa usang kapan saja (llama-3.3-70b pernah membuat situs
+       * ini mati diam-diam), jadi kalau model utama ditolak penyedia,
+       * model cadangan dicoba sebelum menyerah. Batas 15 detik: lebih
+       * lama dari itu, jawaban arsip lebih berguna daripada menunggu.
+       *
+       * Respons datang sebagai teks utuh, bukan stream: begitu respons
+       * streaming dikembalikan, fallback antar tingkat sudah tidak bisa
+       * jalan. Model Groq sehat menjawab 2–4 detik, jadi trade-off ini
+       * dapat diterima.
        */
-      const uji = await streamText({
-        model: provider(utama.model),
-        system: susunSystem(konteks),
-        messages: pesanModel,
-        temperature: 0.2,
-        maxOutputTokens: 700,
-      }).text;
+      const modelCadangan = utama.nama === "groq" ? "openai/gpt-oss-20b" : null;
+      const panggil = (model: string) =>
+        streamText({
+          model: provider(model),
+          system: susunSystem(konteks),
+          messages: pesanModel,
+          temperature: 0.2,
+          maxOutputTokens: 700,
+          abortSignal: AbortSignal.timeout(15_000),
+        }).text;
+
+      let uji = "";
+      try {
+        uji = await panggil(utama.model);
+      } catch (e) {
+        console.warn(
+          "[asisten] model utama", utama.model, "gagal:",
+          e instanceof Error ? e.message.slice(0, 120) : e,
+        );
+      }
+
+      if (!uji.trim() && modelCadangan) {
+        console.warn("[asisten] mencoba model cadangan:", modelCadangan);
+        try {
+          uji = await panggil(modelCadangan);
+        } catch {
+          // Dibiarkan kosong; jatuh ke tingkat 2 di bawah.
+        }
+      }
 
       if (!uji.trim()) {
         console.warn("[asisten] tingkat 1 (", utama.nama, ") jawaban kosong, turun ke tingkat berikutnya");
@@ -358,7 +386,9 @@ export async function POST(req: Request) {
         model: PENYEDIA_TANPA_KUNCI.model,
         messages: [
           { role: "system", content: susunSystem(konteks) },
-          ...messages.map((m) => ({ role: m.role, content: teksPesan(m) })),
+          // Teks tiap pesan dipangkas: riwayat 12 pesan tanpa batas
+          // bisa menyelundupkan puluhan KB ke prompt model.
+          ...messages.map((m) => ({ role: m.role, content: teksPesan(m).slice(0, 1000) })),
         ],
         max_tokens: 500,
         temperature: 0.2,

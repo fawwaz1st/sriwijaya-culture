@@ -16,7 +16,7 @@ export default function HalamanDestinasi() {
         <p className="meta-emas">Katalog</p>
         <div className="mt-3 flex flex-wrap items-end justify-between gap-x-10 gap-y-5">
           <h1 className="display max-w-[16ch] text-[clamp(2.5rem,7vw,5.5rem)] text-terang">
-            Sepuluh tempat, sembilan koordinat.
+            Sepuluh tempat untuk kamu kunjungi.
           </h1>
           <p className="max-w-[42ch] pb-2 text-[0.875rem] leading-relaxed text-terang-2">
             Sepuluh tempat yang patut kamu lihat — lengkap dengan sejarah,

@@ -110,11 +110,11 @@ export default function HalamanTentang() {
           {[
             {
               k: "Next.js 16 · App Router",
-              v: "Server component untuk katalog dan detail, sehingga halaman cepat dan bisa dibaca mesin pencari. Rute dinamis untuk 25 rekaman.",
+              v: "Halaman dirender di server, jadi cepat terbuka dan mudah ditemukan mesin pencari.",
             },
             {
               k: "TypeScript",
-              v: "Skema data ditegakkan di satu tempat. Kesalahan seperti field hilang tertangkap saat build, bukan saat juri membuka halaman.",
+              v: "Bentuk data diperiksa di satu tempat. Kesalahan tertangkap saat pembangunan, bukan saat pengunjung membuka halaman.",
             },
             {
               k: "Tailwind CSS v4",
