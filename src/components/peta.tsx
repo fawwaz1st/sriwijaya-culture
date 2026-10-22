@@ -89,7 +89,7 @@ export function Peta({
         )}
       </div>
 
-      <div className="grid lg:grid-cols-[minmax(0,1fr)_260px]">
+      <div className="grid lg:grid-cols-[minmax(0,1fr)_240px]">
         <div className="relative border-b border-garis-malam lg:border-b-0 lg:border-r">
           <iframe
             key={`${q}-${lapisan}`}
@@ -98,17 +98,18 @@ export function Peta({
             loading="lazy"
             referrerPolicy="no-referrer-when-downgrade"
             allowFullScreen
-            className="block w-full grayscale-[0.15] contrast-[1.02]"
+            className="block w-full"
             style={{ height: tinggi, border: 0 }}
           />
         </div>
 
-        {/* Indeks: memilih nama memindahkan peta ke koordinatnya. */}
+        {/* Indeks: satu baris per destinasi. Sebelumnya baris membengkak
+            karena kolom terlalu sempit untuk dua baris teks. */}
         <div className="flex min-h-0 flex-col bg-malam-2">
           <p className="meta border-b border-garis-malam px-3 py-2">
             {String(denganKoordinat.length).padStart(2, "0")} titik
           </p>
-          <ul className="gulir-tipis max-h-[320px] overflow-y-auto lg:max-h-[460px]">
+          <ul className="gulir-tipis min-h-0 flex-1 overflow-y-auto" style={{ maxHeight: tinggi }}>
             {denganKoordinat.map((d, i) => {
               const on = aktif?.id === d.id;
               return (
@@ -118,32 +119,25 @@ export function Peta({
                     onClick={() => setAktif(d)}
                     aria-pressed={on}
                     className={cn(
-                      "flex w-full items-baseline gap-2 px-3 py-2 text-left transition-colors",
+                      "flex w-full items-center gap-2 px-3 py-2 text-left transition-colors",
                       on ? "bg-emas/12" : "hover:bg-malam-3",
                     )}
                   >
                     <span
                       className={cn(
-                        "tabular shrink-0 font-mono text-[0.5625rem]",
+                        "tabular w-4 shrink-0 font-mono text-[0.5625rem]",
                         on ? "text-emas" : "text-terang-3",
                       )}
                     >
                       {String(i + 1).padStart(2, "0")}
                     </span>
-                    <span className="min-w-0 flex-1">
-                      <span
-                        className={cn(
-                          "block truncate text-[0.8125rem] leading-tight",
-                          on ? "text-emas" : "text-terang-2",
-                        )}
-                      >
-                        {d.nama}
-                      </span>
-                      {d.koordinat && (
-                        <span className="tabular mt-0.5 block font-mono text-[0.5rem] text-terang-3">
-                          {koordinatTeks(d.koordinat.lat, d.koordinat.lng)}
-                        </span>
+                    <span
+                      className={cn(
+                        "min-w-0 truncate text-[0.75rem] leading-tight",
+                        on ? "text-emas" : "text-terang-2",
                       )}
+                    >
+                      {d.nama}
                     </span>
                   </button>
                 </li>
@@ -152,7 +146,7 @@ export function Peta({
           </ul>
 
           {tanpa.length > 0 && (
-            <p className="border-t border-garis-malam px-3 py-2 text-[0.6875rem] leading-snug text-terang-3">
+            <p className="border-t border-garis-malam px-3 py-2 text-[0.625rem] leading-snug text-terang-3">
               Tanpa koordinat: {tanpa.map((d) => d.nama).join(", ")}.
             </p>
           )}

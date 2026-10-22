@@ -110,7 +110,7 @@ export function SiteHeader() {
         <div className="ml-auto flex items-center gap-2 md:ml-2">
           <Link
             href="/asisten"
-            className="flex h-9 items-center gap-2 border border-emas/40 px-2.5 text-emas transition-colors hover:border-emas hover:bg-emas/10 sm:px-3.5"
+            className="flex h-9 items-center gap-2 border border-emas/50 bg-emas/10 px-2.5 text-emas-muda backdrop-blur-sm transition-colors hover:border-emas hover:bg-emas hover:text-malam sm:px-3.5"
             aria-label="Tanya Asisten Sari"
           >
             <svg viewBox="0 0 18 18" className="h-3.5 w-3.5 flex-none" fill="none" stroke="currentColor" strokeWidth="1.4" aria-hidden="true">

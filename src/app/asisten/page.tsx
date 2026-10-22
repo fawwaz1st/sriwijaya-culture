@@ -22,19 +22,22 @@ export default function HalamanAsisten() {
               hanya dari yang ia baca. Tiap jawaban bawa nomor rujukan yang bisa
               kamu buka sendiri.
             </p>
-            <ul className="mt-4 grid grid-cols-2 gap-x-5 gap-y-2 border-t border-garis-malam pt-4">
+            {/* Empat jaminan, disusun sebagai dua baris label-nilai yang
+                rata. Versi sebelumnya memakai flex-baseline di dalam grid
+                2 kolom sehingga nilai kanan menggantung tidak sejajar. */}
+            <dl className="mt-4 grid grid-cols-2 gap-x-6 border-t border-garis-malam pt-4">
               {[
                 ["Sumber", "Selalu disebut"],
                 ["Karangan", "Tidak diizinkan"],
                 ["Legenda", "Diberi label"],
                 ["Di luar arsip", "Ditolak"],
               ].map(([k, v]) => (
-                <li key={k} className="flex items-baseline justify-between gap-2">
-                  <span className="meta">{k}</span>
-                  <span className="text-[0.6875rem] font-medium text-terang">{v}</span>
-                </li>
+                <div key={k} className="flex items-baseline justify-between gap-3 py-1">
+                  <dt className="meta shrink-0">{k}</dt>
+                  <dd className="text-right text-[0.6875rem] font-medium text-terang">{v}</dd>
+                </div>
               ))}
-            </ul>
+            </dl>
           </div>
         </div>
       </header>

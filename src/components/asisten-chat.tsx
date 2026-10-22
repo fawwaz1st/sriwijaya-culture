@@ -151,8 +151,8 @@ export function AsistenChat() {
 
 
   return (
-    <div className="grid border border-garis-malam lg:grid-cols-[minmax(0,1fr)_320px] lg:items-start">
-      <div className="flex min-h-[540px] min-w-0 flex-col border-b border-garis-malam lg:border-b-0 lg:border-r">
+    <div className="grid border border-garis-malam lg:grid-cols-[minmax(0,1fr)_300px] lg:items-start">
+      <div className="flex min-w-0 flex-col border-b border-garis-malam lg:border-b-0 lg:border-r">
         <div className="flex items-center justify-between gap-3 border-b border-garis-malam bg-malam-2 px-4 py-2.5">
           <p className="meta flex items-center gap-2">
             <span
@@ -166,9 +166,14 @@ export function AsistenChat() {
           </p>
         </div>
 
-        <div className="gulir-tipis min-h-0 flex-1 overflow-y-auto px-4 py-5" aria-live="polite">
+        {/* Tinggi tetap yang nyaman, bukan flex-1 yang melar mengikuti
+            kolom kanan. Sebelumnya ini menyisakan ~300px ruang kosong. */}
+        <div
+          className="gulir-tipis h-[340px] overflow-y-auto px-4 py-4 sm:h-[380px]"
+          aria-live="polite"
+        >
           {pesan.length === 0 && (
-            <div className="mx-auto max-w-[44ch] py-8">
+            <div className="mx-auto max-w-[44ch] pt-6">
               <p className="font-display text-2xl leading-tight text-terang">
                 Tanya apa saja tentang arsip ini.
               </p>
