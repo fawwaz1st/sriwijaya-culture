@@ -28,21 +28,24 @@ export default function HalamanTentang() {
         </div>
       </header>
 
-      <div className="mt-10 grid gap-10 lg:grid-cols-2 lg:gap-14">
-        <div className="overflow-hidden">
-          <Foto
-            src="/images/musi-1.jpg"
-            alt="Sungai Musi di kawasan Palembang"
-            prioritas
-            sizes="(max-width: 1024px) 100vw, 50vw"
-            className="w-full"
-          />
+      <div className="mt-10 grid items-start gap-10 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] lg:gap-14">
+        <div>
+          <div className="overflow-hidden">
+            <Foto
+              src="/images/musi-1.jpg"
+              alt="Sungai Musi di kawasan Palembang"
+              prioritas
+              rasioPaksa="4 / 3"
+              sizes="(max-width: 1024px) 100vw, 50vw"
+              className="w-full object-cover"
+            />
+          </div>
           <p className="mt-2 font-mono text-[0.5625rem] uppercase tracking-[0.1em] text-terang-3">
             Sungai Musi · Wikimedia Commons, CC BY-SA 4.0
           </p>
         </div>
 
-        <div className="flex flex-col justify-center">
+        <div>
           <p className="meta-emas">Yang situs ini lakukan</p>
           <ul className="mt-3 space-y-2.5">
             {[

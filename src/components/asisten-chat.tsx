@@ -7,17 +7,15 @@ import { cariDokumen } from "@/lib/retrieval";
 import { cn } from "@/lib/cn";
 
 /**
- * Antarmuka Asisten Sari.
+ * Asisten Sari.
  *
- * Dibangun seperti meja referensi perpustakaan: percakapan di satu
- * kolom, daftar rujukan selalu terlihat di kolom lain. Sumber tidak
- * disembunyikan di balik tombol, karena kemampuan memeriksa jawaban
- * adalah inti produk ini.
+ * Bentuknya mengikuti pola antarmuka asisten yang sudah jadi standar:
+ * composer di tengah layar saat kosong, bergeser ke bawah setelah ada
+ * percakapan, saran berupa chip tepat di bawah composer, dan rujukan
+ * dibuka sebagai panel samping, bukan selalu memakan sepertiga layar.
  *
- * Catatan teknis: server bisa menjawab dalam dua bentuk, yaitu stream
- * UIMessage dari AI SDK (saat ada model) atau teks biasa (mode arsip
- * langsung). Satu jalur fetch menangani keduanya supaya pengguna tidak
- * pernah melihat jawaban kosong.
+ * Yang membedakan dari chatbot biasa: setiap jawaban membawa nomor
+ * rujukan yang bisa dibuka, dan mode penyedia ditampilkan terus terang.
  */
 
 interface Rujukan {
@@ -41,20 +39,31 @@ export function AsistenChat() {
   const [sibuk, setSibuk] = useState(false);
   const [galat, setGalat] = useState<string | null>(null);
   const [mode, setMode] = useState<string | null>(null);
+  const [panel, setPanel] = useState(false);
   const ujung = useRef<HTMLDivElement>(null);
   const kotak = useRef<HTMLTextAreaElement>(null);
   const kendali = useRef<AbortController | null>(null);
   const sibukRef = useRef(false);
 
-  useEffect(() => {
-    ujung.current?.scrollIntoView({ behavior: "smooth", block: "end" });
-  }, [pesan, sibuk]);
+  const kosong = pesan.length === 0;
 
-  // Fokus otomatis hanya di layar lebar, supaya papan tombol seluler
+  useEffect(() => {
+    if (!kosong) ujung.current?.scrollIntoView({ behavior: "smooth", block: "end" });
+  }, [pesan, sibuk, kosong]);
+
+  // Fokus otomatis hanya di layar lebar supaya papan tombol seluler
   // tidak langsung terbuka saat halaman dimuat.
   useEffect(() => {
     if (window.matchMedia("(min-width: 1024px)").matches) kotak.current?.focus();
   }, []);
+
+  // Textarea tumbuh mengikuti isi, maksimal 4 baris.
+  useEffect(() => {
+    const el = kotak.current;
+    if (!el) return;
+    el.style.height = "0px";
+    el.style.height = Math.min(el.scrollHeight, 108) + "px";
+  }, [input]);
 
   async function kirim(teks: string) {
     const bersih = teks.trim().slice(0, 600);
@@ -91,18 +100,15 @@ export function AsistenChat() {
       });
 
       setMode(res.headers.get("X-Sari-Mode"));
-
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
       const tipe = res.headers.get("Content-Type") || "";
       const sumber = rujukanUntuk(bersih);
 
-      // --- Bentuk 1: teks biasa (mode arsip langsung) ---
       if (tipe.includes("text/plain")) {
         const jawab = await res.text();
         setPesan((p) => [...p, { id: idSari, peran: "sari", teks: jawab, sumber }]);
       } else {
-        // --- Bentuk 2: stream UIMessage. Tampilkan sambil tumbuh. ---
         const akhir = await bacaStreamUI(res, (sebagian) => {
           setPesan((p) => {
             const ada = p.find((x) => x.id === idSari);
@@ -120,7 +126,7 @@ export function AsistenChat() {
                 ? {
                     ...x,
                     teks:
-                      "Model tidak mengirim jawaban. Coba lagi, atau buka rujukan di samping untuk membaca arsipnya langsung.",
+                      "Model tidak mengirim jawaban. Coba lagi, atau buka rujukan untuk membaca arsipnya langsung.",
                   }
                 : x,
             );
@@ -148,215 +154,193 @@ export function AsistenChat() {
 
   const kueriTerakhir = [...pesan].reverse().find((p) => p.peran === "pengguna")?.teks ?? "";
   const rujukan = kueriTerakhir ? rujukanUntuk(kueriTerakhir) : [];
-
+  const rujukanTerakhir = [...pesan].reverse().find((p) => p.peran === "sari")?.sumber ?? [];
 
   return (
-    <div className="grid border border-garis-malam lg:grid-cols-[minmax(0,1fr)_300px] lg:items-start">
-      <div className="flex min-w-0 flex-col border-b border-garis-malam lg:border-b-0 lg:border-r">
-        <div className="flex items-center justify-between gap-3 border-b border-garis-malam bg-malam-2 px-4 py-2.5">
-          <p className="meta flex items-center gap-2">
-            <span
-              aria-hidden="true"
-              className={cn("h-1.5 w-1.5 rounded-full", sibuk ? "denyut bg-emas" : "bg-ok")}
-            />
-            Asisten Sari
-          </p>
-          <p className="meta text-terang-3">
-            {mode === "arsip-langsung" ? "Mode arsip langsung" : mode ? `Model: ${mode}` : "Siap"}
-          </p>
-        </div>
+    <div
+      className={cn(
+        "relative flex flex-col",
+        // Tinggi minimum penuh hanya saat kosong, supaya composer berada di
+        // tengah layar. Setelah ada percakapan, halaman tumbuh mengikuti isi
+        // dan composer langsung menempel di bawah jawaban.
+        kosong && "min-h-[calc(100svh-10rem)]",
+      )}
+    >
+      {/* --- Bilah status tipis --- */}
+      <div className="flex items-center justify-between gap-3 border-b border-garis-malam py-2">
+        <p className="meta flex items-center gap-2">
+          <span
+            aria-hidden="true"
+            className={cn("h-1.5 w-1.5 rounded-full", sibuk ? "denyut bg-emas" : "bg-ok")}
+          />
+          {mode === "arsip-langsung"
+            ? "Mode arsip langsung"
+            : mode
+              ? `Model: ${mode}`
+              : "Siap menjawab dari arsip"}
+        </p>
 
-        {/* Tinggi tetap yang nyaman, bukan flex-1 yang melar mengikuti
-            kolom kanan. Sebelumnya ini menyisakan ~300px ruang kosong. */}
-        <div
-          className="gulir-tipis h-[340px] overflow-y-auto px-4 py-4 sm:h-[380px]"
-          aria-live="polite"
-        >
-          {pesan.length === 0 && (
-            <div className="mx-auto max-w-[44ch] pt-6">
-              <p className="font-display text-2xl leading-tight text-terang">
-                Tanya apa saja tentang arsip ini.
-              </p>
-              <p className="mt-2 text-[0.8125rem] leading-relaxed text-terang-2">
-                Sari hanya menjawab dari isi arsip, dan selalu menyebut nomor
-                sumber. Kalau jawabannya belum ada, ia akan mengatakannya.
-              </p>
-            </div>
+        <div className="flex items-center gap-3">
+          {rujukanTerakhir.length > 0 && (
+            <button
+              type="button"
+              onClick={() => setPanel((v) => !v)}
+              aria-expanded={panel}
+              className="meta flex items-center gap-1.5 text-emas hover:text-emas-muda"
+            >
+              {rujukanTerakhir.length} rujukan
+              <span aria-hidden="true" className={cn("transition-transform", panel && "rotate-180")}>
+                ⌄
+              </span>
+            </button>
           )}
-
-          <ol className="space-y-5">
-            {pesan.map((m) =>
-              m.peran === "pengguna" ? (
-                <li key={m.id} className="flex justify-end">
-                  <p className="max-w-[85%] bg-terang px-3.5 py-2.5 text-[0.875rem] leading-relaxed text-malam">
-                    {m.teks}
-                  </p>
-                </li>
-              ) : (
-                <li key={m.id} className="flex gap-2.5">
-                  <span className="meta-emas mt-1 flex-none">Sari</span>
-                  <div className="min-w-0 flex-1">
-                    <p className="whitespace-pre-wrap text-[0.875rem] leading-relaxed text-terang">
-                      {m.teks}
-                    </p>
-                    {m.sumber.length > 0 && (
-                      <ul className="mt-3 space-y-1 border-t border-garis-malam pt-2">
-                        {m.sumber.map((s) => (
-                          <li key={s.no}>
-                            <Link
-                              href={s.href}
-                              className="group flex items-baseline gap-2 text-[0.75rem] leading-snug text-terang-2 hover:text-emas"
-                            >
-                              <span className="tabular font-mono text-[0.5625rem] text-emas">[{s.no}]</span>
-                              <span className="min-w-0 truncate">{s.judul}</span>
-                              <span className="ml-auto flex-none font-mono text-[0.5rem] uppercase tracking-[0.1em] text-terang-3">
-                                {s.jenis}
-                              </span>
-                            </Link>
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-                  </div>
-                </li>
-              ),
-            )}
-
-            {sibuk && (
-              <li className="flex gap-2.5">
-                <span className="meta-emas mt-1 flex-none">Sari</span>
-                <span className="flex gap-1 pt-2" aria-label="Sedang menyusun jawaban">
-                  <span className="h-1.5 w-1.5 rounded-full bg-terang-3 denyut" />
-                  <span className="h-1.5 w-1.5 rounded-full bg-terang-3 denyut [animation-delay:200ms]" />
-                  <span className="h-1.5 w-1.5 rounded-full bg-terang-3 denyut [animation-delay:400ms]" />
-                </span>
-              </li>
-            )}
-          </ol>
-
-          {galat && (
-            <div className="mt-4 border border-bahaya/40 bg-bahaya/8 p-3">
-              <p className="status text-bahaya">Koneksi gagal</p>
-              <p className="mt-1.5 text-[0.8125rem] leading-relaxed text-terang-2">{galat}</p>
-            </div>
-          )}
-          <div ref={ujung} />
-        </div>
-
-        {pesan.length === 0 && (
-          <div className="border-t border-garis-malam px-4 py-3">
-            <p className="meta mb-2">Coba mulai dari</p>
-            <ul className="flex flex-wrap gap-1.5">
-              {SAPAAN.map((s) => (
-                <li key={s}>
-                  <button
-                    type="button"
-                    onClick={() => kirim(s)}
-                    className="border border-garis-malam px-2 py-1 text-left text-[0.75rem] leading-snug text-terang-2 transition-colors hover:border-emas hover:text-terang"
-                  >
-                    {s}
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
-
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            kirim(input);
-          }}
-          className="border-t border-garis-malam bg-malam-2 p-3"
-        >
-          <div className="flex items-end gap-2">
-            <label htmlFor="sari-input" className="sr-only">
-              Pertanyaan untuk Asisten Sari
-            </label>
-            <textarea
-              id="sari-input"
-              ref={kotak}
-              value={input}
-              onChange={(e) => setInput(e.target.value.slice(0, 600))}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" && !e.shiftKey) {
-                  e.preventDefault();
-                  kirim(input);
-                }
+          {!kosong && (
+            <button
+              type="button"
+              onClick={() => {
+                setPesan([]);
+                setMode(null);
+                setGalat(null);
+                setPanel(false);
+                kotak.current?.focus();
               }}
-              rows={1}
-              placeholder="Contoh: destinasi mana yang cocok untuk belajar sejarah Sriwijaya?"
-              className="gulir-tipis min-h-[44px] flex-1 resize-none border border-malam-5 bg-transparent px-3 py-2.5 text-[0.875rem] leading-relaxed text-terang placeholder:text-terang-3 focus:border-emas focus:outline-none"
-            />
-            {sibuk ? (
-              <button
-                type="button"
-                onClick={hentikan}
-                className="h-[44px] flex-none border border-malam-5 px-3.5 font-mono text-[0.625rem] uppercase tracking-[0.1em] text-terang-2 hover:border-terang"
-              >
-                Stop
-              </button>
-            ) : (
-              <button
-                type="submit"
-                disabled={!input.trim()}
-                className="flex h-[44px] flex-none items-center gap-2 bg-emas px-3.5 font-mono text-[0.625rem] uppercase tracking-[0.1em] text-malam transition-colors hover:bg-emas-muda disabled:cursor-not-allowed disabled:bg-malam-4 disabled:text-terang-3"
-              >
-                Kirim
-                <span aria-hidden="true">→</span>
-              </button>
-            )}
-          </div>
-          <div className="mt-2 flex items-center justify-between gap-2">
-            <p className="font-mono text-[0.5625rem] uppercase tracking-[0.1em] text-terang-3">
-              {input.length}/600 · Enter untuk kirim
-            </p>
-            {pesan.length > 0 && (
-              <button
-                type="button"
-                onClick={() => {
-                  setPesan([]);
-                  setMode(null);
-                  setGalat(null);
-                }}
-                className="font-mono text-[0.5625rem] uppercase tracking-[0.1em] text-terang-3 hover:text-terang"
-              >
-                Bersihkan
-              </button>
-            )}
-          </div>
-        </form>
+              className="meta text-terang-3 hover:text-terang"
+            >
+              Mulai ulang
+            </button>
+          )}
+        </div>
       </div>
 
-      <aside className="flex min-w-0 flex-col self-stretch bg-malam-2 lg:sticky lg:top-[4.5rem]">
-        <div className="flex items-center justify-between border-b border-garis-malam px-3.5 py-2.5">
-          <p className="meta">Rujukan arsip</p>
-          <p className="tabular font-mono text-[0.5625rem] text-terang-3">
-            {String(rujukan.length).padStart(2, "0")}
-          </p>
-        </div>
-
-        {rujukan.length === 0 ? (
-          <div className="px-3.5 py-4">
-            <p className="text-[0.75rem] leading-relaxed text-terang-3">
-              Rujukan muncul setelah kamu bertanya. Sari hanya memakai dokumen
-              yang ada di daftar ini.
+      {/* --- Percakapan --- */}
+      <div className={cn("flex flex-col", kosong ? "flex-1 justify-center pb-16" : "flex-1")}>
+        {kosong ? (
+          /* Empty state terpusat: satu pertanyaan besar, composer di tengah. */
+          <div className="mx-auto w-full max-w-[46rem] px-1">
+            <p className="meta-emas">Asisten arsip · Palembang</p>
+            <h1 className="display mt-3 text-[clamp(2rem,5.2vw,3.75rem)] text-terang">
+              Mau tahu apa tentang Palembang?
+            </h1>
+            <p className="mt-3 max-w-[46ch] text-[0.875rem] leading-relaxed text-terang-2">
+              Sari menjawab dari 25 rekaman arsip ini dan menyebut sumbernya.
+              Kalau datanya belum ada, ia bilang belum ada.
             </p>
-            <div className="mt-5 border-t border-garis-malam pt-4">
-              <p className="meta">Isi arsip</p>
-              <ul className="mt-2 space-y-1 font-mono text-[0.625rem] uppercase tracking-[0.1em] text-terang-3">
-                <li>10 destinasi</li>
-                <li>7 usaha lokal</li>
-                <li>8 catatan sejarah</li>
-                <li>19 tonggak waktu</li>
-              </ul>
+
+            <div className="mt-8">
+              <Composer
+                input={input}
+                setInput={setInput}
+                kirim={kirim}
+                sibuk={sibuk}
+                hentikan={hentikan}
+                kotak={kotak}
+                besar
+              />
+              <SaranPertanyaan onPick={kirim} />
             </div>
           </div>
         ) : (
-          <ul className="gulir-tipis min-h-0 flex-1 overflow-y-auto">
+          <>
+            <div className="mx-auto w-full max-w-[46rem] px-1 py-6">
+              <ol className="space-y-7">
+                {pesan.map((m) =>
+                  m.peran === "pengguna" ? (
+                    <li key={m.id} className="flex justify-end">
+                      <p className="max-w-[85%] rounded-sm bg-terang px-3.5 py-2.5 text-[0.875rem] leading-relaxed text-malam">
+                        {m.teks}
+                      </p>
+                    </li>
+                  ) : (
+                    <li key={m.id}>
+                      <p className="meta-emas mb-1.5">Sari</p>
+                      <p className="whitespace-pre-wrap text-[0.9375rem] leading-[1.7] text-terang">
+                        {m.teks}
+                      </p>
+                      {m.sumber.length > 0 && (
+                        <ul className="mt-3 flex flex-wrap gap-1.5">
+                          {m.sumber.map((s) => (
+                            <li key={s.no}>
+                              <Link
+                                href={s.href}
+                                className="group flex items-center gap-1.5 border border-garis-malam px-2 py-1 font-mono text-[0.5625rem] uppercase tracking-[0.08em] text-terang-2 transition-colors hover:border-emas hover:text-emas"
+                              >
+                                <span className="tabular text-emas">[{s.no}]</span>
+                                <span className="max-w-[22ch] truncate normal-case tracking-normal">
+                                  {s.judul}
+                                </span>
+                              </Link>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </li>
+                  ),
+                )}
+
+                {sibuk && (
+                  <li>
+                    <p className="meta-emas mb-1.5">Sari</p>
+                    <span className="flex gap-1" aria-label="Sedang menyusun jawaban">
+                      <span className="h-1.5 w-1.5 rounded-full bg-terang-3 denyut" />
+                      <span className="h-1.5 w-1.5 rounded-full bg-terang-3 denyut [animation-delay:200ms]" />
+                      <span className="h-1.5 w-1.5 rounded-full bg-terang-3 denyut [animation-delay:400ms]" />
+                    </span>
+                  </li>
+                )}
+              </ol>
+
+              {galat && (
+                <div className="mt-5 border border-bahaya/40 bg-bahaya/8 p-3">
+                  <p className="status text-bahaya">Koneksi gagal</p>
+                  <p className="mt-1.5 text-[0.8125rem] leading-relaxed text-terang-2">{galat}</p>
+                </div>
+              )}
+              <div ref={ujung} />
+            </div>
+
+            {/* Composer mengikuti isi percakapan, bukan didorong ke dasar
+                layar. Sebelumnya `mt-auto` menyisakan ~300px ruang kosong. */}
+            <div className="border-t border-garis-malam bg-malam/95 backdrop-blur">
+              <div className="mx-auto w-full max-w-[46rem] px-1 py-3">
+                <Composer
+                  input={input}
+                  setInput={setInput}
+                  kirim={kirim}
+                  sibuk={sibuk}
+                  hentikan={hentikan}
+                  kotak={kotak}
+                />
+              </div>
+            </div>
+          </>
+        )}
+      </div>
+
+      {/* --- Panel rujukan, dibuka sesuai permintaan --- */}
+      {panel && rujukan.length > 0 && (
+        <aside className="fixed inset-y-0 right-0 z-40 w-full max-w-[22rem] overflow-y-auto border-l border-garis-malam bg-malam-2 p-4 shadow-2xl">
+          <div className="flex items-center justify-between">
+            <p className="meta">Rujukan arsip</p>
+            <button
+              type="button"
+              onClick={() => setPanel(false)}
+              className="grid h-7 w-7 place-items-center border border-garis-malam text-terang-2 hover:border-terang"
+              aria-label="Tutup rujukan"
+            >
+              ×
+            </button>
+          </div>
+          <p className="mt-2 text-[0.75rem] leading-relaxed text-terang-3">
+            Dokumen yang dipakai untuk pertanyaan terakhir. Sari hanya memakai
+            yang ada di daftar ini.
+          </p>
+          <ul className="mt-4 space-y-2">
             {rujukan.map((r) => (
-              <li key={r.no} className="border-b border-garis-malam last:border-b-0">
-                <Link href={r.href} className="group block px-3.5 py-3 hover:bg-malam-3">
+              <li key={r.no}>
+                <Link
+                  href={r.href}
+                  className="group block border border-garis-malam p-2.5 hover:border-emas"
+                >
                   <p className="flex items-baseline gap-1.5">
                     <span className="tabular font-mono text-[0.5625rem] text-emas">[{r.no}]</span>
                     <span className="font-mono text-[0.5rem] uppercase tracking-[0.1em] text-terang-3">
@@ -373,15 +357,105 @@ export function AsistenChat() {
               </li>
             ))}
           </ul>
-        )}
+        </aside>
+      )}
+    </div>
+  );
+}
 
-        <div className="border-t border-garis-malam px-3.5 py-2.5">
-          <p className="font-mono text-[0.5rem] uppercase leading-relaxed tracking-[0.1em] text-terang-3">
-            Pencarian kata kunci berbobot atas 25 rekaman. Tidak ada data yang
-            dikirim keluar selain pertanyaan dan potongan arsip yang relevan.
-          </p>
-        </div>
-      </aside>
+/** Kotak input. Satu komponen, dua ukuran: hero dan sticky. */
+function Composer({
+  input,
+  setInput,
+  kirim,
+  sibuk,
+  hentikan,
+  kotak,
+  besar = false,
+}: {
+  input: string;
+  setInput: (v: string) => void;
+  kirim: (t: string) => void;
+  sibuk: boolean;
+  hentikan: () => void;
+  kotak: React.RefObject<HTMLTextAreaElement | null>;
+  besar?: boolean;
+}) {
+  return (
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        kirim(input);
+      }}
+      className={cn(
+        "flex items-end gap-2 border border-garis-malam bg-malam-2 p-2 transition-colors focus-within:border-emas/60",
+        besar && "p-2.5",
+      )}
+    >
+      <label htmlFor="sari-input" className="sr-only">
+        Pertanyaan untuk Asisten Sari
+      </label>
+      <textarea
+        id="sari-input"
+        ref={kotak}
+        value={input}
+        onChange={(e) => setInput(e.target.value.slice(0, 600))}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" && !e.shiftKey) {
+            e.preventDefault();
+            kirim(input);
+          }
+        }}
+        rows={1}
+        placeholder="Tanya tentang destinasi, sejarah, atau usaha lokal…"
+        className={cn(
+          "gulir-tipis flex-1 resize-none bg-transparent px-1.5 py-2 text-terang placeholder:text-terang-3 focus:outline-none",
+          besar ? "text-[0.9375rem]" : "text-[0.875rem]",
+        )}
+      />
+      {sibuk ? (
+        <button
+          type="button"
+          onClick={hentikan}
+          className="grid h-9 w-9 flex-none place-items-center border border-garis-malam text-terang-2 hover:border-terang"
+          aria-label="Hentikan jawaban"
+        >
+          <span className="block h-2.5 w-2.5 bg-terang-2" />
+        </button>
+      ) : (
+        <button
+          type="submit"
+          disabled={!input.trim()}
+          className="grid h-9 w-9 flex-none place-items-center bg-emas text-malam transition-colors hover:bg-emas-muda disabled:cursor-not-allowed disabled:bg-malam-5 disabled:text-terang-3"
+          aria-label="Kirim pertanyaan"
+        >
+          <svg viewBox="0 0 20 20" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.8">
+            <path d="M10 16V4M5 9l5-5 5 5" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </button>
+      )}
+    </form>
+  );
+}
+
+/** Chip saran. Ditulis tangan, mengikuti isi arsip. */
+function SaranPertanyaan({ onPick }: { onPick: (t: string) => void }) {
+  return (
+    <div className="mt-3">
+      <p className="meta mb-2">Coba</p>
+      <ul className="flex flex-wrap gap-1.5">
+        {SAPAAN.map((s) => (
+          <li key={s}>
+            <button
+              type="button"
+              onClick={() => onPick(s)}
+              className="border border-garis-malam px-2.5 py-1.5 text-left text-[0.75rem] leading-snug text-terang-2 transition-colors hover:border-emas hover:text-terang"
+            >
+              {s}
+            </button>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
@@ -396,10 +470,7 @@ function rujukanUntuk(kueri: string): Rujukan[] {
   }));
 }
 
-async function bacaStreamUI(
-  res: Response,
-  saatPotongan: (teks: string) => void,
-): Promise<string> {
+async function bacaStreamUI(res: Response, saatPotongan: (teks: string) => void): Promise<string> {
   const reader = res.body?.getReader();
   if (!reader) return "";
 
