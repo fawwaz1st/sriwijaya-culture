@@ -375,7 +375,7 @@ export function AsistenChat() {
                 {pesan.map((m) =>
                   m.peran === "pengguna" ? (
                     <li key={m.id} className="flex justify-end">
-                      <p className="max-w-[85%] rounded-sm bg-terang px-3.5 py-2.5 text-[0.875rem] leading-relaxed text-malam">
+                      <p className="max-w-[85%] rounded-lg bg-terang px-3.5 py-2.5 text-[0.875rem] leading-relaxed text-malam shadow-[inset_0_1px_0_rgba(255,255,255,0.5)]">
                         {m.teks}
                       </p>
                     </li>
@@ -398,7 +398,7 @@ export function AsistenChat() {
                                 <li key={s.no}>
                                   <Link
                                     href={s.href}
-                                    className="group flex items-center gap-1.5 border border-garis-malam px-2 py-1 font-mono text-[0.5625rem] uppercase tracking-[0.08em] text-terang-2 transition-colors hover:border-emas hover:text-emas"
+                                    className="group flex items-center gap-1.5 rounded-full border border-garis-malam bg-malam-2/60 px-2.5 py-1 font-mono text-[0.5625rem] uppercase tracking-[0.08em] text-terang-2 transition-colors hover:border-emas/60 hover:bg-emas/8 hover:text-emas"
                                   >
                                     <span className="tabular text-emas">[{s.no}]</span>
                                     <span className="max-w-[22ch] truncate normal-case tracking-normal">
@@ -520,7 +520,7 @@ function Composer({
         kirim(input);
       }}
       className={cn(
-        "flex items-end gap-2 border border-garis-malam bg-malam-2 p-2 transition-colors focus-within:border-emas/60",
+        "flex items-end gap-2 border border-garis-malam bg-malam-2 p-2 shadow-[inset_0_1px_0_rgba(242,239,232,0.05)] transition-all focus-within:border-emas/60 focus-within:shadow-[0_0_0_1px_rgba(217,168,50,0.25),inset_0_1px_0_rgba(242,239,232,0.05)]",
         besar && "p-2.5",
       )}
     >

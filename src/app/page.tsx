@@ -52,7 +52,8 @@ export default function Beranda() {
         </div>
 
         <div className="relative mx-auto flex w-full max-w-[1600px] flex-1 flex-col justify-end px-5 pb-8 pt-24 sm:px-8 sm:pb-10 lg:px-12">
-          <p className="meta-emas">Arsip digital Palembang · 2026</p>
+          <div className="kilau pointer-events-none absolute inset-x-0 top-0 h-full" aria-hidden="true" />
+          <p className="meta-emas relative">Arsip digital Palembang · 2026</p>
 
           <h1 className="display mt-3 max-w-[14ch] text-[clamp(2.5rem,8vw,7rem)] text-terang">
             Sepuluh tempat yang membentuk kota ini.
@@ -128,7 +129,7 @@ export default function Beranda() {
                 src={f.src}
                 alt={f.label}
                 sizes="176px"
-                className="h-full w-full object-cover opacity-70 transition-opacity duration-500 group-hover:opacity-100"
+                className="h-full w-full object-cover opacity-75 transition-all duration-500 group-hover:scale-105 group-hover:opacity-100"
               />
               <span className="absolute inset-x-0 bottom-0 bg-linear-to-t from-malam/90 to-transparent px-2 pb-1.5 pt-4 font-mono text-[0.5625rem] uppercase tracking-[0.1em] text-terang">
                 {f.label}

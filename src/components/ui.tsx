@@ -73,12 +73,16 @@ export function Tombol({
   panah?: boolean;
 } & Omit<React.ComponentProps<typeof Link>, "href" | "className" | "children">) {
   const dasar =
-    "group inline-flex min-h-11 items-center justify-center gap-2 px-5 py-3 font-mono text-[0.6875rem] uppercase tracking-[0.12em] transition-colors duration-300";
+    "group inline-flex min-h-11 items-center justify-center gap-2 px-5 py-3 font-mono text-[0.6875rem] uppercase tracking-[0.12em] transition-all duration-300";
   const gaya = {
-    terang: "bg-terang text-malam hover:bg-emas",
-    garis: "border border-terang/30 text-terang hover:border-terang",
-    gelap: "bg-gelap text-kertas hover:bg-emas-tinta",
-    "garis-gelap": "border border-gelap/25 text-gelap hover:border-gelap",
+    terang:
+      "bg-terang text-malam shadow-[inset_0_1px_0_rgba(255,255,255,0.4)] hover:-translate-y-0.5 hover:bg-emas",
+    garis:
+      "border border-terang/30 text-terang hover:-translate-y-0.5 hover:border-terang/70 hover:bg-terang/5",
+    gelap:
+      "bg-gelap text-kertas shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] hover:-translate-y-0.5 hover:bg-emas-tinta",
+    "garis-gelap":
+      "border border-gelap/25 text-gelap hover:-translate-y-0.5 hover:border-gelap/60 hover:bg-gelap/5",
   }[varian];
 
   return (

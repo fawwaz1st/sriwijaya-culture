@@ -125,8 +125,11 @@ export function KatalogDestinasi({
           {hasil.map((d, i) => {
             const p = potret(d.gambar[0].src);
             return (
-              <li key={d.id}>
-                <Link href={`/destinasi/${d.id}`} className="group flex h-full flex-col">
+              <li key={d.id} className="h-full">
+                <Link
+                  href={`/destinasi/${d.id}`}
+                  className="group kartu flex h-full flex-col p-2.5"
+                >
                   <div className="relative overflow-hidden">
                     <Foto
                       src={d.gambar[0].src}
@@ -137,7 +140,7 @@ export function KatalogDestinasi({
                       // memotong subjeknya sampai tidak terbaca.
                       rasioPaksa={p ? "4 / 5" : "3 / 2"}
                       sizes="(max-width: 640px) 50vw, 33vw"
-                      className="h-full w-full object-cover transition-[filter] duration-700 group-hover:brightness-110"
+                      className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]"
                     />
                     <span
                       className="absolute left-0 top-0 px-2 py-1 font-mono text-[0.5rem] uppercase tracking-[0.1em] text-malam"
@@ -146,9 +149,9 @@ export function KatalogDestinasi({
                       {String(i + 1).padStart(2, "0")}
                     </span>
                   </div>
-                  <div className="mt-3 flex flex-1 flex-col">
+                  <div className="flex flex-1 flex-col px-1.5 pb-1.5 pt-3">
                     <p className="meta">{d.kategori.join(" · ")}</p>
-                    <h2 className="mt-1 font-display text-lg leading-tight text-terang group-hover:text-emas">
+                    <h2 className="mt-1 font-display text-lg leading-tight text-terang transition-colors group-hover:text-emas">
                       {d.nama}
                     </h2>
                     <p className="mt-1 line-clamp-2 text-[0.75rem] leading-relaxed text-terang-2">

@@ -71,7 +71,9 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="id" className={`${fraunces.variable} ${instrument.variable} ${plexMono.variable}`}>
-      <body>
+      {/* Butir film di seluruh halaman: 4% opacity, overlay, tidak
+          mengganggu interaksi apa pun. */}
+      <body className="butir">
         <a
           href="#konten"
           className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-100 focus:bg-emas focus:px-4 focus:py-2 focus:text-malam"

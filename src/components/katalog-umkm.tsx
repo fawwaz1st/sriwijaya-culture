@@ -132,24 +132,24 @@ export function KatalogUMKM({
           {hasil.map((u) => {
             const terverifikasi = u.statusData === "rujukan-umum";
             return (
-              <li key={u.id}>
-                <Link href={`/umkm/${u.id}`} className="group block">
+              <li key={u.id} className="h-full">
+                <Link href={`/umkm/${u.id}`} className="group kartu block h-full p-2.5">
                   <div className="overflow-hidden">
                     <Foto
                       src={u.gambar[0].src}
                       alt={u.gambar[0].caption}
                       sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                      className="w-full transition-[filter] duration-700 group-hover:brightness-110"
+                      className="w-full transition-transform duration-700 ease-out group-hover:scale-[1.04]"
                     />
                   </div>
-                  <div className="mt-3">
+                  <div className="px-1.5 pb-1.5 pt-3">
                     <div className="flex items-start justify-between gap-2">
                       <p className="meta">{u.kategori}</p>
                       <span className={cn("status shrink-0", terverifikasi ? "text-ok" : "text-warn")}>
                         {terverifikasi ? "Asli" : "Contoh"}
                       </span>
                     </div>
-                    <h2 className="mt-1 font-display text-lg leading-tight text-terang group-hover:text-emas">
+                    <h2 className="mt-1 font-display text-lg leading-tight text-terang transition-colors group-hover:text-emas">
                       {u.nama}
                     </h2>
                     <p className="mt-1 line-clamp-2 text-[0.75rem] leading-relaxed text-terang-2">

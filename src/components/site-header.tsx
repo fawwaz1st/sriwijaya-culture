@@ -89,7 +89,7 @@ export function SiteHeader() {
                   href={item.href}
                   aria-current={aktif(item.href) ? "page" : undefined}
                   className={cn(
-                    "relative block px-3 py-2 text-[0.8125rem] transition-colors",
+                    "group/nav relative block px-3 py-2 text-[0.8125rem] transition-colors",
                     aktif(item.href) ? "text-terang" : "text-terang-2 hover:text-terang",
                   )}
                 >
@@ -98,7 +98,9 @@ export function SiteHeader() {
                     aria-hidden="true"
                     className={cn(
                       "absolute inset-x-3 bottom-1 h-px origin-left bg-emas transition-transform duration-500",
-                      aktif(item.href) ? "scale-x-100" : "scale-x-0",
+                      aktif(item.href)
+                        ? "scale-x-100"
+                        : "scale-x-0 group-hover/nav:scale-x-100",
                     )}
                   />
                 </Link>
@@ -110,7 +112,7 @@ export function SiteHeader() {
         <div className="ml-auto flex items-center gap-2 md:ml-2">
           <Link
             href="/asisten"
-            className="flex h-9 items-center gap-2 border border-emas/50 bg-emas/10 px-2.5 text-emas-muda backdrop-blur-sm transition-colors hover:border-emas hover:bg-emas hover:text-malam sm:px-3.5"
+            className="flex h-9 items-center gap-2 border border-emas/50 bg-emas/10 px-2.5 text-emas-muda shadow-[0_0_18px_rgba(217,168,50,0.15)] backdrop-blur-sm transition-all hover:-translate-y-0.5 hover:border-emas hover:bg-emas hover:text-malam hover:shadow-[0_0_28px_rgba(217,168,50,0.3)] sm:px-3.5"
             aria-label="Tanya Asisten Sari"
           >
             <svg viewBox="0 0 18 18" className="h-3.5 w-3.5 flex-none" fill="none" stroke="currentColor" strokeWidth="1.4" aria-hidden="true">

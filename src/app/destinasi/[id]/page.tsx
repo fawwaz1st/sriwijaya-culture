@@ -120,15 +120,15 @@ export default async function DetailDestinasi({ params }: { params: Promise<{ id
           {/* Galeri dulu, teks kemudian. Pengunjung datang untuk melihat
               tempatnya, bukan membaca tentangnya. */}
           {galeri.length > 0 && (
-            <div className="gulir-tipis -mx-5 mb-10 flex gap-2 overflow-x-auto px-5 pb-2 sm:mx-0 sm:px-0 lg:mb-12">
+            <div className="gulir-tipis -mx-5 mb-10 flex gap-3 overflow-x-auto px-5 pb-2 sm:mx-0 sm:px-0 lg:mb-12">
               {galeri.map((g, i) => (
                 <figure key={i} className="w-[78vw] max-w-[560px] flex-none sm:w-[44vw] lg:w-[32vw]">
-                  <div className="overflow-hidden">
+                  <div className="group overflow-hidden">
                     <Foto
                       src={g.src}
                       alt={g.caption}
                       sizes="(max-width: 640px) 78vw, (max-width: 1024px) 44vw, 32vw"
-                      className="w-full"
+                      className="w-full transition-transform duration-700 ease-out group-hover:scale-[1.03]"
                     />
                   </div>
                   <figcaption className="mt-1.5 text-[0.5625rem] leading-tight text-gelap-3">
@@ -163,9 +163,12 @@ export default async function DetailDestinasi({ params }: { params: Promise<{ id
 
               <div className="mt-8 border-t border-garis-kertas pt-6">
                 <p className="meta-emas">Daya tarik</p>
-                <ul className="mt-3 grid gap-x-8 gap-y-2 sm:grid-cols-2">
+                <ul className="mt-3 grid gap-x-8 gap-y-1 sm:grid-cols-2">
                   {d.dayaTarik.map((x, i) => (
-                    <li key={i} className="flex gap-3 text-[0.875rem] leading-relaxed text-gelap-2">
+                    <li
+                      key={i}
+                      className="flex gap-3 rounded-md px-2 py-1.5 text-[0.875rem] leading-relaxed text-gelap-2 transition-colors -mx-2 hover:bg-emas/8 hover:text-gelap"
+                    >
                       <span className="tabular shrink-0 font-mono text-[0.625rem] text-emas-tinta">
                         {String(i + 1).padStart(2, "0")}
                       </span>

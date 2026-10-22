@@ -9,8 +9,8 @@ import Link from "next/link";
  */
 export function SiteFooter() {
   return (
-    <footer className="border-t border-garis-malam bg-malam">
-      <div className="mx-auto flex max-w-[1600px] flex-col gap-3 px-5 py-6 sm:px-8 md:flex-row md:items-center md:justify-between lg:px-12">
+    <footer className="border-t border-terang/10 bg-malam">
+      <div className="mx-auto flex max-w-[1600px] flex-col gap-3 px-5 py-7 sm:px-8 md:flex-row md:items-center md:justify-between lg:px-12">
         <p className="font-display text-[0.9375rem] text-terang">Sriwijaya Culture</p>
 
         <nav aria-label="Tautan footer" className="flex flex-wrap items-center gap-x-5 gap-y-1">
