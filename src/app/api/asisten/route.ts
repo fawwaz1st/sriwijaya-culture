@@ -1,8 +1,6 @@
 import {
   convertToModelMessages,
-  createUIMessageStreamResponse,
   streamText,
-  toUIMessageStream,
   type UIMessage,
 } from "ai";
 import { createOpenAICompatible } from "@ai-sdk/openai-compatible";
@@ -26,11 +24,22 @@ export const maxDuration = 60;
  * jatah lebih longgar: biayanya ditanggung mereka, bukan kami.
  */
 const LAJU = new Map<string, { n: number; reset: number }>();
+const LAJU_MAKS = 5_000;
 
 function dalamBatas(alamat: string, kunciPengguna: boolean): boolean {
   const maks = kunciPengguna ? 30 : 10;
   const jendela = 60_000;
   const kini = Date.now();
+
+  // Peta dibersihkan saat penuh: tanpa ini, penyerang dengan alamat
+  // palsu bisa menggembungkan memori tanpa batas.
+  if (LAJU.size > LAJU_MAKS) {
+    for (const [k, v] of LAJU) {
+      if (kini > v.reset) LAJU.delete(k);
+    }
+    if (LAJU.size > LAJU_MAKS) LAJU.clear();
+  }
+
   const catatan = LAJU.get(alamat);
   if (!catatan || kini > catatan.reset) {
     LAJU.set(alamat, { n: 1, reset: kini + jendela });
@@ -216,9 +225,17 @@ function balasanTeks(teks: string, mode: string, jumlahSumber: number): Response
 }
 
 export async function POST(req: Request) {
-  // Identitas kasar untuk pembatas laju: alamat klien atau kunci.
-  const alamat =
-    req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "lokal";
+  /**
+   * Identitas untuk pembatas laju.
+   *
+   * Di belakang Vercel, hop PERTAMA x-forwarded-for dikendalikan klien
+   * (bisa dipalsukan bebas); alamat asli ada di hop TERAKHIR. Di lokal
+   * (next start) tidak ada proxy, jadi pakai x-real-ip yang di-set
+   * server.
+   */
+  const xff = req.headers.get("x-forwarded-for") ?? "";
+  const hop = xff.split(",").map((s) => s.trim()).filter(Boolean);
+  const alamat = hop.at(-1) || req.headers.get("x-real-ip") || "lokal";
   const kunciMilik = kunciPengguna(req.headers.get("x-sari-api-key"));
 
   if (!dalamBatas(alamat, Boolean(kunciMilik))) {
@@ -226,6 +243,13 @@ export async function POST(req: Request) {
       { error: "Terlalu banyak pertanyaan. Tunggu sebentar, ya." },
       { status: 429, headers: { "Retry-After": "30" } },
     );
+  }
+
+  // Tolak badan besar sebelum diurai: 64 KB sudah jauh melampaui
+  // kebutuhan percakapan 12 pesan.
+  const panjang = Number(req.headers.get("content-length") ?? 0);
+  if (panjang > 65_536) {
+    return Response.json({ error: "Percakapan terlalu panjang." }, { status: 413 });
   }
 
   let messages: UIMessage[] = [];
@@ -284,27 +308,35 @@ export async function POST(req: Request) {
       });
 
       const pesanModel = await convertToModelMessages(messages);
-      const hasil = streamText({
+
+      /**
+       * Kunci milik pengguna diuji dengan panggilan kecil sebelum
+       * permintaan sesungguhnya. Kunci yang salah auth harus turun ke
+       * tingkat 2, tapi begitu respons streaming dikembalikan, fallback
+       * sudah tidak bisa jalan — itulah bug asalnya: kunci dummy
+       * menghasilkan stream kosong tanpa pesan galat.
+       */
+      const uji = await streamText({
         model: provider(utama.model),
         system: susunSystem(konteks),
         messages: pesanModel,
         temperature: 0.2,
-        maxOutputTokens: 600,
-        onError({ error }) {
-          console.error("[asisten] galat penyedia utama:", error);
-        },
-      });
+        maxOutputTokens: 700,
+      }).text;
 
-      return createUIMessageStreamResponse({
-        stream: toUIMessageStream({
-          stream: hasil.stream,
-          onError: () => "Model sedang tidak bisa dijangkau. Coba lagi sebentar.",
-        }),
-        headers: {
-          "X-Sari-Mode": utama.nama,
-          "X-Sari-Sumber": String(konteks.sumber.length),
-        },
-      });
+      if (!uji.trim()) {
+        console.warn("[asisten] tingkat 1 (", utama.nama, ") jawaban kosong, turun ke tingkat berikutnya");
+        // Jatuh ke tingkat 2 di bawah, tanpa mengirim apa pun.
+      } else {
+        return new Response(uji, {
+          headers: {
+            "Content-Type": "text/plain; charset=utf-8",
+            "X-Sari-Mode": utama.nama,
+            "X-Sari-Sumber": String(konteks.sumber.length),
+            "Cache-Control": "no-store",
+          },
+        });
+      }
     } catch (e) {
       console.error("[asisten] penyedia utama gagal, turun ke tingkat berikutnya:", e);
     }

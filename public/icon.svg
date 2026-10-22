@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Monogram S: lengkungan songket di latar malam. -->
+  <rect width="64" height="64" rx="8" fill="#0b0d0c"/>
+  <path d="M44 20c-3-4-8-6-13-6-7 0-12 4-12 10 0 12 24 8 24 18 0 5-5 8-11 8-5 0-10-2-13-6" fill="none" stroke="#d9a832" stroke-width="4" stroke-linecap="round"/>
+</svg>

@@ -19,11 +19,9 @@ import type { KategoriUMKM, UMKM } from "@/lib/types";
 export function KatalogUMKM({
   daftar,
   kategori,
-  varian,
 }: {
   daftar: readonly UMKM[];
   kategori: readonly KategoriUMKM[];
-  varian: readonly string[];
 }) {
   const router = useRouter();
   const params = useSearchParams();
@@ -51,7 +49,9 @@ export function KatalogUMKM({
     router.replace(next.toString() ? `/umkm?${next}` : "/umkm", { scroll: false });
   }
 
-  const jumlahProduk = daftar.reduce((n, u) => n + u.produk.length, 0);
+  const jumlahProduk = daftar
+    .filter((u) => u.statusData === "rujukan-umum")
+    .reduce((n, u) => n + u.produk.length, 0);
 
   return (
     <>
@@ -101,21 +101,10 @@ export function KatalogUMKM({
       </div>
 
       <p className="meta mt-4">
-        <span className="tabular text-terang">{daftar.length}</span> entri ·{" "}
-        <span className="tabular text-terang">{jumlahProduk}</span> produk tercatat
+        <span className="tabular text-terang">{hasil.length}</span> usaha ·{" "}
+        <span className="tabular text-terang">{jumlahProduk}</span> produk
+        tercatat (label Asli)
       </p>
-
-      <div className="mt-3 flex flex-wrap items-center gap-1.5">
-        <span className="meta mr-1">Varian pempek</span>
-        {varian.map((v) => (
-          <span
-            key={v}
-            className="border border-garis-malam px-1.5 py-0.5 font-mono text-[0.5rem] uppercase tracking-[0.08em] text-terang-2"
-          >
-            {v}
-          </span>
-        ))}
-      </div>
 
       {hasil.length === 0 ? (
         <div className="mt-8">

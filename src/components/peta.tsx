@@ -34,6 +34,7 @@ export function Peta({
   judul?: string;
 }) {
   const [lapisan, setLapisan] = useState<"k" | "m">("k");
+  const [dimuat, setDimuat] = useState(false);
   const [aktif, setAktif] = useState<Destinasi | null>(fokus ?? daftar[0] ?? null);
 
   const denganKoordinat = daftar.filter((d) => d.koordinat);
@@ -91,16 +92,49 @@ export function Peta({
 
       <div className="grid lg:grid-cols-[minmax(0,1fr)_240px]">
         <div className="relative border-b border-garis-malam lg:border-b-0 lg:border-r">
-          <iframe
-            key={`${q}-${lapisan}`}
-            src={src}
-            title={judul}
-            loading="lazy"
-            referrerPolicy="no-referrer-when-downgrade"
-            allowFullScreen
-            className="block w-full"
-            style={{ height: tinggi, border: 0 }}
-          />
+          {dimuat ? (
+            <iframe
+              key={`${q}-${lapisan}`}
+              src={src}
+              title={judul}
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              allowFullScreen
+              className="block w-full"
+              style={{ height: tinggi, border: 0 }}
+            />
+          ) : (
+            /**
+             * Facade: peta tidak dimuat sebelum diminta.
+             *
+             * Embed Google Maps mengunduh ~1 MB skrip dan tile saat
+             * halaman dibuka. Dengan facade, unduhan itu ditunda sampai
+             * pengunjung benar-benar mau melihat peta — satu-satunya
+             * optimasi berdampak besar yang tersisa di situs ini.
+             */
+            <button
+              type="button"
+              onClick={() => setDimuat(true)}
+              className="group relative flex w-full flex-col items-center justify-center gap-2 bg-malam-3"
+              style={{ height: tinggi }}
+              aria-label={`Muat peta interaktif: ${judul}`}
+            >
+              <span
+                aria-hidden="true"
+                className="grid h-11 w-11 place-items-center rounded-full bg-emas text-malam transition-transform group-hover:scale-110"
+              >
+                <svg viewBox="0 0 20 20" className="h-4 w-4" fill="currentColor">
+                  <path d="M7 4.5v11l9-5.5-9-5.5Z" />
+                </svg>
+              </span>
+              <span className="font-mono text-[0.625rem] uppercase tracking-[0.12em] text-terang-2 group-hover:text-terang">
+                Muat peta interaktif
+              </span>
+              <span className="font-mono text-[0.5rem] uppercase tracking-[0.1em] text-terang-3">
+                {aktif ? aktif.nama : "Palembang"} · Google Maps
+              </span>
+            </button>
+          )}
         </div>
 
         {/* Indeks: satu baris per destinasi. Sebelumnya baris membengkak

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { JsonLdDestinasi } from "@/components/json-ld";
 import { Foto } from "@/components/foto";
 import { BadgeVerifikasi, BarisMeta } from "@/components/ui";
 import { DESTINASI, artikelUntukDestinasi, cariDestinasi, destinasiTerkait } from "@/lib/arsip";
@@ -48,6 +49,13 @@ export default async function DetailDestinasi({ params }: { params: Promise<{ id
 
   return (
     <article>
+      <JsonLdDestinasi
+        nama={d.nama}
+        deskripsi={d.ringkas}
+        gambar={utama.src}
+        koordinat={d.koordinat ?? undefined}
+        href={`/destinasi/${d.id}`}
+      />
       <header className="relative">
         <div className="relative max-h-[78svh] overflow-hidden">
           <Foto

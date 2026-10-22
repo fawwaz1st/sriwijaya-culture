@@ -52,13 +52,15 @@ export function KatalogDestinasi({
 
   return (
     <>
-      <div className="mt-8 flex flex-wrap items-center gap-x-1 gap-y-2 border-y border-garis-malam py-2.5">
+      {/* Filter: gulir horizontal di ponsel, tidak bungkus jadi tumpukan
+          chip yang membentur pencarian. Pencarian pindah ke baris sendiri. */}
+      <div className="gulir-tipis mt-8 flex items-center gap-x-1 overflow-x-auto border-y border-garis-malam py-2.5">
         <button
           type="button"
           onClick={() => pilih("")}
           aria-pressed={!aktif}
           className={cn(
-            "px-2.5 py-1 font-mono text-[0.625rem] uppercase tracking-[0.1em] transition-colors",
+            "flex-none px-2.5 py-1 font-mono text-[0.625rem] uppercase tracking-[0.1em] transition-colors",
             !aktif ? "bg-terang text-malam" : "text-terang-2 hover:text-terang",
           )}
         >
@@ -75,7 +77,7 @@ export function KatalogDestinasi({
               onClick={() => pilih(k)}
               aria-pressed={on}
               className={cn(
-                "flex items-center gap-1.5 px-2.5 py-1 font-mono text-[0.625rem] uppercase tracking-[0.1em] transition-colors",
+                "flex flex-none items-center gap-1.5 px-2.5 py-1 font-mono text-[0.625rem] uppercase tracking-[0.1em] transition-colors",
                 on ? "bg-terang text-malam" : "text-terang-2 hover:text-terang",
               )}
             >
@@ -84,18 +86,18 @@ export function KatalogDestinasi({
             </button>
           );
         })}
-
-        <label className="ml-auto flex items-center gap-2">
-          <span className="sr-only">Cari destinasi</span>
-          <input
-            type="search"
-            value={kueri}
-            onChange={(e) => setKueri(e.target.value.slice(0, 80))}
-            placeholder="Cari nama atau wilayah"
-            className="w-44 border border-malam-5 bg-transparent px-2.5 py-1.5 text-[0.8125rem] text-terang placeholder:text-terang-3 focus:border-emas focus:outline-none sm:w-56"
-          />
-        </label>
       </div>
+
+      <label className="mt-3 flex items-center sm:justify-end">
+        <span className="sr-only">Cari destinasi</span>
+        <input
+          type="search"
+          value={kueri}
+          onChange={(e) => setKueri(e.target.value.slice(0, 80))}
+          placeholder="Cari nama atau wilayah"
+          className="w-full border border-malam-5 bg-transparent px-2.5 py-2 text-[0.8125rem] text-terang placeholder:text-terang-3 focus:border-emas focus:outline-none sm:w-56"
+        />
+      </label>
 
       {hasil.length === 0 ? (
         <div className="mt-8">

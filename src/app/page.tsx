@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { JsonLdSitus } from "@/components/json-ld";
 import { Foto } from "@/components/foto";
 import { Peta } from "@/components/peta";
 import { TimelineSejarah } from "@/components/timeline";
@@ -24,6 +25,7 @@ export default function Beranda() {
 
   return (
     <>
+      <JsonLdSitus />
       {/* ================================================================
           HERO
 

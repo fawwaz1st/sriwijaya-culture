@@ -284,7 +284,11 @@ export function AsistenChat() {
 
       {/* --- Panel kunci API (BYOK) --- */}
       {panelKunci && (
-        <div className="border-b border-garis-malam bg-malam-2/60 px-4 py-3.5 sm:px-6">
+        <div
+          role="group"
+          aria-label="Pengaturan kunci API"
+          className="border-b border-garis-malam bg-malam-2/60 px-4 py-3.5 sm:px-6"
+        >
           <div className="mx-auto w-full max-w-[46rem]">
             <p className="meta-emas">Kunci API milikmu</p>
             <p className="mt-1.5 text-[0.8125rem] leading-relaxed text-terang-2">
@@ -325,8 +329,15 @@ export function AsistenChat() {
         </div>
       )}
 
-      {/* --- Percakapan: satu-satunya yang menggulir --- */}
-      <div className="gulir-tipis min-h-0 flex-1 overflow-y-auto">
+      {/* --- Percakapan: satu-satunya yang menggulir ---
+          role=log + aria-live polite: pembaca layar diumumkan saat
+          jawaban baru masuk, tanpa menyela pengguna yang sedang mengetik. */}
+      <div
+        role="log"
+        aria-live="polite"
+        aria-label="Percakapan dengan Sari"
+        className="gulir-tipis min-h-0 flex-1 overflow-y-auto"
+      >
         {kosong ? (
           <div className="mx-auto flex h-full w-full max-w-[46rem] flex-col justify-center px-1 pb-10">
             <p className="meta-emas">Asisten arsip · Palembang</p>

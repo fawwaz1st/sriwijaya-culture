@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { KatalogUMKM } from "@/components/katalog-umkm";
-import { DAFTAR_UMKM, KATEGORI_UMKM, VARIAN_PEMPEK } from "@/lib/arsip";
+import { DAFTAR_UMKM, KATEGORI_UMKM } from "@/lib/arsip";
 
 export const metadata: Metadata = {
   title: "Direktori Usaha Lokal",
@@ -28,7 +28,7 @@ export default function HalamanUMKM() {
       </header>
 
       <Suspense fallback={<p className="meta mt-10">Memuat direktori…</p>}>
-        <KatalogUMKM daftar={DAFTAR_UMKM} kategori={KATEGORI_UMKM} varian={VARIAN_PEMPEK} />
+        <KatalogUMKM daftar={DAFTAR_UMKM} kategori={KATEGORI_UMKM} />
       </Suspense>
 
       <section className="mt-16 border-t border-garis-malam pt-8">
