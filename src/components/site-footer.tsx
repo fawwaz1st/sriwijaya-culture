@@ -18,7 +18,7 @@ export function SiteFooter() {
         <div className="mt-12 grid gap-10 border-t border-garis-malam pt-8 sm:grid-cols-2 lg:grid-cols-4">
           <div>
             <p className="meta">Isi arsip</p>
-            <ul className="mt-3 space-y-1.5 text-[0.8125rem] text-terang-2">
+            <ul className="mt-3 space-y-0.5 text-[0.8125rem] text-terang-2">
               {[
                 { href: "/destinasi", label: "Destinasi wisata" },
                 { href: "/umkm", label: "Usaha lokal" },
@@ -26,7 +26,10 @@ export function SiteFooter() {
                 { href: "/asisten", label: "Asisten Sari" },
               ].map((l) => (
                 <li key={l.href}>
-                  <Link href={l.href} className="tautan hover:text-terang">
+                  <Link
+                    href={l.href}
+                    className="tautan inline-flex min-h-8 items-center hover:text-terang"
+                  >
                     {l.label}
                   </Link>
                 </li>
@@ -36,14 +39,14 @@ export function SiteFooter() {
 
           <div>
             <p className="meta">Tentang data</p>
-            <ul className="mt-3 space-y-1.5 text-[0.8125rem] text-terang-2">
+            <ul className="mt-3 space-y-0.5 text-[0.8125rem] text-terang-2">
               <li>
-                <Link href="/metodologi" className="tautan hover:text-terang">
+                <Link href="/metodologi" className="tautan inline-flex min-h-8 items-center hover:text-terang">
                   Metodologi dan sumber
                 </Link>
               </li>
               <li>
-                <Link href="/tentang" className="tautan hover:text-terang">
+                <Link href="/tentang" className="tautan inline-flex min-h-8 items-center hover:text-terang">
                   Tentang tim
                 </Link>
               </li>

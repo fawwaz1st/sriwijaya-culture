@@ -15,7 +15,9 @@ import { cn } from "@/lib/cn";
  * dibuka sebagai panel samping, bukan selalu memakan sepertiga layar.
  *
  * Yang membedakan dari chatbot biasa: setiap jawaban membawa nomor
- * rujukan yang bisa dibuka, dan mode penyedia ditampilkan terus terang.
+ * rujukan yang bisa dibuka, dan asal jawabannya dinyatakan terus terang
+ * (dari arsip atau tidak ada di arsip), tanpa menyebut nama penyedia
+ * internal mana pun.
  */
 
 interface Rujukan {
@@ -38,7 +40,6 @@ export function AsistenChat() {
   const [pesan, setPesan] = useState<PesanLokal[]>([]);
   const [sibuk, setSibuk] = useState(false);
   const [galat, setGalat] = useState<string | null>(null);
-  const [mode, setMode] = useState<string | null>(null);
   const [panel, setPanel] = useState(false);
   const ujung = useRef<HTMLDivElement>(null);
   const kotak = useRef<HTMLTextAreaElement>(null);
@@ -99,7 +100,6 @@ export function AsistenChat() {
         }),
       });
 
-      setMode(res.headers.get("X-Sari-Mode"));
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
       const tipe = res.headers.get("Content-Type") || "";
@@ -154,7 +154,23 @@ export function AsistenChat() {
 
   const kueriTerakhir = [...pesan].reverse().find((p) => p.peran === "pengguna")?.teks ?? "";
   const rujukan = kueriTerakhir ? rujukanUntuk(kueriTerakhir) : [];
-  const rujukanTerakhir = [...pesan].reverse().find((p) => p.peran === "sari")?.sumber ?? [];
+  const jawabanTerakhir = [...pesan].reverse().find((p) => p.peran === "sari");
+  const rujukanTerakhir = jawabanTerakhir?.sumber ?? [];
+
+  /**
+   * Status dibaca dari jawaban terakhir, bukan dari satu variabel global.
+   *
+   * Versi sebelumnya menyimpan `mode` untuk seluruh percakapan, sehingga
+   * satu pertanyaan di luar topik mengubah label di atas menjadi "Tidak
+   * ada di arsip" padahal jawaban yang terlihat di layar tetap punya
+   * rujukan. Sekarang label mengikuti apa yang benar-benar terakhir
+   * dijawab.
+   */
+  const statusTerakhir = !jawabanTerakhir
+    ? "Siap menjawab"
+    : rujukanTerakhir.length === 0
+      ? "Tidak ada di arsip"
+      : "Dijawab dari arsip";
 
   return (
     <div
@@ -166,18 +182,17 @@ export function AsistenChat() {
         kosong && "min-h-[calc(100svh-10rem)]",
       )}
     >
-      {/* --- Bilah status tipis --- */}
-      <div className="flex items-center justify-between gap-3 border-b border-garis-malam py-2">
+      {/* --- Bilah status tipis ---
+          Jangan tampilkan nama penyedia internal ("tanpa-kunci") ke
+          pengguna. Yang penting bagi mereka hanya: apakah jawaban ini
+          dari model atau langsung dari arsip. */}
+      <div className="flex items-center justify-between gap-3 border-b border-garis-malam py-2.5">
         <p className="meta flex items-center gap-2">
           <span
             aria-hidden="true"
             className={cn("h-1.5 w-1.5 rounded-full", sibuk ? "denyut bg-emas" : "bg-ok")}
           />
-          {mode === "arsip-langsung"
-            ? "Mode arsip langsung"
-            : mode
-              ? `Model: ${mode}`
-              : "Siap menjawab dari arsip"}
+          {sibuk ? "Menyusun jawaban" : statusTerakhir}
         </p>
 
         <div className="flex items-center gap-3">
@@ -199,7 +214,6 @@ export function AsistenChat() {
               type="button"
               onClick={() => {
                 setPesan([]);
-                setMode(null);
                 setGalat(null);
                 setPanel(false);
                 kotak.current?.focus();
@@ -252,27 +266,36 @@ export function AsistenChat() {
                     </li>
                   ) : (
                     <li key={m.id}>
-                      <p className="meta-emas mb-1.5">Sari</p>
-                      <p className="whitespace-pre-wrap text-[0.9375rem] leading-[1.7] text-terang">
-                        {m.teks}
-                      </p>
-                      {m.sumber.length > 0 && (
-                        <ul className="mt-3 flex flex-wrap gap-1.5">
-                          {m.sumber.map((s) => (
-                            <li key={s.no}>
-                              <Link
-                                href={s.href}
-                                className="group flex items-center gap-1.5 border border-garis-malam px-2 py-1 font-mono text-[0.5625rem] uppercase tracking-[0.08em] text-terang-2 transition-colors hover:border-emas hover:text-emas"
-                              >
-                                <span className="tabular text-emas">[{s.no}]</span>
-                                <span className="max-w-[22ch] truncate normal-case tracking-normal">
-                                  {s.judul}
-                                </span>
-                              </Link>
-                            </li>
-                          ))}
-                        </ul>
-                      )}
+                      <div className="flex gap-3">
+                        <span
+                          aria-hidden="true"
+                          className="mt-0.5 grid h-6 w-6 flex-none place-items-center bg-emas/15 font-display text-[0.625rem] font-medium text-emas"
+                        >
+                          S
+                        </span>
+                        <div className="min-w-0 flex-1">
+                          <p className="whitespace-pre-wrap text-[0.9375rem] leading-[1.7] text-terang">
+                            {m.teks}
+                          </p>
+                          {m.sumber.length > 0 && (
+                            <ul className="mt-3 flex flex-wrap gap-1.5">
+                              {m.sumber.map((s) => (
+                                <li key={s.no}>
+                                  <Link
+                                    href={s.href}
+                                    className="group flex items-center gap-1.5 border border-garis-malam px-2 py-1 font-mono text-[0.5625rem] uppercase tracking-[0.08em] text-terang-2 transition-colors hover:border-emas hover:text-emas"
+                                  >
+                                    <span className="tabular text-emas">[{s.no}]</span>
+                                    <span className="max-w-[22ch] truncate normal-case tracking-normal">
+                                      {s.judul}
+                                    </span>
+                                  </Link>
+                                </li>
+                              ))}
+                            </ul>
+                          )}
+                        </div>
+                      </div>
                     </li>
                   ),
                 )}

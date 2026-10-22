@@ -147,7 +147,7 @@ export default function Beranda() {
           </h2>
           <Link
             href="/destinasi"
-            className="meta hidden shrink-0 border-b border-terang-3 pb-1 text-terang-2 hover:border-emas hover:text-emas sm:block"
+            className="meta hidden min-h-8 shrink-0 items-center border-b border-terang-3 text-terang-2 hover:border-emas hover:text-emas sm:inline-flex"
           >
             Semua destinasi →
           </Link>
@@ -196,7 +196,7 @@ export default function Beranda() {
               Dibangun April 1962 dengan dana pampasan perang Jepang, mulai
               digunakan 1965. Bentang tengahnya pernah bisa diangkat.
             </p>
-            <Link href={`/artikel/${ARTIKEL[0].id}`} className="tautan meta mt-4 inline-block text-emas">
+            <Link href={`/artikel/${ARTIKEL[0].id}`} className="tautan meta mt-4 inline-flex min-h-8 items-center text-emas">
               Baca sejarahnya →
             </Link>
 
@@ -306,7 +306,7 @@ export default function Beranda() {
                 Seribu tiga ratus tahun, diringkas.
               </h2>
             </div>
-            <Link href="/artikel" className="meta border-b border-terang-3 pb-1 text-terang-2 hover:border-emas hover:text-emas">
+            <Link href="/artikel" className="meta inline-flex min-h-8 items-center border-b border-terang-3 text-terang-2 hover:border-emas hover:text-emas">
               Baca catatan sejarah →
             </Link>
           </div>
@@ -324,7 +324,7 @@ export default function Beranda() {
           <h2 className="display max-w-[20ch] text-[clamp(2rem,4.6vw,3.5rem)] text-terang">
             Pahami tempatnya sebelum datang.
           </h2>
-          <Link href="/artikel" className="meta hidden shrink-0 border-b border-terang-3 pb-1 text-terang-2 hover:border-emas hover:text-emas sm:block">
+          <Link href="/artikel" className="meta hidden min-h-8 shrink-0 items-center border-b border-terang-3 text-terang-2 hover:border-emas hover:text-emas sm:inline-flex">
             Semua catatan →
           </Link>
         </div>
@@ -380,7 +380,7 @@ export default function Beranda() {
                 Usaha yang menghidupi kota.
               </h2>
             </div>
-            <Link href="/umkm" className="meta border-b border-terang-3 pb-1 text-terang-2 hover:border-emas hover:text-emas">
+            <Link href="/umkm" className="meta inline-flex min-h-8 items-center border-b border-terang-3 text-terang-2 hover:border-emas hover:text-emas">
               Buka direktori →
             </Link>
           </div>

@@ -49,7 +49,7 @@ export function Peta({
     `&t=${lapisan}&z=${aktif ? 16 : 13}&hl=id&output=embed`;
 
   return (
-    <div className="border border-garis-malam">
+    <div className="pulau-gelap border border-garis-malam bg-malam-2">
       {/* Bar kontrol */}
       <div className="flex flex-wrap items-center justify-between gap-2 border-b border-garis-malam bg-malam-2 px-3 py-2">
         <div className="flex items-center gap-1">
@@ -65,7 +65,7 @@ export function Peta({
               onClick={() => setLapisan(v)}
               aria-pressed={lapisan === v}
               className={cn(
-                "px-2.5 py-1 font-mono text-[0.5625rem] uppercase tracking-[0.1em] transition-colors",
+                "flex min-h-8 items-center px-2.5 py-1 font-mono text-[0.5625rem] uppercase tracking-[0.1em] transition-colors",
                 lapisan === v ? "bg-terang text-malam" : "text-terang-2 hover:text-terang",
               )}
             >
@@ -81,7 +81,7 @@ export function Peta({
         {aktif && (
           <Link
             href={`/destinasi/${aktif.id}`}
-            className="flex items-center gap-1.5 bg-emas px-2.5 py-1 font-mono text-[0.5625rem] uppercase tracking-[0.1em] text-malam"
+            className="flex min-h-8 items-center gap-1.5 bg-emas px-2.5 py-1 font-mono text-[0.5625rem] uppercase tracking-[0.1em] text-malam"
           >
             Buka halaman
             <span aria-hidden="true">→</span>
@@ -195,7 +195,7 @@ export function PetaDestinasi({ destinasi }: { destinasi: Destinasi }) {
               onClick={() => setLapisan(v)}
               aria-pressed={lapisan === v}
               className={cn(
-                "px-2 py-0.5 font-mono text-[0.5rem] uppercase tracking-[0.1em] transition-colors",
+                "flex min-h-7 items-center px-2 py-0.5 font-mono text-[0.5rem] uppercase tracking-[0.1em] transition-colors",
                 lapisan === v ? "bg-gelap text-kertas" : "text-gelap-2 hover:text-gelap",
               )}
             >

@@ -40,10 +40,10 @@
   /* --- Tinta ------------------------------------------------------------ */
   --color-terang: #f2efe8;
   --color-terang-2: #b9b5ab;
-  --color-terang-3: #8a877f;
+  --color-terang-3: #a3a099;
   --color-gelap: #14170f;
   --color-gelap-2: #4a4f45;
-  --color-gelap-3: #75796d;
+  --color-gelap-3: #5a5e52;
 
   /* --- Aksen: emas songket, dipakai hemat ------------------------------ */
   --color-emas: #d9a832;
@@ -62,6 +62,10 @@
   --color-ok: #4f9d6f;
   --color-warn: #c9963a;
   --color-bahaya: #c9635a;
+  /* Versi tinta untuk latar kertas: kontras >= 5.3:1. */
+  --color-ok-tinta: #2f6f4a;
+  --color-warn-tinta: #7a5a12;
+  --color-bahaya-tinta: #8f3b33;
 
   /* --- Tipografi -------------------------------------------------------- */
   --font-display: var(--font-fraunces), Georgia, "Times New Roman", serif;
@@ -310,6 +314,20 @@
     object-fit: cover;
   }
 }
+
+/* Status verifikasi di atas kertas butuh tinta, bukan warna layar.
+   Ditulis di luar layer agar menang atas utilitas text-* Tailwind. */
+.kertas .status-ok { color: var(--color-ok-tinta); }
+.kertas .status-warn { color: var(--color-warn-tinta); }
+.kertas .status-bahaya { color: var(--color-bahaya-tinta); }
+
+/* Peta adalah pulau gelap di dalam bagian kertas. Tanpa ini, aturan
+   .kertas .meta menimpa tinta terang dan teks jadi tak terbaca. */
+.pulau-gelap .meta { color: var(--color-terang-3); }
+.pulau-gelap .meta-emas { color: var(--color-emas); }
+.pulau-gelap .status-ok { color: var(--color-ok); }
+.pulau-gelap .status-warn { color: var(--color-warn); }
+.pulau-gelap .status-bahaya { color: var(--color-bahaya); }
 
 @layer utilities {
   .gulir-tipis {

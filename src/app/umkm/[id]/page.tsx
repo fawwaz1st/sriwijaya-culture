@@ -46,11 +46,11 @@ export default async function DetailUMKM({ params }: { params: Promise<{ id: str
               aria-label="Remah roti"
               className="flex items-center gap-2 font-mono text-[0.5625rem] uppercase tracking-[0.12em] text-terang-2"
             >
-              <Link href="/umkm" className="hover:text-terang">
+              <Link href="/umkm" className="inline-flex min-h-8 items-center hover:text-terang">
                 Usaha
               </Link>
               <span aria-hidden="true">/</span>
-              <span className="text-terang">{u.nama}</span>
+              <span className="inline-flex min-h-8 items-center text-terang">{u.nama}</span>
             </nav>
             <p className="meta-emas mt-3">
               {u.kategori} · {u.wilayah}
@@ -72,7 +72,7 @@ export default async function DetailUMKM({ params }: { params: Promise<{ id: str
                     : "border border-warn/40 bg-warn/8 p-4"
                 }
               >
-                <p className={`status ${u.statusData === "rujukan-umum" ? "text-ok" : "text-warn"}`}>
+                <p className={`status ${u.statusData === "rujukan-umum" ? "text-ok status-ok" : "text-warn status-warn"}`}>
                   {u.statusData === "rujukan-umum" ? "Rujukan umum" : "Data demonstrasi"}
                 </p>
                 <p className="mt-2 text-[0.8125rem] leading-relaxed text-gelap-2">
@@ -113,7 +113,7 @@ export default async function DetailUMKM({ params }: { params: Promise<{ id: str
 
               {u.catatanVerifikasi && (
                 <div className="mt-8 border border-warn/40 bg-warn/8 p-4">
-                  <p className="status text-warn">Catatan verifikasi</p>
+                  <p className="status text-warn status-warn">Catatan verifikasi</p>
                   <p className="mt-2 text-[0.8125rem] leading-relaxed text-gelap-2">{u.catatanVerifikasi}</p>
                 </div>
               )}
@@ -127,7 +127,7 @@ export default async function DetailUMKM({ params }: { params: Promise<{ id: str
                         href={s.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="tautan text-[0.875rem] font-medium text-gelap"
+                        className="tautan inline-flex min-h-6 items-center text-[0.875rem] font-medium text-gelap"
                       >
                         {s.judul}
                       </a>

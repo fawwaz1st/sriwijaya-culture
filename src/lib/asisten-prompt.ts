@@ -18,7 +18,7 @@ export const SYSTEM_PROMPT = `Kamu adalah Sari, asisten arsip digital Sriwijaya 
 
 ATURAN WAJIB, tidak boleh dilanggar:
 1. Jawab HANYA berdasarkan KONTEKS di bawah. Kamu tidak punya pengetahuan lain yang boleh dipakai.
-2. Kalau KONTEKS tidak memuat jawabannya, katakan dengan jelas: "Belum ada di arsip kami." Lalu sebutkan topik terdekat yang memang ada di konteks.
+2. Kalau KONTEKS kosong atau tidak memuat jawabannya, balas PERSIS satu kalimat ini tanpa tambahan apa pun: "Belum ada di arsip kami. Coba sebut nama tempat atau peristiwa yang lebih spesifik." Jangan menyebut "topik yang tersedia", jangan mengarang daftar, jangan menambahkan kalimat lain.
 3. JANGAN mengarang harga tiket, jam buka, alamat, nomor telepon, atau nama usaha. Kalau konteks bilang belum terverifikasi, sampaikan itu.
 4. Legenda rakyat disebut "legenda", bukan peristiwa sejarah. Jangan mencampur keduanya.
 5. Setiap kali memakai sebuah sumber, tulis nomornya dalam kurung siku, contoh [1] atau [2][3].
@@ -26,8 +26,20 @@ ATURAN WAJIB, tidak boleh dilanggar:
 7. Kalau pengguna meminta rekomendasi, sebutkan nama yang ada di konteks beserta alasannya dalam satu kalimat.
 8. Jangan memakai emoji. Jangan memakai tanda pisah panjang (em dash) atau tanda pisah sedang (en dash). Pakai koma, titik, atau pecah kalimat.
 9. Tulis nama tempat persis seperti di konteks. Jangan menambah kota atau provinsi yang tidak disebut konteks.
+10. Jangan pernah menyebut kata "konteks", "dokumen", "model", atau "sistem" kepada pengguna. Bicara seperti pustakawan, bukan seperti mesin.
 
 GAYA: seperti pustakawan yang ramah dan teliti. Tidak berlebihan, tidak menjual.`;
+
+/**
+ * Pesan saat arsip tidak punya jawaban.
+ *
+ * Ditulis tangan, bukan hasil model. Model yang diberi konteks kosong
+ * cenderung menambahkan kalimat aneh seperti "topik yang tersedia:
+ * tidak ada". Jawaban ini dikembalikan langsung tanpa memanggil model,
+ * jadi bentuknya selalu sama dan selalu masuk akal.
+ */
+export const PESAN_TIDAK_ADA =
+  "Belum ada di arsip kami. Coba sebut nama tempat, usaha, atau peristiwa yang lebih spesifik, misalnya Jembatan Ampera, songket, atau Sriwijaya.";
 
 export interface KonteksSumber {
   no: number;
@@ -35,6 +47,8 @@ export interface KonteksSumber {
   jenis: string;
   href: string;
   meta: string;
+  /** Dua-tiga kalimat pertama yang relevan, untuk ringkasan tanpa model. */
+  cuplikan?: string;
 }
 
 /**
@@ -83,18 +97,20 @@ export function susunKonteks(kueri: string): {
   hasil.forEach((h, i) => {
     const no = i + 1;
     const d: Dokumen = h.dokumen;
+    const potong = potonganRelevan(d, kueri);
     sumber.push({
       no,
       judul: d.judul,
       jenis: d.jenis,
       href: d.href,
       meta: d.meta,
+      cuplikan: potong.replace(/\s+/g, " ").trim().slice(0, 320),
     });
     blok.push(
       `[${no}] ${d.jenis.toUpperCase()}: ${d.judul}\n` +
         `Lokasi arsip: ${d.href}\n` +
         `Keterangan: ${d.meta}\n` +
-        `Isi:\n${potonganRelevan(d, kueri)}`,
+        `Isi:\n${potong}`,
     );
   });
 
@@ -110,11 +126,19 @@ export function teksPesan(pesan: UIMessage): string {
     .trim();
 }
 
-/** Sapaan awal, ditulis tangan, bukan hasil model. */
+/**
+ * Sapaan awal, ditulis tangan, bukan hasil model.
+ *
+ * Setiap pertanyaan di sini harus benar-benar bisa dijawab arsip.
+ * "Asal-usul nama Sungai Musi" pernah ada di daftar ini dan selalu
+ * dijawab "belum ada di arsip": entri Sungai Musi tidak memuat etimologi.
+ * Saran yang berujung pada jawaban kosong lebih buruk daripada tidak ada
+ * saran sama sekali, jadi diganti dengan yang datanya memang ada.
+ */
 export const SAPAAN = [
   "Apa yang membedakan Jembatan Ampera dari jembatan lain?",
   "Di mana saya bisa membeli songket asli?",
-  "Ceritakan asal-usul nama Sungai Musi.",
+  "Apa yang bisa dilihat di Sungai Musi?",
   "Destinasi mana yang cocok untuk belajar sejarah Sriwijaya?",
 ];
 

@@ -3,76 +3,63 @@ import { TIMELINE, cariArtikel, cariDestinasi } from "@/lib/arsip";
 import { cn } from "@/lib/cn";
 
 /**
- * Garis waktu proporsional.
+ * Garis waktu sebagai pita era.
  *
- * Posisi x dihitung dari tahun sebenarnya terhadap rentang 671 sampai
- * 2023. Jadi pembaca langsung melihat bahwa dua belas dari sembilan belas
- * tonggak menumpuk di dua abad terakhir. Itu informasi, bukan dekorasi.
- *
- * Sumbu digambar sebagai garis tipis dengan tonggak naik-turun, lalu
- * daftar di bawahnya berfungsi sebagai tabel, bukan kartu.
+ * Sumbu tahun proporsional sudah dicoba dan gagal secara keterbacaan:
+ * 12 dari 19 tonggak jatuh di dua abad terakhir, sehingga dua belas
+ * label bertumpuk di 8% lebar terakhir. Pita era menyampaikan informasi
+ * yang sama (di mana sejarahnya menumpuk) tanpa label yang saling
+ * menimpa, lalu daftar kronologis di bawahnya menjadi tabelnya.
  */
 export function TimelineSejarah() {
   const peristiwa = [...TIMELINE.peristiwa].sort((a, b) => a.tahun - b.tahun);
-  const tahun = peristiwa.map((p) => p.tahun);
-  const awal = Math.min(...tahun);
-  const akhir = Math.max(...tahun);
-  const span = akhir - awal;
-  const posisi = (t: number) => ((t - awal) / span) * 100;
 
-  const abad = new Map<number, number>();
-  for (const p of peristiwa) {
-    const k = Math.floor(p.tahun / 100) * 100;
-    abad.set(k, (abad.get(k) ?? 0) + 1);
-  }
-  const daftarAbad = [...abad.entries()].sort((a, b) => a[0] - b[0]);
-  const maks = Math.max(...daftarAbad.map(([, n]) => n));
+  /**
+   * Pita era, bukan sumbu tahun proporsional.
+   *
+   * Percobaan pertama memetakan tahun ke posisi x. Hasilnya jujur secara
+   * matematis tapi tidak terbaca: 12 dari 19 tonggak jatuh di dua abad
+   * terakhir, jadi dua belas label bertumpuk di 8% lebar terakhir.
+   * Informasi yang sama disampaikan sebagai pita per era dengan jumlah
+   * tonggak, lalu daftar kronologis di bawahnya.
+   */
+  const era = [
+    { label: "Sriwijaya", dari: 600, sampai: 1399 },
+    { label: "Kesultanan", dari: 1400, sampai: 1819 },
+    { label: "Kolonial", dari: 1820, sampai: 1944 },
+    { label: "Republik", dari: 1945, sampai: 2100 },
+  ].map((e) => ({
+    ...e,
+    jumlah: peristiwa.filter((p) => p.tahun >= e.dari && p.tahun <= e.sampai).length,
+  }));
+  const maks = Math.max(...era.map((e) => e.jumlah), 1);
 
   return (
     <div>
-      {/* Kepadatan per abad: batang tipis, tanpa kotak. */}
-      <div className="flex items-end gap-[3px]" role="img" aria-label="Jumlah tonggak per abad">
-        {daftarAbad.map(([k, n]) => (
-          <div key={k} className="group relative flex-1" title={`Abad ${k}: ${n} tonggak`}>
-            <div
-              className={cn("w-full transition-colors", n === maks ? "bg-emas" : "bg-terang-3/40")}
-              style={{ height: `${Math.max(4, (n / maks) * 64)}px` }}
-            />
-            <span className="tabular mt-1.5 block text-center font-mono text-[0.5rem] text-terang-3">
-              {String(k).slice(2)}
-            </span>
-          </div>
+      {/* Pita era: satu blok per zaman, tinggi sebanding jumlah tonggak. */}
+      <ol className="grid grid-cols-2 gap-px border border-garis-malam bg-garis-malam sm:grid-cols-4">
+        {era.map((e) => (
+          <li key={e.label} className="bg-malam-2 p-3 sm:p-4">
+            <p className="font-mono text-[0.5rem] uppercase tracking-[0.1em] text-terang-3">
+              {e.dari}–{e.sampai === 2100 ? "kini" : e.sampai}
+            </p>
+            <p className="mt-1 flex items-baseline gap-2">
+              <span
+                className={cn(
+                  "tabular font-display text-[clamp(1.5rem,3vw,2.25rem)] leading-none",
+                  e.jumlah === maks ? "text-emas" : "text-terang",
+                )}
+              >
+                {e.jumlah}
+              </span>
+              <span className="font-mono text-[0.5625rem] uppercase tracking-[0.08em] text-terang-3">
+                tonggak
+              </span>
+            </p>
+            <p className="mt-2 font-display text-[0.9375rem] leading-tight text-terang-2">{e.label}</p>
+          </li>
         ))}
-      </div>
-
-      {/* Sumbu: tonggak naik-turun supaya tahun tidak saling menimpa. */}
-      <div className="gulir-tipis mt-6 overflow-x-auto pb-2">
-        <div className="relative min-w-[620px]">
-          <div className="absolute inset-x-0 top-10 h-px bg-garis-malam" aria-hidden="true" />
-          <ol className="relative h-20">
-            {peristiwa.map((p, i) => {
-              const naik = i % 2 === 0;
-              return (
-                <li
-                  key={`${p.tahun}-${i}`}
-                  className="absolute -translate-x-1/2"
-                  style={{ left: `${posisi(p.tahun)}%`, top: naik ? 0 : 44 }}
-                >
-                  <div className="flex flex-col items-center">
-                    {naik && (
-                      <span className="tabular mb-1 font-mono text-[0.5625rem] text-terang">{p.tahun}</span>
-                    )}
-                    <span className="h-1.5 w-1.5 rounded-full bg-emas" aria-hidden="true" />
-                    {!naik && (
-                      <span className="tabular mt-1 font-mono text-[0.5625rem] text-terang-3">{p.tahun}</span>
-                    )}
-                  </div>
-                </li>
-              );
-            })}
-          </ol>
-        </div>
-      </div>
+      </ol>
 
       {/* Tabel tonggak. */}
       <ol className="mt-4 border-t border-garis-malam">

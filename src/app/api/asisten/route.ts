@@ -8,6 +8,7 @@ import {
 import { createOpenAICompatible } from "@ai-sdk/openai-compatible";
 import {
   SYSTEM_PROMPT,
+  PESAN_TIDAK_ADA,
   jawabanLangsung,
   susunKonteks,
   teksPesan,
@@ -113,12 +114,34 @@ function jawabanDariArsip(kueri: string): { teks: string; sumber: KonteksSumber[
     };
   }
 
-  const baris = sumber.map((s) => `[${s.no}] ${s.judul} (${s.meta})`).join("; ");
+  /**
+   * Susun ringkasan dari dokumen yang benar-benar cocok.
+   *
+   * Sebelumnya fungsi ini mengembalikan kalimat yang membocorkan mesin:
+   * "berjalan dalam mode arsip langsung, tanpa model bahasa". Pengunjung
+   * tidak perlu tahu itu. Yang mereka butuhkan: apa yang ditemukan, dari
+   * mana, dan ke mana harus pergi berikutnya.
+   */
+  const utama = sumber[0];
+  const lain = sumber.slice(1);
+
+  const pembuka =
+    sumber.length === 1
+      ? `Yang paling dekat dengan pertanyaan Anda ada di "${utama.judul}".`
+      : `Ada ${sumber.length} lembar arsip yang menyinggung hal ini. Yang paling dekat: "${utama.judul}".`;
+
+  const rincian = utama.cuplikan
+    ? utama.cuplikan.split("\n").filter(Boolean).slice(0, 2).join(" ")
+    : "";
+
+  const sisa = lain.length
+    ? ` Lembar lain yang mungkin berguna: ${lain.map((s) => s.judul).join(", ")}.`
+    : "";
 
   return {
     teks:
-      `Asisten sedang berjalan dalam mode arsip langsung, tanpa model bahasa, jadi jawaban ini hanya daftar rujukan paling relevan: ${baris}. ` +
-      `Buka salah satu lembar di rujukan untuk membaca isinya.`,
+      [pembuka, rincian, sisa].filter(Boolean).join("\n\n") +
+      "\n\nBuka rujukan di bawah untuk membaca lengkapnya.",
     sumber,
   };
 }
@@ -167,6 +190,18 @@ export async function POST(req: Request) {
 
   const konteks = susunKonteks(kueriAman);
 
+  /**
+   * Kalau arsip tidak punya dokumen yang cocok, jangan panggil model.
+   *
+   * Model yang diberi konteks kosong tetap mencoba menjawab dan hasilnya
+   * sering aneh ("Topik yang tersedia: tidak ada"). Karena jawaban untuk
+   * kasus ini sudah pasti, lebih baik dikembalikan langsung: lebih cepat,
+   * lebih konsisten, dan tidak bisa mengarang.
+   */
+  if (konteks.kosong) {
+    return balasanTeks(PESAN_TIDAK_ADA, "arsip-kosong", 0);
+  }
+
   // --- Tingkat 1: kunci valid ---
   const utama = penyediaUtama();
   if (utama) {
@@ -207,9 +242,11 @@ export async function POST(req: Request) {
 
   // --- Tingkat 2: tanpa kunci ---
   // Batas waktu keras supaya pengguna tidak menunggu tanpa kepastian.
+  // 6 detik: penyedia sehat menjawab < 2 detik; kalau lewat dari ini,
+  // jawaban arsip langsung lebih baik daripada indikator muat panjang.
   try {
     const kendali = new AbortController();
-    const batas = setTimeout(() => kendali.abort(), 14000);
+    const batas = setTimeout(() => kendali.abort(), 6000);
 
     const res = await fetch(PENYEDIA_TANPA_KUNCI.baseURL, {
       method: "POST",

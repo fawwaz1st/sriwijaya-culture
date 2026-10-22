@@ -21,9 +21,11 @@ export const metadata: Metadata = {
 export default function HalamanAsisten() {
   return (
     <div className="mx-auto max-w-[1100px] px-5 pb-16 pt-20 sm:px-8 lg:px-12">
-      <AsistenChat />
+      <div className="border border-garis-malam bg-malam-2/40 px-4 sm:px-6">
+        <AsistenChat />
+      </div>
 
-      <p className="mt-8 border-t border-garis-malam pt-4 text-[0.75rem] leading-relaxed text-terang-3">
+      <p className="mt-6 text-[0.75rem] leading-relaxed text-terang-3">
         Sari mencari dokumen di arsip lebih dulu, lalu merangkai jawaban hanya
         dari dokumen itu. Tanpa dokumen yang cocok, jawabannya &ldquo;belum ada
         di arsip&rdquo;. Harga, jam buka, dan kontak tidak pernah dikarang.

@@ -146,9 +146,9 @@ export function KatalogDestinasi({
                   </div>
                   <div className="mt-3 flex flex-1 flex-col">
                     <p className="meta">{d.kategori.join(" · ")}</p>
-                    <h3 className="mt-1 font-display text-lg leading-tight text-terang group-hover:text-emas">
+                    <h2 className="mt-1 font-display text-lg leading-tight text-terang group-hover:text-emas">
                       {d.nama}
-                    </h3>
+                    </h2>
                     <p className="mt-1 line-clamp-2 text-[0.75rem] leading-relaxed text-terang-2">
                       {d.ringkas}
                     </p>

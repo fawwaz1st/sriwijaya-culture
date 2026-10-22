@@ -73,12 +73,12 @@ export function Tombol({
   panah?: boolean;
 } & Omit<React.ComponentProps<typeof Link>, "href" | "className" | "children">) {
   const dasar =
-    "group inline-flex items-center justify-center gap-2 font-mono text-[0.6875rem] uppercase tracking-[0.12em] transition-colors duration-300";
+    "group inline-flex min-h-11 items-center justify-center gap-2 px-5 py-3 font-mono text-[0.6875rem] uppercase tracking-[0.12em] transition-colors duration-300";
   const gaya = {
-    terang: "bg-terang px-5 py-3 text-malam hover:bg-emas",
-    garis: "border border-terang/30 px-5 py-3 text-terang hover:border-terang",
-    gelap: "bg-gelap px-5 py-3 text-kertas hover:bg-emas-tinta",
-    "garis-gelap": "border border-gelap/25 px-5 py-3 text-gelap hover:border-gelap",
+    terang: "bg-terang text-malam hover:bg-emas",
+    garis: "border border-terang/30 text-terang hover:border-terang",
+    gelap: "bg-gelap text-kertas hover:bg-emas-tinta",
+    "garis-gelap": "border border-gelap/25 text-gelap hover:border-gelap",
   }[varian];
 
   return (
@@ -96,7 +96,11 @@ export function Tombol({
 /** Badge status verifikasi. */
 export function BadgeVerifikasi({ tingkat }: { tingkat: string }) {
   const warna =
-    tingkat === "tinggi" ? "text-ok" : tingkat === "sedang" ? "text-warn" : "text-bahaya";
+    tingkat === "tinggi"
+      ? "text-ok status-ok"
+      : tingkat === "sedang"
+        ? "text-warn status-warn"
+        : "text-bahaya status-bahaya";
   return <span className={cn("status", warna)}>{labelVerifikasi(tingkat)}</span>;
 }
 

@@ -65,11 +65,11 @@ export default async function DetailArtikel({ params }: { params: Promise<{ id: 
               aria-label="Remah roti"
               className="flex items-center gap-2 font-mono text-[0.5625rem] uppercase tracking-[0.12em] text-terang-2"
             >
-              <Link href="/artikel" className="hover:text-terang">
+              <Link href="/artikel" className="inline-flex min-h-8 items-center hover:text-terang">
                 Sejarah
               </Link>
               <span aria-hidden="true">/</span>
-              <span className="line-clamp-1 text-terang">{a.kategori}</span>
+              <span className="line-clamp-1 inline-flex min-h-8 items-center text-terang">{a.kategori}</span>
             </nav>
             <p className="meta-emas mt-3">
               {a.kategori} · {tanggalPanjang(a.tanggal)} · {menit} menit baca · {a.sumber.length} sumber
@@ -145,7 +145,7 @@ export default async function DetailArtikel({ params }: { params: Promise<{ id: 
                         href={s.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="tautan text-[0.875rem] font-medium text-gelap"
+                        className="tautan inline-flex min-h-6 items-center text-[0.875rem] font-medium text-gelap"
                       >
                         {s.judul}
                       </a>

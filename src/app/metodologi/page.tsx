@@ -198,7 +198,7 @@ export default function HalamanMetodologi() {
                   href={x.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="tautan text-[0.8125rem] font-medium leading-snug text-terang"
+                  className="tautan inline-flex min-h-6 items-center text-[0.8125rem] font-medium leading-snug text-terang"
                 >
                   {x.judul}
                 </a>
@@ -213,7 +213,7 @@ export default function HalamanMetodologi() {
 
       <p className="mt-10 border-t border-garis-malam pt-5 text-[0.8125rem] leading-relaxed text-terang-2">
         Menemukan kesalahan? Arsip ini terbuka untuk koreksi. Buka{" "}
-        <Link href="/tentang" className="tautan font-medium text-terang">
+        <Link href="/tentang" className="tautan inline-flex min-h-6 items-center font-medium text-terang">
           halaman tentang
         </Link>{" "}
         untuk melihat siapa yang menyusunnya.
