@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Foto } from "@/components/foto";
-import { AtlasMap } from "@/components/atlas-map";
+import { Peta } from "@/components/peta";
 import { TimelineSejarah } from "@/components/timeline";
 import { ARTIKEL, DAFTAR_UMKM, DESTINASI, statistikArsip } from "@/lib/arsip";
 
@@ -48,9 +48,9 @@ export default function Beranda() {
           </h1>
 
           <div className="mt-8 flex flex-col gap-6 border-t border-terang/15 pt-6 sm:flex-row sm:items-end sm:justify-between">
-            <p className="baca-malam max-w-[42ch] text-[0.9375rem]">
-              Destinasi, usaha lokal, dan catatan sejarah Palembang. Setiap angka
-              menunjuk sumber. Yang belum pasti ditandai belum pasti.
+            <p className="baca-malam max-w-[40ch] text-[0.9375rem]">
+              Tempat, usaha, dan cerita dari Palembang. Tiap angka ada sumbernya,
+              dan yang belum jelas kami bilang belum jelas.
             </p>
 
             <div className="flex flex-wrap items-center gap-2.5 sm:gap-3">
@@ -151,8 +151,9 @@ export default function Beranda() {
               <Foto
                 src={ampera.gambar[0].src}
                 alt={ampera.gambar[0].caption}
+                rasioPaksa="4 / 5"
                 sizes="(max-width: 768px) 100vw, 40vw"
-                className="w-full transition-[filter] duration-700 group-hover:brightness-110"
+                className="w-full object-cover transition-[filter] duration-700 group-hover:brightness-110"
               />
               <span className="absolute left-0 top-0 bg-malam/80 px-2 py-1 font-mono text-[0.5625rem] uppercase tracking-[0.1em] text-emas">
                 01 · {ampera.kategori[0]}
@@ -257,23 +258,23 @@ export default function Beranda() {
           PETA: latar kertas, sengaja dibalik. Ini satu-satunya bagian
           yang butuh permukaan terang karena peta dibaca, bukan ditonton.
           ================================================================ */}
-      <section className="kertas py-16 lg:py-24">
+      <section className="kertas py-14 lg:py-20">
         <div className="mx-auto max-w-[1600px] px-5 sm:px-8 lg:px-12">
           <div className="flex flex-wrap items-end justify-between gap-6">
             <div>
-              <p className="meta-emas">Atlas</p>
-              <h2 className="display mt-2 max-w-[18ch] text-[clamp(2rem,4.6vw,3.75rem)] text-gelap">
-                Posisi yang sebenarnya, bukan ilustrasi.
+              <p className="meta-emas">Peta</p>
+              <h2 className="display mt-2 max-w-[18ch] text-[clamp(2rem,4.6vw,3.5rem)] text-gelap">
+                Lihat sendiri bentuk kotanya.
               </h2>
             </div>
-            <p className="max-w-[40ch] text-[0.8125rem] leading-relaxed text-gelap-2">
-              Jalan dan sungai digambar dari koordinat OpenStreetMap. Sembilan
-              destinasi punya koordinat terverifikasi. Yang belum, tidak digambar.
+            <p className="max-w-[38ch] text-[0.8125rem] leading-relaxed text-gelap-2">
+              Satelit asli, bisa di-zoom dan digeser. Sembilan destinasi punya
+              koordinat terverifikasi. Pulau Kemaro belum, jadi tidak diberi pin.
             </p>
           </div>
 
           <div className="mt-8">
-            <AtlasMap daftar={DESTINASI} />
+            <Peta daftar={DESTINASI} tinggi="560px" />
           </div>
         </div>
       </section>
@@ -303,9 +304,9 @@ export default function Beranda() {
       {/* ================================================================
           ARTIKEL: satu besar, dua kecil. Bukan tiga kartu sama.
           ================================================================ */}
-      <section className="mx-auto max-w-[1600px] px-5 py-16 sm:px-8 lg:px-12 lg:py-24">
+      <section className="mx-auto max-w-[1600px] px-5 py-14 sm:px-8 lg:px-12 lg:py-20">
         <div className="flex items-end justify-between gap-6">
-          <h2 className="display max-w-[20ch] text-[clamp(2rem,4.6vw,3.75rem)] text-terang">
+          <h2 className="display max-w-[20ch] text-[clamp(2rem,4.6vw,3.5rem)] text-terang">
             Pahami tempatnya sebelum datang.
           </h2>
           <Link href="/artikel" className="meta hidden shrink-0 border-b border-terang-3 pb-1 text-terang-2 hover:border-emas hover:text-emas sm:block">
@@ -313,43 +314,38 @@ export default function Beranda() {
           </Link>
         </div>
 
-        <div className="mt-10 grid gap-8 lg:grid-cols-2">
+        <div className="mt-8 grid gap-8 lg:grid-cols-2">
           <Link href={`/artikel/${ARTIKEL[0].id}`} className="group">
             <div className="overflow-hidden">
               <Foto
                 src={ARTIKEL[0].gambar}
                 alt={ARTIKEL[0].gambarCaption}
+                rasioPaksa="16 / 10"
                 sizes="(max-width: 1024px) 100vw, 50vw"
-                className="w-full transition-[filter] duration-700 group-hover:brightness-110"
+                className="w-full object-cover transition-[filter] duration-700 group-hover:brightness-110"
               />
             </div>
             <p className="meta mt-3">{ARTIKEL[0].kategori} · {ARTIKEL[0].sumber.length} sumber</p>
             <h3 className="display mt-1.5 text-[clamp(1.4rem,2.4vw,1.9rem)] text-terang group-hover:text-emas">
               {ARTIKEL[0].judul}
             </h3>
-            <p className="mt-2 max-w-[52ch] text-[0.8125rem] leading-relaxed text-terang-2">
-              {ARTIKEL[0].ringkas}
-            </p>
           </Link>
 
-          <div className="flex flex-col">
+          <div className="flex flex-col justify-center">
             {ARTIKEL.slice(1, 4).map((a) => (
               <Link
                 key={a.id}
                 href={`/artikel/${a.id}`}
                 className="group flex gap-4 border-t border-garis-malam py-4 first:border-t-0 first:pt-0"
               >
-                <div className="w-24 flex-none overflow-hidden sm:w-32">
-                  <Foto src={a.gambar} alt={a.gambarCaption} sizes="128px" className="w-full" />
+                <div className="w-20 flex-none overflow-hidden sm:w-28">
+                  <Foto src={a.gambar} alt={a.gambarCaption} rasioPaksa="1 / 1" sizes="112px" className="w-full object-cover" />
                 </div>
                 <div className="min-w-0">
                   <p className="meta">{a.kategori}</p>
                   <h3 className="mt-1 font-display text-lg leading-snug text-terang group-hover:text-emas">
                     {a.judul}
                   </h3>
-                  <p className="mt-1 line-clamp-2 text-[0.75rem] leading-relaxed text-terang-3">
-                    {a.ringkas}
-                  </p>
                 </div>
               </Link>
             ))}
@@ -360,7 +356,7 @@ export default function Beranda() {
       {/* ================================================================
           USAHA: pita horizontal, bukan grid kartu.
           ================================================================ */}
-      <section className="border-t border-garis-malam bg-malam-2 py-16 lg:py-20">
+      <section className="border-t border-garis-malam bg-malam-2 py-14 lg:py-16">
         <div className="mx-auto max-w-[1600px] px-5 sm:px-8 lg:px-12">
           <div className="flex flex-wrap items-end justify-between gap-6">
             <div>
@@ -374,7 +370,7 @@ export default function Beranda() {
             </Link>
           </div>
 
-          <ul className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+          <ul className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-4">
             {DAFTAR_UMKM.slice(0, 4).map((u) => (
               <li key={u.id}>
                 <Link href={`/umkm/${u.id}`} className="group block">
@@ -382,8 +378,9 @@ export default function Beranda() {
                     <Foto
                       src={u.gambar[0].src}
                       alt={u.gambar[0].caption}
+                      rasioPaksa="1 / 1"
                       sizes="(max-width: 640px) 50vw, 25vw"
-                      className="w-full transition-[filter] duration-700 group-hover:brightness-110"
+                      className="w-full object-cover transition-[filter] duration-700 group-hover:brightness-110"
                     />
                   </div>
                   <p className="meta mt-2">{u.kategori}</p>
@@ -410,14 +407,15 @@ export default function Beranda() {
           />
           <div className="absolute inset-0 bg-malam/82" />
         </div>
-        <div className="relative mx-auto max-w-[1600px] px-5 py-20 sm:px-8 lg:px-12 lg:py-28">
+        <div className="relative mx-auto max-w-[1600px] px-5 py-16 sm:px-8 lg:px-12 lg:py-20">
           <p className="meta-emas">Asisten arsip</p>
           <h2 className="display mt-3 max-w-[18ch] text-[clamp(2.25rem,5.5vw,4.5rem)] text-terang">
-            Asisten yang mengaku kalau tidak tahu.
+            Tanya Sari. Ia jujur kalau tidak tahu.
           </h2>
-          <p className="baca-malam mt-5 max-w-[46ch]">
-            Sari menjawab hanya dari isi arsip, menyebut nomor rujukan, dan menolak
-            pertanyaan di luar topik. Kalau jawabannya belum ada, ia mengatakannya.
+          <p className="baca-malam mt-5 max-w-[44ch]">
+            Sari cuma menjawab dari isi arsip ini, menyebut nomor rujukannya, dan
+            menolak pertanyaan di luar topik. Kalau belum ada datanya, ia bilang
+            belum ada.
           </p>
           <div className="mt-8 flex flex-wrap gap-2">
             <Link

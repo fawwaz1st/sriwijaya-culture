@@ -2,10 +2,11 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Foto } from "@/components/foto";
-import { BadgeVerifikasi, BarisMeta, Tombol } from "@/components/ui";
+import { BadgeVerifikasi, BarisMeta } from "@/components/ui";
 import { DESTINASI, artikelUntukDestinasi, cariDestinasi, destinasiTerkait } from "@/lib/arsip";
 import { koordinatTeks, tanggalPanjang } from "@/lib/format";
 import { potret } from "@/lib/foto";
+import { PetaDestinasi } from "@/components/peta";
 
 export function generateStaticParams() {
   return DESTINASI.map((d) => ({ id: d.id }));
@@ -228,26 +229,7 @@ export default async function DetailDestinasi({ params }: { params: Promise<{ id
                 </p>
               </div>
 
-              {d.koordinat && (
-                <div className="flex flex-wrap gap-2">
-                  <Tombol
-                    href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(d.mapsQuery)}`}
-                    varian="garis-gelap"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Peta
-                  </Tombol>
-                  <Tombol
-                    href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(d.mapsQuery)}`}
-                    varian="garis-gelap"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Rute
-                  </Tombol>
-                </div>
-              )}
+              {d.koordinat && <PetaDestinasi destinasi={d} />}
 
               {galeri.length > 0 && (
                 <div>

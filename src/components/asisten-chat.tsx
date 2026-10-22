@@ -279,15 +279,15 @@ export function AsistenChat() {
                   kirim(input);
                 }
               }}
-              rows={2}
+              rows={1}
               placeholder="Contoh: destinasi mana yang cocok untuk belajar sejarah Sriwijaya?"
-              className="gulir-tipis min-h-[54px] flex-1 resize-none border border-malam-5 bg-transparent px-3 py-2.5 text-[0.875rem] leading-relaxed text-terang placeholder:text-terang-3 focus:border-emas focus:outline-none"
+              className="gulir-tipis min-h-[44px] flex-1 resize-none border border-malam-5 bg-transparent px-3 py-2.5 text-[0.875rem] leading-relaxed text-terang placeholder:text-terang-3 focus:border-emas focus:outline-none"
             />
             {sibuk ? (
               <button
                 type="button"
                 onClick={hentikan}
-                className="h-[54px] flex-none border border-malam-5 px-3.5 font-mono text-[0.625rem] uppercase tracking-[0.1em] text-terang-2 hover:border-terang"
+                className="h-[44px] flex-none border border-malam-5 px-3.5 font-mono text-[0.625rem] uppercase tracking-[0.1em] text-terang-2 hover:border-terang"
               >
                 Stop
               </button>
@@ -295,7 +295,7 @@ export function AsistenChat() {
               <button
                 type="submit"
                 disabled={!input.trim()}
-                className="flex h-[54px] flex-none items-center gap-2 bg-emas px-3.5 font-mono text-[0.625rem] uppercase tracking-[0.1em] text-malam transition-colors hover:bg-emas-muda disabled:cursor-not-allowed disabled:bg-malam-4 disabled:text-terang-3"
+                className="flex h-[44px] flex-none items-center gap-2 bg-emas px-3.5 font-mono text-[0.625rem] uppercase tracking-[0.1em] text-malam transition-colors hover:bg-emas-muda disabled:cursor-not-allowed disabled:bg-malam-4 disabled:text-terang-3"
               >
                 Kirim
                 <span aria-hidden="true">→</span>
@@ -323,7 +323,7 @@ export function AsistenChat() {
         </form>
       </div>
 
-      <aside className="min-w-0 self-start bg-malam-2 lg:sticky lg:top-[4.5rem]">
+      <aside className="flex min-w-0 flex-col self-stretch bg-malam-2 lg:sticky lg:top-[4.5rem]">
         <div className="flex items-center justify-between border-b border-garis-malam px-3.5 py-2.5">
           <p className="meta">Rujukan arsip</p>
           <p className="tabular font-mono text-[0.5625rem] text-terang-3">
@@ -348,7 +348,7 @@ export function AsistenChat() {
             </div>
           </div>
         ) : (
-          <ul className="gulir-tipis max-h-[440px] overflow-y-auto">
+          <ul className="gulir-tipis min-h-0 flex-1 overflow-y-auto">
             {rujukan.map((r) => (
               <li key={r.no} className="border-b border-garis-malam last:border-b-0">
                 <Link href={r.href} className="group block px-3.5 py-3 hover:bg-malam-3">

@@ -18,9 +18,9 @@ export default function HalamanAsisten() {
           </h1>
           <div className="max-w-[42ch] pb-2">
             <p className="text-[0.875rem] leading-relaxed text-terang-2">
-              Sari menjawab dengan mengambil dokumen dari arsip ini lebih dulu,
-              lalu merangkai jawaban hanya dari dokumen tersebut. Setiap jawaban
-              membawa nomor rujukan yang bisa kamu buka.
+              Sari membaca arsip ini dulu sebelum menjawab, lalu merangkai jawaban
+              hanya dari yang ia baca. Tiap jawaban bawa nomor rujukan yang bisa
+              kamu buka sendiri.
             </p>
             <ul className="mt-4 grid grid-cols-2 gap-x-5 gap-y-2 border-t border-garis-malam pt-4">
               {[
@@ -48,17 +48,17 @@ export default function HalamanAsisten() {
           {
             n: "01",
             j: "Pengambilan dokumen",
-            i: "Pertanyaan diubah jadi kata kunci, lalu dicocokkan dengan 25 rekaman arsip memakai bobot TF-IDF. Judul diberi bobot tiga kali lebih besar.",
+            i: "Pertanyaanmu jadi kata kunci, lalu dicocokkan ke 25 rekaman arsip. Nama tempat diberi bobot lebih besar dari isi paragraf.",
           },
           {
             n: "02",
             j: "Penyusunan jawaban",
-            i: "Lima dokumen teratas dikirim sebagai konteks. Model diminta menjawab hanya dari konteks itu, dan menuliskan nomor rujukan.",
+            i: "Lima dokumen teratas dikirim ke model sebagai satu-satunya bahan. Model diminta menulis nomor rujukannya.",
           },
           {
             n: "03",
             j: "Batas yang jelas",
-            i: "Kalau konteks kosong, jawabannya adalah belum ada di arsip. Harga, jam buka, dan kontak tidak pernah dikarang.",
+            i: "Kalau tidak ada dokumen yang cocok, jawabannya \"belum ada di arsip\". Harga, jam buka, dan kontak tidak pernah dikarang.",
           },
         ].map((b) => (
           <div key={b.n}>

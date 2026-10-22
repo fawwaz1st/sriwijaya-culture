@@ -184,11 +184,11 @@ export default function HalamanMetodologi() {
         <h2 className="display mt-2 text-[clamp(1.9rem,4vw,3rem)] text-terang">
           {daftarUnik.length} sumber unik.
         </h2>
-        <ol className="mt-6 border-t border-garis-malam">
+        <ol className="mt-6 grid gap-x-10 border-t border-garis-malam md:grid-cols-2">
           {daftarUnik.map((x, i) => (
             <li
               key={x.url}
-              className="grid grid-cols-[2.5rem_1fr_auto] items-start gap-3 border-b border-garis-malam py-3"
+              className="grid grid-cols-[2rem_1fr] items-start gap-2 border-b border-garis-malam py-2.5"
             >
               <span className="tabular pt-0.5 font-mono text-[0.5625rem] text-terang-3">
                 {String(i + 1).padStart(2, "0")}
@@ -202,15 +202,10 @@ export default function HalamanMetodologi() {
                 >
                   {x.judul}
                 </a>
-                <p className="mt-0.5 font-mono text-[0.5625rem] uppercase tracking-[0.1em] text-terang-3">
-                  {x.penulis} · dipakai di {x.induk}
+                <p className="mt-0.5 font-mono text-[0.5rem] uppercase tracking-[0.08em] text-terang-3">
+                  {x.penulis} · {x.induk}
                 </p>
               </div>
-              {x.verifikasi && (
-                <span className="hidden sm:block">
-                  <BadgeVerifikasi tingkat={x.verifikasi} />
-                </span>
-              )}
             </li>
           ))}
         </ol>
