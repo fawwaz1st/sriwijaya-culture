@@ -40,8 +40,8 @@ export default function HalamanMetodologi() {
             Bagaimana kami tahu, dan bagaimana kami salah.
           </h1>
           <p className="max-w-[42ch] pb-2 text-[0.875rem] leading-relaxed text-terang-2">
-            Setiap angka di situs ini bisa ditelusuri ke satu baris di halaman
-            ini. Kalau tidak bisa, angkanya tidak kami tampilkan.
+            Setiap angka bisa dilacak ke sumbernya. Kalau tidak, angkanya
+            tidak tampil.
           </p>
         </div>
       </header>
@@ -64,27 +64,27 @@ export default function HalamanMetodologi() {
           {[
             {
               j: "Setiap klaim menunjuk sumber",
-              i: "Angka, tanggal, dan peristiwa punya field sumber berisi URL yang bisa dibuka. Tidak ada klaim tanpa rujukan.",
+              i: "Angka, tanggal, dan peristiwa punya tautan sumber yang bisa dibuka.",
             },
             {
               j: "Perbedaan ditulis sebagai perbedaan",
-              i: "Kalau dua sumber berbeda, keduanya dicatat. Kami tidak memilih satu angka hanya karena lebih enak dibaca.",
+              i: "Dua sumber yang berbeda, keduanya dicatat. Bukan dipilih yang enak.",
             },
             {
               j: "Legenda diberi label legenda",
-              i: "Cerita rakyat seperti Tan Bun An dan Siti Fatimah ditulis di bagian terpisah dan tidak disebut peristiwa sejarah.",
+              i: "Cerita rakyat ditulis terpisah dan tidak disebut sejarah.",
             },
             {
-              j: "Tidak mengisi data yang belum ada",
-              i: "Alamat, nomor telepon, akun sosial, harga tiket, dan ulasan tidak diisi perkiraan. Lebih baik kosong daripada salah.",
+              j: "Tidak mengisi yang belum ada",
+              i: "Alamat, kontak, dan harga tidak diisi perkiraan. Kosong lebih baik daripada salah.",
             },
             {
-              j: "Entri contoh diberi label",
-              i: "Entri UMKM berstatus demonstrasi ditandai di kartu dan halaman detailnya, supaya tidak dikira usaha nyata.",
+              j: "Contoh diberi label",
+              i: "Usaha contoh ditandai jelas supaya tidak dikira toko nyata.",
             },
             {
-              j: "Tidak ada formulir palsu",
-              i: "Tidak ada pendaftaran yang berpura-pura menyimpan data permanen. Tidak ada tombol yang tidak melakukan apa pun.",
+              j: "Tidak ada tombol kosong",
+              i: "Tidak ada formulir palsu atau tombol yang tidak berfungsi.",
             },
           ].map((r, i) => (
             <li key={r.j} className="border-t border-garis-malam pt-4">
@@ -144,15 +144,15 @@ export default function HalamanMetodologi() {
             {[
               {
                 j: "Harga tiket dan jam buka",
-                i: "Beberapa destinasi hanya menampilkan teks tanpa angka pasti, karena sumbernya bukan pengelola resmi. Kami tidak mengubah ketidakpastian menjadi angka bulat.",
+                i: "Sumbernya bukan pengelola resmi, jadi angkanya tidak kami tampilkan.",
               },
               {
                 j: "Ulasan pengunjung",
-                i: "Tidak ada ulasan di situs ini. Ulasan yang tidak bisa diverifikasi lebih berbahaya daripada tidak ada ulasan.",
+                i: "Ulasan yang tak bisa diperiksa lebih berbahaya daripada tidak ada.",
               },
               {
-                j: "Alamat dan kontak UMKM",
-                i: "Verifikasi lapangan tidak bisa dilakukan lewat kode. Nama usaha boleh tampil karena terdokumentasi publik, kontak tidak.",
+                j: "Alamat dan kontak usaha",
+                i: "Kami tak bisa memeriksa lapangan. Nama boleh tampil, kontak tidak.",
               },
             ].map((x) => (
               <div key={x.j} className="border border-warn/35 bg-warn/8 p-4">
@@ -164,13 +164,11 @@ export default function HalamanMetodologi() {
           <div className="border-t border-garis-malam pt-4">
             <p className="meta-emas">Kredit foto</p>
             <p className="mt-2 text-[0.8125rem] leading-relaxed text-terang-2">
-              Seluruh foto berasal dari Wikimedia Commons dengan lisensi Creative
-              Commons. Berkas asli diunduh, dikonversi ke JPEG, dan dikompres.
-              Kredit per berkas tercantum di halaman detail masing-masing.
+              Semua foto dari Wikimedia Commons (lisensi Creative Commons),
+              dikompres untuk web. Kredit per foto ada di halaman detailnya.
             </p>
             <p className="mt-3 text-[0.8125rem] leading-relaxed text-terang-2">
-              Geometri peta berasal dari OpenStreetMap contributors (ODbL) dan
-              disederhanakan dengan Douglas-Peucker agar muat tanpa server peta.
+              Peta: data © OpenStreetMap contributors (ODbL).
             </p>
             <p className="mt-4 border-t border-garis-malam pt-3 font-mono text-[0.5625rem] uppercase tracking-[0.1em] text-terang-3">
               Data diperiksa terakhir 20 Oktober 2026

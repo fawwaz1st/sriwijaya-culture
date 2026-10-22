@@ -21,9 +21,8 @@ export default function HalamanUMKM() {
             Usaha yang menghidupi kota.
           </h1>
           <p className="max-w-[42ch] pb-2 text-[0.875rem] leading-relaxed text-terang-2">
-            {DAFTAR_UMKM.length} entri dengan {jumlahProduk} produk tercatat.
-            Alamat, nomor telepon, dan akun sosial hanya ditampilkan bila sudah
-            diverifikasi. Yang belum, dikatakan belum.
+            {DAFTAR_UMKM.length} usaha, {jumlahProduk} produk. Kontak hanya
+            tampil kalau sudah kami verifikasi.
           </p>
         </div>
       </header>
@@ -35,19 +34,16 @@ export default function HalamanUMKM() {
       <section className="mt-16 border-t border-garis-malam pt-8">
         <div className="grid gap-6 sm:grid-cols-2">
           <div>
-            <p className="status text-ok">Rujukan umum</p>
+            <p className="status text-ok">Asli — sudah dicek</p>
             <p className="mt-2 max-w-[46ch] text-[0.8125rem] leading-relaxed text-terang-2">
-              Nama usaha dan jenis produknya terdokumentasi di sumber publik
-              seperti berita, artikel budaya, atau katalog pemerintah. Alamat
-              dan kontak tetap disembunyikan sampai pengelola mengonfirmasi.
+              Usaha nyata yang tercatat di sumber publik. Alamat baru tampil
+              setelah pengelolanya mengonfirmasi.
             </p>
           </div>
           <div>
-            <p className="status text-warn">Demonstrasi</p>
+            <p className="status text-warn">Contoh</p>
             <p className="mt-2 max-w-[46ch] text-[0.8125rem] leading-relaxed text-terang-2">
-              Entri contoh untuk menunjukkan cara kerja direktori. Diberi label
-              jelas supaya tidak dikira usaha yang benar-benar ada di alamat
-              tertentu.
+              Bukan toko sungguhan — hanya menunjukkan cara kerja halaman ini.
             </p>
           </div>
         </div>

@@ -73,12 +73,12 @@ export default async function DetailUMKM({ params }: { params: Promise<{ id: str
                 }
               >
                 <p className={`status ${u.statusData === "rujukan-umum" ? "text-ok status-ok" : "text-warn status-warn"}`}>
-                  {u.statusData === "rujukan-umum" ? "Rujukan umum" : "Data demonstrasi"}
+                  {u.statusData === "rujukan-umum" ? "Asli — sudah dicek" : "Contoh"}
                 </p>
                 <p className="mt-2 text-[0.8125rem] leading-relaxed text-gelap-2">
                   {u.statusData === "rujukan-umum"
-                    ? "Nama dan jenis produk terdokumentasi di sumber publik. Alamat dan kontak belum dikonfirmasi pengelola."
-                    : "Entri ini contoh untuk menunjukkan cara kerja direktori, bukan usaha yang bisa dikunjungi."}
+                    ? "Usaha nyata, tercatat di sumber publik. Kontak belum dikonfirmasi pengelola."
+                    : "Ini contoh, bukan toko sungguhan. Tidak bisa dikunjungi."}
                 </p>
               </div>
 

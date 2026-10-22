@@ -108,17 +108,39 @@ export default async function DetailDestinasi({ params }: { params: Promise<{ id
       </div>
 
       <div className="kertas">
-        <div className="mx-auto max-w-[1600px] px-5 py-12 sm:px-8 lg:px-12 lg:py-16">
+        <div className="mx-auto max-w-[1600px] px-5 py-10 sm:px-8 lg:px-12 lg:py-14">
+          {/* Galeri dulu, teks kemudian. Pengunjung datang untuk melihat
+              tempatnya, bukan membaca tentangnya. */}
+          {galeri.length > 0 && (
+            <div className="gulir-tipis -mx-5 mb-10 flex gap-2 overflow-x-auto px-5 pb-2 sm:mx-0 sm:px-0 lg:mb-12">
+              {galeri.map((g, i) => (
+                <figure key={i} className="w-[78vw] max-w-[560px] flex-none sm:w-[44vw] lg:w-[32vw]">
+                  <div className="overflow-hidden">
+                    <Foto
+                      src={g.src}
+                      alt={g.caption}
+                      sizes="(max-width: 640px) 78vw, (max-width: 1024px) 44vw, 32vw"
+                      className="w-full"
+                    />
+                  </div>
+                  <figcaption className="mt-1.5 text-[0.5625rem] leading-tight text-gelap-3">
+                    {g.caption}
+                  </figcaption>
+                </figure>
+              ))}
+            </div>
+          )}
+
           <div className="grid gap-10 lg:grid-cols-[minmax(0,1.55fr)_minmax(0,1fr)] lg:gap-14">
             <div className="min-w-0">
               <p className="baca text-[1.0625rem] leading-relaxed text-gelap">{d.ringkas}</p>
 
-              <div className="mt-8 border-t border-garis-kertas pt-6">
-                <p className="meta-emas">Deskripsi</p>
+              <div className="mt-7 border-t border-garis-kertas pt-5">
+                <p className="meta-emas">Tentang tempat ini</p>
                 <p className="baca mt-3">{d.deskripsi}</p>
               </div>
 
-              <div className="mt-8 border-t border-garis-kertas pt-6">
+              <div className="mt-7 border-t border-garis-kertas pt-5">
                 <p className="meta-emas">Sejarah</p>
                 <p className="baca mt-3">{d.sejarah}</p>
               </div>
@@ -230,29 +252,6 @@ export default async function DetailDestinasi({ params }: { params: Promise<{ id
               </div>
 
               {d.koordinat && <PetaDestinasi destinasi={d} />}
-
-              {galeri.length > 0 && (
-                <div>
-                  <p className="meta-emas">Galeri · {galeri.length} foto</p>
-                  <div className="mt-2 space-y-2">
-                    {galeri.map((g, i) => (
-                      <figure key={i}>
-                        <div className="overflow-hidden">
-                          <Foto
-                            src={g.src}
-                            alt={g.caption}
-                            sizes="(max-width: 1024px) 100vw, 380px"
-                            className="w-full"
-                          />
-                        </div>
-                        <figcaption className="mt-1 text-[0.5625rem] leading-tight text-gelap-3">
-                          {g.caption}
-                        </figcaption>
-                      </figure>
-                    ))}
-                  </div>
-                </div>
-              )}
             </aside>
           </div>
         </div>

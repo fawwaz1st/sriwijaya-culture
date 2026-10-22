@@ -157,7 +157,7 @@ export function KatalogUMKM({
                     <div className="flex items-start justify-between gap-2">
                       <p className="meta">{u.kategori}</p>
                       <span className={cn("status shrink-0", terverifikasi ? "text-ok" : "text-warn")}>
-                        {terverifikasi ? "Rujukan" : "Demo"}
+                        {terverifikasi ? "Asli" : "Contoh"}
                       </span>
                     </div>
                     <h2 className="mt-1 font-display text-lg leading-tight text-terang group-hover:text-emas">

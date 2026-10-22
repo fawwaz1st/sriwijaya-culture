@@ -19,9 +19,7 @@ export default function HalamanArtikel() {
             Kota ini punya lebih dari satu lapisan waktu.
           </h1>
           <p className="max-w-[42ch] pb-2 text-[0.875rem] leading-relaxed text-terang-2">
-            Dari prasasti abad ke-7 sampai pemugaran museum pada 2023. Setiap
-            artikel mencantumkan sumber, dan perbedaan pendapat antar sejarawan
-            ditulis sebagai perbedaan.
+            Delapan catatan, dari Sriwijaya abad ke-7 sampai pemugaran 2023.
           </p>
         </div>
       </header>

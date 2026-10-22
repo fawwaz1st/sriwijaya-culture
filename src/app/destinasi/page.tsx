@@ -6,7 +6,7 @@ import { DESTINASI, KATEGORI_DESTINASI } from "@/lib/arsip";
 export const metadata: Metadata = {
   title: "Destinasi",
   description:
-    "Sepuluh destinasi di Kota Palembang dengan koordinat terverifikasi, sumber per klaim, dan status verifikasi tiket serta jam buka.",
+    "Sepuluh tempat yang patut kamu lihat di Palembang: sejarah, jam buka, tiket, dan petanya.",
 };
 
 export default function HalamanDestinasi() {
@@ -19,9 +19,8 @@ export default function HalamanDestinasi() {
             Sepuluh tempat, sembilan koordinat.
           </h1>
           <p className="max-w-[42ch] pb-2 text-[0.875rem] leading-relaxed text-terang-2">
-            Setiap destinasi punya halaman sendiri: sejarah, daya tarik, tiket,
-            jam buka, peta, dan daftar sumber. Angka yang belum pasti ditandai,
-            bukan ditulis sebagai fakta.
+            Sepuluh tempat yang patut kamu lihat — lengkap dengan sejarah,
+            jam buka, dan petanya.
           </p>
         </div>
       </header>

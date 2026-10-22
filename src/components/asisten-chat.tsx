@@ -7,17 +7,18 @@ import { cariDokumen } from "@/lib/retrieval";
 import { cn } from "@/lib/cn";
 
 /**
- * Asisten Sari.
+ * Asisten Sari — shell aplikasi layar penuh.
  *
- * Bentuknya mengikuti pola antarmuka asisten yang sudah jadi standar:
- * composer di tengah layar saat kosong, bergeser ke bawah setelah ada
- * percakapan, saran berupa chip tepat di bawah composer, dan rujukan
- * dibuka sebagai panel samping, bukan selalu memakan sepertiga layar.
+ * Pola 2026 (Claude.ai / ChatGPT / Perplexity): header tipis, area
+ * percakapan sebagai satu-satunya yang menggulir, composer menempel di
+ * bawah. Empty state terpusat: sapaan besar + chip saran.
  *
- * Yang membedakan dari chatbot biasa: setiap jawaban membawa nomor
- * rujukan yang bisa dibuka, dan asal jawabannya dinyatakan terus terang
- * (dari arsip atau tidak ada di arsip), tanpa menyebut nama penyedia
- * internal mana pun.
+ * Kunci milik pengguna (BYOK): disimpan di localStorage peramban ini
+ * saja, dikirim ke /api/asisten lewat HTTPS sebagai header, dan dipakai
+ * server untuk menelepon penyedia. Kunci tidak pernah diteruskan
+ * browser langsung ke pihak ketiga dan tidak pernah ditampilkan utuh
+ * setelah disimpan. Tanpa kunci, asisten tetap berjalan dengan tingkat
+ * tanpa kunci dan arsip.
  */
 
 interface Rujukan {
@@ -35,12 +36,22 @@ interface PesanLokal {
   sumber: Rujukan[];
 }
 
+const KUNCI_PENYIMPANAN = "sari-api-key";
+
+/** Hanya izinkan bentuk kunci yang dikenal, sebelum dikirim ke server. */
+function bentukKunciValid(k: string): boolean {
+  return /^(sk-or-v1-[a-f0-9]{64}|gsk_[A-Za-z0-9]{50}|sk-[A-Za-z0-9-_]{40,})$/.test(k.trim());
+}
+
 export function AsistenChat() {
   const [input, setInput] = useState("");
   const [pesan, setPesan] = useState<PesanLokal[]>([]);
   const [sibuk, setSibuk] = useState(false);
   const [galat, setGalat] = useState<string | null>(null);
   const [panel, setPanel] = useState(false);
+  const [panelKunci, setPanelKunci] = useState(false);
+  const [kunci, setKunci] = useState("");
+  const [statusKunci, setStatusKunci] = useState<string | null>(null);
   const ujung = useRef<HTMLDivElement>(null);
   const kotak = useRef<HTMLTextAreaElement>(null);
   const kendali = useRef<AbortController | null>(null);
@@ -48,23 +59,69 @@ export function AsistenChat() {
 
   const kosong = pesan.length === 0;
 
+  /**
+   * Kunci tersimpan dibaca sekali saat render pertama lewat lazy
+   * initializer: berjalan di luar efek, tanpa render berantai. SSR
+   * aman karena typeof window diperiksa dulu. Kunci disimpan sebagai
+   * state (bukan ref) agar tidak diakses saat render.
+   */
+  const [kunciAktif, setKunciAktif] = useState(() => {
+    if (typeof window === "undefined") return "";
+    try {
+      const t = localStorage.getItem(KUNCI_PENYIMPANAN);
+      return t && bentukKunciValid(t) ? t : "";
+    } catch {
+      return "";
+    }
+  });
+
   useEffect(() => {
     if (!kosong) ujung.current?.scrollIntoView({ behavior: "smooth", block: "end" });
   }, [pesan, sibuk, kosong]);
 
-  // Fokus otomatis hanya di layar lebar supaya papan tombol seluler
-  // tidak langsung terbuka saat halaman dimuat.
   useEffect(() => {
     if (window.matchMedia("(min-width: 1024px)").matches) kotak.current?.focus();
   }, []);
 
-  // Textarea tumbuh mengikuti isi, maksimal 4 baris.
   useEffect(() => {
     const el = kotak.current;
     if (!el) return;
     el.style.height = "0px";
     el.style.height = Math.min(el.scrollHeight, 108) + "px";
   }, [input]);
+
+  function simpanKunci() {
+    const k = kunci.trim();
+    if (!k) {
+      // Kosong berarti hapus.
+      setKunciAktif("");
+      try {
+        localStorage.removeItem(KUNCI_PENYIMPANAN);
+      } catch {}
+      setStatusKunci("Kunci dihapus. Asisten kembali ke mode bawaan.");
+      setKunci("");
+      return;
+    }
+    if (!bentukKunciValid(k)) {
+      setStatusKunci("Bentuk kunci tidak dikenali. Periksa lagi kunci Anda.");
+      return;
+    }
+    setKunciAktif(k);
+    try {
+      localStorage.setItem(KUNCI_PENYIMPANAN, k);
+    } catch {}
+    setStatusKunci("Kunci tersimpan di peramban ini saja.");
+    setKunci("");
+  }
+
+  function hapusKunci() {
+    setKunciAktif("");
+    setKunci("");
+    try {
+      localStorage.removeItem(KUNCI_PENYIMPANAN);
+    } catch {}
+    setStatusKunci("Kunci dihapus.");
+  }
 
   async function kirim(teks: string) {
     const bersih = teks.trim().slice(0, 600);
@@ -79,6 +136,7 @@ export function AsistenChat() {
     setSibuk(true);
     sibukRef.current = true;
     setGalat(null);
+    setStatusKunci(null);
 
     const kendaliBaru = new AbortController();
     kendali.current = kendaliBaru;
@@ -86,7 +144,11 @@ export function AsistenChat() {
     try {
       const res = await fetch("/api/asisten", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          // Kunci dikirim hanya ke server kami, bukan ke penyedia langsung.
+          ...(kunciAktif ? { "X-Sari-Api-Key": kunciAktif } : {}),
+        },
         signal: kendaliBaru.signal,
         body: JSON.stringify({
           messages: [
@@ -123,11 +185,7 @@ export function AsistenChat() {
           if (!teksAkhir) {
             return p.map((x) =>
               x.id === idSari
-                ? {
-                    ...x,
-                    teks:
-                      "Model tidak mengirim jawaban. Coba lagi, atau buka rujukan untuk membaca arsipnya langsung.",
-                  }
+                ? { ...x, teks: "Jawabannya tidak sampai. Coba lagi, atau buka rujukan di bawah." }
                 : x,
             );
           }
@@ -137,7 +195,7 @@ export function AsistenChat() {
       }
     } catch (e) {
       if ((e as Error).name !== "AbortError") {
-        setGalat("Asisten tidak bisa menjangkau server. Arsip tetap bisa dibaca lewat katalog.");
+        setGalat("Sari tidak bisa dijangkau. Arsip tetap bisa dibaca lewat katalog.");
       }
     } finally {
       setSibuk(false);
@@ -157,15 +215,6 @@ export function AsistenChat() {
   const jawabanTerakhir = [...pesan].reverse().find((p) => p.peran === "sari");
   const rujukanTerakhir = jawabanTerakhir?.sumber ?? [];
 
-  /**
-   * Status dibaca dari jawaban terakhir, bukan dari satu variabel global.
-   *
-   * Versi sebelumnya menyimpan `mode` untuk seluruh percakapan, sehingga
-   * satu pertanyaan di luar topik mengubah label di atas menjadi "Tidak
-   * ada di arsip" padahal jawaban yang terlihat di layar tetap punya
-   * rujukan. Sekarang label mengikuti apa yang benar-benar terakhir
-   * dijawab.
-   */
   const statusTerakhir = !jawabanTerakhir
     ? "Siap menjawab"
     : rujukanTerakhir.length === 0
@@ -173,20 +222,9 @@ export function AsistenChat() {
       : "Dijawab dari arsip";
 
   return (
-    <div
-      className={cn(
-        "relative flex flex-col",
-        // Tinggi minimum penuh hanya saat kosong, supaya composer berada di
-        // tengah layar. Setelah ada percakapan, halaman tumbuh mengikuti isi
-        // dan composer langsung menempel di bawah jawaban.
-        kosong && "min-h-[calc(100svh-10rem)]",
-      )}
-    >
-      {/* --- Bilah status tipis ---
-          Jangan tampilkan nama penyedia internal ("tanpa-kunci") ke
-          pengguna. Yang penting bagi mereka hanya: apakah jawaban ini
-          dari model atau langsung dari arsip. */}
-      <div className="flex items-center justify-between gap-3 border-b border-garis-malam py-2.5">
+    <div className="flex h-full flex-col bg-malam">
+      {/* --- Bar atas: status + aksi --- */}
+      <div className="flex items-center justify-between gap-3 border-b border-garis-malam px-4 py-2.5 sm:px-6">
         <p className="meta flex items-center gap-2">
           <span
             aria-hidden="true"
@@ -195,7 +233,7 @@ export function AsistenChat() {
           {sibuk ? "Menyusun jawaban" : statusTerakhir}
         </p>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
           {rujukanTerakhir.length > 0 && (
             <button
               type="button"
@@ -223,24 +261,83 @@ export function AsistenChat() {
               Mulai ulang
             </button>
           )}
+          <button
+            type="button"
+            onClick={() => setPanelKunci((v) => !v)}
+            aria-expanded={panelKunci}
+            aria-label="Pengaturan kunci API"
+            className={cn(
+              "grid h-7 w-7 place-items-center border transition-colors",
+              kunciAktif
+                ? "border-emas/50 text-emas hover:text-emas-muda"
+                : "border-garis-malam text-terang-3 hover:border-terang hover:text-terang",
+            )}
+            title={kunciAktif ? "Kunci API tersimpan" : "Pakai kunci API milikmu"}
+          >
+            <svg viewBox="0 0 16 16" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="1.4">
+              <circle cx="5.5" cy="10.5" r="2.6" />
+              <path d="M7.6 8.4 13 3m-2 0h2v2" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </button>
         </div>
       </div>
 
-      {/* --- Percakapan --- */}
-      <div className={cn("flex flex-col", kosong ? "flex-1 justify-center pb-16" : "flex-1")}>
+      {/* --- Panel kunci API (BYOK) --- */}
+      {panelKunci && (
+        <div className="border-b border-garis-malam bg-malam-2/60 px-4 py-3.5 sm:px-6">
+          <div className="mx-auto w-full max-w-[46rem]">
+            <p className="meta-emas">Kunci API milikmu</p>
+            <p className="mt-1.5 text-[0.8125rem] leading-relaxed text-terang-2">
+              Punya kunci OpenRouter atau Groq? Tempel di sini untuk jawaban
+              yang lebih cepat. Kunci disimpan di peramban ini saja dan tidak
+              pernah keluar selain ke server kami.
+            </p>
+            <div className="mt-2.5 flex gap-2">
+              <input
+                type="password"
+                value={kunci}
+                onChange={(e) => setKunci(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && simpanKunci()}
+                placeholder={kunciAktif ? "•••••••• (tersimpan)" : "sk-or-v1-…"}
+                autoComplete="off"
+                spellCheck={false}
+                className="min-h-9 flex-1 border border-garis-malam bg-malam px-2.5 py-1.5 font-mono text-[0.8125rem] text-terang placeholder:text-terang-3 focus:border-emas/60 focus:outline-none"
+              />
+              <button
+                type="button"
+                onClick={simpanKunci}
+                className="min-h-9 bg-emas px-3.5 font-mono text-[0.625rem] uppercase tracking-[0.1em] text-malam transition-colors hover:bg-emas-muda"
+              >
+                Simpan
+              </button>
+              {kunciAktif && (
+                <button
+                  type="button"
+                  onClick={hapusKunci}
+                  className="min-h-9 border border-garis-malam px-3.5 font-mono text-[0.625rem] uppercase tracking-[0.1em] text-terang-2 transition-colors hover:border-bahaya hover:text-bahaya"
+                >
+                  Hapus
+                </button>
+              )}
+            </div>
+            {statusKunci && <p className="meta mt-2 normal-case tracking-normal">{statusKunci}</p>}
+          </div>
+        </div>
+      )}
+
+      {/* --- Percakapan: satu-satunya yang menggulir --- */}
+      <div className="gulir-tipis min-h-0 flex-1 overflow-y-auto">
         {kosong ? (
-          /* Empty state terpusat: satu pertanyaan besar, composer di tengah. */
-          <div className="mx-auto w-full max-w-[46rem] px-1">
+          <div className="mx-auto flex h-full w-full max-w-[46rem] flex-col justify-center px-1 pb-10">
             <p className="meta-emas">Asisten arsip · Palembang</p>
-            <h1 className="display mt-3 text-[clamp(2rem,5.2vw,3.75rem)] text-terang">
+            <h1 className="display mt-3 text-[clamp(2rem,5.2vw,3.5rem)] text-terang">
               Mau tahu apa tentang Palembang?
             </h1>
-            <p className="mt-3 max-w-[46ch] text-[0.875rem] leading-relaxed text-terang-2">
-              Sari menjawab dari 25 rekaman arsip ini dan menyebut sumbernya.
-              Kalau datanya belum ada, ia bilang belum ada.
+            <p className="mt-3 max-w-[44ch] text-[0.875rem] leading-relaxed text-terang-2">
+              Sari menjawab dari arsip situs ini dan menyertakan sumbernya.
             </p>
 
-            <div className="mt-8">
+            <div className="mt-7">
               <Composer
                 input={input}
                 setInput={setInput}
@@ -255,7 +352,7 @@ export function AsistenChat() {
           </div>
         ) : (
           <>
-            <div className="mx-auto w-full max-w-[46rem] px-1 py-6">
+            <div className="mx-auto w-full max-w-[46rem] px-1 pb-4 pt-6">
               <ol className="space-y-7">
                 {pesan.map((m) =>
                   m.peran === "pengguna" ? (
@@ -302,7 +399,6 @@ export function AsistenChat() {
 
                 {sibuk && (
                   <li>
-                    <p className="meta-emas mb-1.5">Sari</p>
                     <span className="flex gap-1" aria-label="Sedang menyusun jawaban">
                       <span className="h-1.5 w-1.5 rounded-full bg-terang-3 denyut" />
                       <span className="h-1.5 w-1.5 rounded-full bg-terang-3 denyut [animation-delay:200ms]" />
@@ -321,9 +417,8 @@ export function AsistenChat() {
               <div ref={ujung} />
             </div>
 
-            {/* Composer mengikuti isi percakapan, bukan didorong ke dasar
-                layar. Sebelumnya `mt-auto` menyisakan ~300px ruang kosong. */}
-            <div className="border-t border-garis-malam bg-malam/95 backdrop-blur">
+            {/* Composer menempel di dasar viewport (bukan dasar isi). */}
+            <div className="sticky bottom-0 border-t border-garis-malam bg-malam/95 backdrop-blur">
               <div className="mx-auto w-full max-w-[46rem] px-1 py-3">
                 <Composer
                   input={input}
@@ -339,7 +434,7 @@ export function AsistenChat() {
         )}
       </div>
 
-      {/* --- Panel rujukan, dibuka sesuai permintaan --- */}
+      {/* --- Panel rujukan --- */}
       {panel && rujukan.length > 0 && (
         <aside className="fixed inset-y-0 right-0 z-40 w-full max-w-[22rem] overflow-y-auto border-l border-garis-malam bg-malam-2 p-4 shadow-2xl">
           <div className="flex items-center justify-between">
@@ -354,16 +449,12 @@ export function AsistenChat() {
             </button>
           </div>
           <p className="mt-2 text-[0.75rem] leading-relaxed text-terang-3">
-            Dokumen yang dipakai untuk pertanyaan terakhir. Sari hanya memakai
-            yang ada di daftar ini.
+            Dokumen yang dipakai untuk pertanyaan terakhir.
           </p>
           <ul className="mt-4 space-y-2">
             {rujukan.map((r) => (
               <li key={r.no}>
-                <Link
-                  href={r.href}
-                  className="group block border border-garis-malam p-2.5 hover:border-emas"
-                >
+                <Link href={r.href} className="group block border border-garis-malam p-2.5 hover:border-emas">
                   <p className="flex items-baseline gap-1.5">
                     <span className="tabular font-mono text-[0.5625rem] text-emas">[{r.no}]</span>
                     <span className="font-mono text-[0.5rem] uppercase tracking-[0.1em] text-terang-3">

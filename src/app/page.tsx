@@ -58,8 +58,8 @@ export default function Beranda() {
 
           <div className="mt-6 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
             <p className="baca-malam max-w-[38ch] text-[0.9375rem]">
-              Tempat, usaha, dan cerita dari Palembang. Tiap angka ada sumbernya,
-              dan yang belum jelas kami bilang belum jelas.
+              Mari jelajahi Palembang: tempat menarik, usaha lokal, dan
+              kisahnya. Kami tulis apa yang kami tahu.
             </p>
 
             <div className="flex flex-wrap items-center gap-2.5 sm:gap-3">
@@ -283,8 +283,7 @@ export default function Beranda() {
               </h2>
             </div>
             <p className="max-w-[38ch] text-[0.8125rem] leading-relaxed text-gelap-2">
-              Satelit asli, bisa di-zoom dan digeser. Sembilan destinasi punya
-              koordinat terverifikasi. Pulau Kemaro belum, jadi tidak diberi pin.
+              Satelit asli, bisa di-zoom. Sembilan titik sudah terverifikasi.
             </p>
           </div>
 
@@ -322,7 +321,7 @@ export default function Beranda() {
       <section className="mx-auto max-w-[1600px] px-5 py-14 sm:px-8 lg:px-12 lg:py-20">
         <div className="flex items-end justify-between gap-6">
           <h2 className="display max-w-[20ch] text-[clamp(2rem,4.6vw,3.5rem)] text-terang">
-            Pahami tempatnya sebelum datang.
+            Kenali dulu, baru datang.
           </h2>
           <Link href="/artikel" className="meta hidden min-h-8 shrink-0 items-center border-b border-terang-3 text-terang-2 hover:border-emas hover:text-emas sm:inline-flex">
             Semua catatan →
@@ -428,9 +427,7 @@ export default function Beranda() {
             Tanya Sari. Ia jujur kalau tidak tahu.
           </h2>
           <p className="baca-malam mt-5 max-w-[44ch]">
-            Sari cuma menjawab dari isi arsip ini, menyebut nomor rujukannya, dan
-            menolak pertanyaan di luar topik. Kalau belum ada datanya, ia bilang
-            belum ada.
+            Sari menjawab dari arsip situs ini dan menyertakan sumbernya.
           </p>
           <div className="mt-8 flex flex-wrap gap-2">
             <Link

@@ -488,3 +488,15 @@
     color: #000 !important;
   }
 }
+
+/* Halaman asisten: aplikasi layar penuh. Footer situs disembunyikan dan
+   <main> mengambil sisa tinggi layar, jadi hanya percakapan yang
+   menggulir (pola antarmuka asisten 2026). */
+body:has(.asisten-halaman) [data-chrome="true"] {
+  display: none;
+}
+
+body:has(.asisten-halaman) #konten {
+  height: calc(100svh - var(--tinggi-header, 4rem));
+  overflow: hidden;
+}

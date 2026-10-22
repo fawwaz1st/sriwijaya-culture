@@ -18,6 +18,64 @@ import {
 export const maxDuration = 60;
 
 /**
+ * Pembatas laju sederhana di memori.
+ *
+ * Vercel bisa memindahkan fungsi antar instansi, jadi ini penghalang
+ * kasar, bukan jaminan. Cukup untuk menahan penyalahgunaan kasual tanpa
+ * menambah dependensi. Pemanggil dengan kunci milik sendiri diberi
+ * jatah lebih longgar: biayanya ditanggung mereka, bukan kami.
+ */
+const LAJU = new Map<string, { n: number; reset: number }>();
+
+function dalamBatas(alamat: string, kunciPengguna: boolean): boolean {
+  const maks = kunciPengguna ? 30 : 10;
+  const jendela = 60_000;
+  const kini = Date.now();
+  const catatan = LAJU.get(alamat);
+  if (!catatan || kini > catatan.reset) {
+    LAJU.set(alamat, { n: 1, reset: kini + jendela });
+    return true;
+  }
+  if (catatan.n >= maks) return false;
+  catatan.n += 1;
+  return true;
+}
+
+/**
+ * Kunci milik pengguna (BYOK).
+ *
+ * Dikirim peramban sebagai header dan hanya dipakai di memori proses
+ * ini. Bentuknya divalidasi sebelum dipakai, tidak pernah dicatat ke
+ * log, dan tidak pernah diteruskan ke mana pun selain penyedia yang
+ * bentuk kuncinya cocok.
+ */
+function kunciPengguna(header: string | null): Penyedia | null {
+  if (!header) return null;
+  const k = header.trim();
+  if (/^sk-or-v1-[a-f0-9]{64}$/.test(k)) {
+    return {
+      nama: "openrouter",
+      model: process.env.OPENROUTER_MODEL || "google/gemma-4-31b-it:free",
+      baseURL: "https://openrouter.ai/api/v1",
+      apiKey: k,
+      headers: {
+        "HTTP-Referer": "https://sriwijaya-culture.vercel.app",
+        "X-Title": "Sriwijaya Culture",
+      },
+    };
+  }
+  if (/^gsk_[A-Za-z0-9]{50}$/.test(k)) {
+    return {
+      nama: "groq",
+      model: process.env.GROQ_MODEL || "llama-3.3-70b-versatile",
+      baseURL: "https://api.groq.com/openai/v1",
+      apiKey: k,
+    };
+  }
+  return null;
+}
+
+/**
  * Rantai penyedia model.
  *
  * Tiga tingkat, dicoba berurutan. Tujuannya satu: asisten tidak boleh
@@ -158,10 +216,22 @@ function balasanTeks(teks: string, mode: string, jumlahSumber: number): Response
 }
 
 export async function POST(req: Request) {
+  // Identitas kasar untuk pembatas laju: alamat klien atau kunci.
+  const alamat =
+    req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "lokal";
+  const kunciMilik = kunciPengguna(req.headers.get("x-sari-api-key"));
+
+  if (!dalamBatas(alamat, Boolean(kunciMilik))) {
+    return Response.json(
+      { error: "Terlalu banyak pertanyaan. Tunggu sebentar, ya." },
+      { status: 429, headers: { "Retry-After": "30" } },
+    );
+  }
+
   let messages: UIMessage[] = [];
   try {
     const body = await req.json();
-    messages = Array.isArray(body?.messages) ? body.messages : [];
+    messages = Array.isArray(body?.messages) ? body.messages.slice(-12) : [];
   } catch {
     return Response.json({ error: "Badan permintaan bukan JSON." }, { status: 400 });
   }
@@ -202,8 +272,8 @@ export async function POST(req: Request) {
     return balasanTeks(PESAN_TIDAK_ADA, "arsip-kosong", 0);
   }
 
-  // --- Tingkat 1: kunci valid ---
-  const utama = penyediaUtama();
+  // --- Tingkat 1: kunci milik pengguna dulu, lalu kunci server ---
+  const utama = kunciMilik ?? penyediaUtama();
   if (utama) {
     try {
       const provider = createOpenAICompatible({

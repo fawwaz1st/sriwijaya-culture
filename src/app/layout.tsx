@@ -80,7 +80,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </a>
         <SiteHeader />
         <main id="konten">{children}</main>
-        <SiteFooter />
+        {/* Asisten berperilaku seperti aplikasi layar penuh (pola Claude.ai/
+            ChatGPT): footer disembunyikan supaya percakapan menjadi
+            satu-satunya yang menggulir. Ditandai lewat kelas di <main>. */}
+        <div data-chrome="true">
+          <SiteFooter />
+        </div>
       </body>
     </html>
   );
