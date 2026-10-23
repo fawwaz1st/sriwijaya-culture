@@ -61,7 +61,7 @@ export function KatalogUMKM({
           onClick={() => pilih("")}
           aria-pressed={!aktif}
           className={cn(
-            "px-2.5 py-1 font-mono text-[0.625rem] uppercase tracking-[0.1em] transition-colors",
+            "px-2.5 py-1 font-mono text-[0.75rem] uppercase tracking-[0.1em] transition-colors",
             !aktif ? "bg-terang text-malam" : "text-terang-2 hover:text-terang",
           )}
         >
@@ -78,7 +78,7 @@ export function KatalogUMKM({
               onClick={() => pilih(k)}
               aria-pressed={on}
               className={cn(
-                "flex items-center gap-1.5 px-2.5 py-1 font-mono text-[0.625rem] uppercase tracking-[0.1em] transition-colors",
+                "flex items-center gap-1.5 px-2.5 py-1 font-mono text-[0.75rem] uppercase tracking-[0.1em] transition-colors",
                 on ? "bg-terang text-malam" : "text-terang-2 hover:text-terang",
               )}
             >
@@ -157,10 +157,10 @@ export function KatalogUMKM({
                     <h2 className="mt-1 font-display text-lg leading-tight text-terang transition-colors group-hover:text-emas">
                       {u.nama}
                     </h2>
-                    <p className="mt-1 line-clamp-2 text-[0.75rem] leading-relaxed text-terang-2">
+                    <p className="mt-1 line-clamp-2 text-[0.8125rem] leading-relaxed text-terang-2">
                       {u.ringkas}
                     </p>
-                    <p className="mt-auto pt-2 font-mono text-[0.5rem] uppercase tracking-[0.1em] text-terang-3">
+                    <p className="mt-auto pt-2 font-mono text-[0.75rem] uppercase tracking-[0.1em] text-terang-3">
                       {u.wilayah} · {u.produk.length} produk
                     </p>
                   </div>
@@ -206,7 +206,7 @@ export function KatalogUMKM({
                 </div>
                 <Link
                   href="/asisten"
-                  className="inline-flex min-h-9 w-fit items-center gap-2 border border-emas/40 px-4 py-2 font-mono text-[0.6875rem] uppercase tracking-[0.12em] text-emas transition-colors hover:border-emas hover:bg-emas/10"
+                  className="inline-flex min-h-9 w-fit items-center gap-2 border border-emas/40 px-4 py-2 font-mono text-[0.75rem] uppercase tracking-[0.12em] text-emas transition-colors hover:border-emas hover:bg-emas/10"
                 >
                   Buka asisten →
                 </Link>

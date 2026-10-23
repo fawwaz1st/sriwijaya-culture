@@ -3,7 +3,7 @@ import { JsonLdSitus } from "@/components/json-ld";
 import { Foto } from "@/components/foto";
 import { Peta } from "@/components/peta";
 import { TimelineSejarah } from "@/components/timeline";
-import { ARTIKEL, DAFTAR_UMKM, DESTINASI, statistikArsip } from "@/lib/arsip";
+import { ARTIKEL, DESTINASI, UMKM_PUBLIK, statistikArsip } from "@/lib/arsip";
 
 /**
  * Beranda.
@@ -51,7 +51,7 @@ export default function Beranda() {
           <div className="absolute inset-x-0 bottom-0 h-[62%] bg-linear-to-t from-malam via-malam/70 to-transparent" />
         </div>
 
-        <div className="relative mx-auto flex w-full max-w-[1600px] flex-1 flex-col justify-end px-5 pb-8 pt-24 sm:px-8 sm:pb-10 lg:px-12">
+        <div className="relative mx-auto flex w-full max-w-[1760px] flex-1 flex-col justify-end px-5 pb-8 pt-24 sm:px-8 sm:pb-10 lg:px-12">
           <div className="kilau pointer-events-none absolute inset-x-0 top-0 h-full" aria-hidden="true" />
           <p className="meta-emas relative">Arsip digital Palembang · 2026</p>
 
@@ -68,7 +68,7 @@ export default function Beranda() {
             <div className="flex flex-wrap items-center gap-2.5 sm:gap-3">
               <Link
                 href="/destinasi"
-                className="group inline-flex items-center gap-2 bg-terang px-5 py-3 font-mono text-[0.6875rem] uppercase tracking-[0.12em] text-malam transition-colors hover:bg-emas"
+                className="group inline-flex items-center gap-2 bg-terang px-5 py-3 font-mono text-[0.75rem] uppercase tracking-[0.12em] text-malam transition-colors hover:bg-emas"
               >
                 Jelajahi destinasi
                 <span aria-hidden="true" className="transition-transform group-hover:translate-x-1">
@@ -77,25 +77,37 @@ export default function Beranda() {
               </Link>
               <Link
                 href="/asisten"
-                className="inline-flex items-center gap-2 bg-malam/70 px-5 py-3 font-mono text-[0.6875rem] uppercase tracking-[0.12em] text-terang backdrop-blur-sm transition-colors hover:bg-malam"
+                className="inline-flex items-center gap-2 bg-malam/70 px-5 py-3 font-mono text-[0.75rem] uppercase tracking-[0.12em] text-terang backdrop-blur-sm transition-colors hover:bg-malam"
               >
                 Tanya Sari
               </Link>
             </div>
           </div>
 
-          {/* Pita angka. Empat kolom, dua baris di ponsel, tanpa risiko
-              terpotong karena section boleh tumbuh. */}
+          {/* Pita angka.
+
+              Sebelumnya kolom terakhir berbunyi "Terverifikasi 15%".
+              Angka itu jujur tetapi salah tempat: di posisi paling
+              menonjol di halaman, ia terbaca sebagai "85% sisanya tidak
+              dipercaya". Yang ditampilkan sekarang adalah ukuran arsip
+              yang bisa dipakai pengunjung, dan status verifikasi tetap
+              dijelaskan di halaman Metodologi tempat ia memang dibahas. */}
           <dl className="mt-7 grid grid-cols-2 gap-x-5 gap-y-3 border-t border-terang/20 pt-4 sm:grid-cols-3 lg:grid-cols-6">
             {[
               { k: "Destinasi", v: s.destinasi },
-              { k: "Berkoordinat", v: s.destinasiTerpetakan },
+              { k: "Titik peta", v: s.destinasiTerpetakan },
               { k: "Usaha lokal", v: s.umkm },
               { k: "Catatan", v: s.artikel },
+              { k: "Peristiwa", v: s.peristiwa },
               { k: "Sumber", v: s.sumber },
-              { k: "Terverifikasi", v: `${s.persenTerverifikasi}%` },
             ].map((x, i) => (
-              <div key={x.k} className="angka-naik" style={{ animationDelay: `${i * 60}ms` }}>
+              /*
+                Jeda maksimum 2 langkah, bukan 6. Dengan 6 langkah
+                (60 ms each) angka terakhir baru terbaca 396 ms setelah
+                LCP. Dua langkah sudah memberi kesan berurutan tanpa
+                menunda keterbacaan.
+              */
+              <div key={x.k} className="angka-naik" style={{ animationDelay: `${Math.min(i, 1) * 70}ms` }}>
                 <dt className="meta">{x.k}</dt>
                 <dd className="tabular mt-0.5 font-display text-xl leading-none text-terang">{x.v}</dd>
               </div>
@@ -131,7 +143,7 @@ export default function Beranda() {
                 sizes="176px"
                 className="h-full w-full object-cover opacity-75 transition-all duration-500 group-hover:scale-105 group-hover:opacity-100"
               />
-              <span className="absolute inset-x-0 bottom-0 bg-linear-to-t from-malam/90 to-transparent px-2 pb-1.5 pt-4 font-mono text-[0.5625rem] uppercase tracking-[0.1em] text-terang">
+              <span className="absolute inset-x-0 bottom-0 bg-linear-to-t from-malam/90 to-transparent px-2 pb-1.5 pt-4 font-mono text-[0.75rem] uppercase tracking-[0.1em] text-terang">
                 {f.label}
               </span>
             </Link>
@@ -143,14 +155,20 @@ export default function Beranda() {
           GALERI ASIMETRIS: setiap baris punya bentuk berbeda.
           Baris 1: potret tinggi + teks + lanskap lebar.
           ================================================================ */}
-      <section className="mx-auto max-w-[1600px] px-5 py-14 sm:px-8 lg:px-12 lg:py-20">
+      <section className="relative mx-auto max-w-[1760px] px-5 py-14 sm:px-8 lg:px-12 lg:py-20">
+        {/* Nomor bagian besar dan sangat redup di sudut. Ini penanda
+            katalog museum: pembaca tahu sedang di bagian mana tanpa
+            perlu membaca label. */}
+        <span className="nomor-bagian" aria-hidden="true">
+          02
+        </span>
         <div className="flex items-end justify-between gap-6">
           <h2 className="display max-w-[20ch] text-[clamp(2rem,4.6vw,3.75rem)] text-terang">
             Mulai dari yang paling dikenal
           </h2>
           <Link
             href="/destinasi"
-            className="meta hidden min-h-8 shrink-0 items-center border-b border-terang-3 text-terang-2 hover:border-emas hover:text-emas sm:inline-flex"
+            className="meta tautan-tumbuh hidden min-h-8 shrink-0 items-center text-terang-2 hover:text-emas sm:inline-flex"
           >
             Semua destinasi →
           </Link>
@@ -174,7 +192,7 @@ export default function Beranda() {
                 sizes="(max-width: 768px) 100vw, 40vw"
                 className="w-full object-cover transition-[filter] duration-700 group-hover:brightness-110"
               />
-              <span className="absolute left-0 top-0 bg-malam/80 px-2 py-1 font-mono text-[0.5625rem] uppercase tracking-[0.1em] text-emas">
+              <span className="absolute left-0 top-0 bg-malam/80 px-2 py-1 font-mono text-[0.75rem] uppercase tracking-[0.1em] text-emas">
                 01 · {ampera.kategori[0]}
               </span>
             </div>
@@ -217,7 +235,7 @@ export default function Beranda() {
                       />
                     </div>
                     <div className="min-w-0">
-                      <p className="meta text-[0.5rem]">{d.kategori[0]}</p>
+                      <p className="meta text-[0.75rem]">{d.kategori[0]}</p>
                       <p className="truncate font-display text-sm leading-tight text-terang group-hover:text-emas">
                         {d.nama}
                       </p>
@@ -237,10 +255,10 @@ export default function Beranda() {
                   key={f.k}
                   className="flex items-baseline justify-between gap-4 border-b border-garis-malam/60 py-1.5"
                 >
-                  <dt className="font-mono text-[0.5625rem] uppercase tracking-[0.1em] text-terang-3">
+                  <dt className="font-mono text-[0.75rem] uppercase tracking-[0.1em] text-terang-3">
                     {f.k}
                   </dt>
-                  <dd className="tabular text-right font-mono text-[0.6875rem] text-terang-2">
+                  <dd className="tabular text-right font-mono text-[0.75rem] text-terang-2">
                     {f.v}
                   </dd>
                 </div>
@@ -270,7 +288,7 @@ export default function Beranda() {
             <h3 className="mt-1 font-display text-lg leading-tight text-terang group-hover:text-emas">
               {bkb.nama}
             </h3>
-            <p className="mt-1.5 line-clamp-3 text-[0.75rem] leading-relaxed text-terang-3">
+            <p className="mt-1.5 line-clamp-3 text-[0.8125rem] leading-relaxed text-terang-3">
               {bkb.ringkas}
             </p>
           </Link>
@@ -293,7 +311,7 @@ export default function Beranda() {
               <h3 className="mt-1 font-display text-lg leading-tight text-terang group-hover:text-emas">
                 {d.nama}
               </h3>
-              <p className="mt-1.5 line-clamp-2 text-[0.75rem] leading-relaxed text-terang-3">
+              <p className="mt-1.5 line-clamp-2 text-[0.8125rem] leading-relaxed text-terang-3">
                 {d.ringkas}
               </p>
             </Link>
@@ -305,8 +323,8 @@ export default function Beranda() {
           PETA: latar kertas, sengaja dibalik. Ini satu-satunya bagian
           yang butuh permukaan terang karena peta dibaca, bukan ditonton.
           ================================================================ */}
-      <section className="kertas py-14 lg:py-16">
-        <div className="mx-auto max-w-[1600px] px-5 sm:px-8 lg:px-12">
+      <section className="kertas relative py-14 lg:py-16">
+        <div className="relative mx-auto max-w-[1760px] px-5 sm:px-8 lg:px-12">
           <div className="flex flex-wrap items-end justify-between gap-6">
             <div>
               <p className="meta-emas">Peta</p>
@@ -314,8 +332,14 @@ export default function Beranda() {
                 Lihat sendiri bentuk kotanya.
               </h2>
             </div>
-            <p className="max-w-[38ch] text-[0.8125rem] leading-relaxed text-gelap-2">
-              Satelit asli, bisa di-zoom. Sembilan titik sudah terverifikasi.
+            {/* Angka diambil dari data, bukan ditulis tetap. Sebelumnya
+                teks ini berbunyi "Sembilan titik" padahal ada sepuluh
+                destinasi berkoordinat: angka yang tidak ikut berubah
+                saat data berubah adalah cara tercepat kehilangan
+                kepercayaan pembaca. */}
+            <p className="max-w-[38ch] text-[0.875rem] leading-relaxed text-gelap-2">
+              Satelit asli, bisa di-zoom. {s.destinasiTerpetakan} titik sudah
+              terverifikasi dan bisa dibuka satu per satu.
             </p>
           </div>
 
@@ -329,7 +353,7 @@ export default function Beranda() {
           GARIS WAKTU: pita gelap, angka besar.
           ================================================================ */}
       <section className="border-y border-garis-malam bg-malam-2 py-14 lg:py-20">
-        <div className="mx-auto max-w-[1600px] px-5 sm:px-8 lg:px-12">
+        <div className="mx-auto max-w-[1760px] px-5 sm:px-8 lg:px-12">
           <div className="flex flex-wrap items-end justify-between gap-6">
             <div>
               <p className="meta-emas">Garis waktu</p>
@@ -350,7 +374,7 @@ export default function Beranda() {
       {/* ================================================================
           ARTIKEL: satu besar, dua kecil. Bukan tiga kartu sama.
           ================================================================ */}
-      <section className="mx-auto max-w-[1600px] px-5 py-14 sm:px-8 lg:px-12 lg:py-20">
+      <section className="mx-auto max-w-[1760px] px-5 py-14 sm:px-8 lg:px-12 lg:py-20">
         <div className="flex items-end justify-between gap-6">
           <h2 className="display max-w-[20ch] text-[clamp(2rem,4.6vw,3.5rem)] text-terang">
             Kenali dulu, baru datang.
@@ -404,7 +428,7 @@ export default function Beranda() {
                   <h3 className="mt-1 font-display text-lg leading-snug text-terang group-hover:text-emas">
                     {a.judul}
                   </h3>
-                  <p className="mt-1.5 line-clamp-2 text-[0.75rem] leading-relaxed text-terang-3">
+                  <p className="mt-1.5 line-clamp-2 text-[0.8125rem] leading-relaxed text-terang-3">
                     {a.ringkas}
                   </p>
                 </div>
@@ -418,7 +442,7 @@ export default function Beranda() {
           USAHA: pita horizontal, bukan grid kartu.
           ================================================================ */}
       <section className="border-t border-garis-malam bg-malam-2 py-14 lg:py-16">
-        <div className="mx-auto max-w-[1600px] px-5 sm:px-8 lg:px-12">
+        <div className="mx-auto max-w-[1760px] px-5 sm:px-8 lg:px-12">
           <div className="flex flex-wrap items-end justify-between gap-6">
             <div>
               <p className="meta-emas">Usaha lokal</p>
@@ -431,8 +455,14 @@ export default function Beranda() {
             </Link>
           </div>
 
-          <ul className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-4">
-            {DAFTAR_UMKM.slice(0, 4).map((u) => (
+          <ul className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3">
+            {/*
+              Hanya usaha yang datanya bisa dipertanggungjawabkan.
+              Sebelumnya beranda memakai daftar mentah, sehingga entri
+              berstatus demonstrasi ikut tampil di halaman depan.
+              `UMKM_PUBLIK` menyaringnya di satu tempat.
+            */}
+            {UMKM_PUBLIK.slice(0, 3).map((u) => (
               <li key={u.id}>
                 <Link href={`/umkm/${u.id}`} className="group block">
                   <div className="overflow-hidden">
@@ -468,7 +498,7 @@ export default function Beranda() {
           />
           <div className="absolute inset-0 bg-malam/82" />
         </div>
-        <div className="relative mx-auto max-w-[1600px] px-5 py-16 sm:px-8 lg:px-12 lg:py-20">
+        <div className="relative mx-auto max-w-[1760px] px-5 py-16 sm:px-8 lg:px-12 lg:py-20">
           <p className="meta-emas">Asisten arsip</p>
           <h2 className="display mt-3 max-w-[18ch] text-[clamp(2.25rem,5.5vw,4.5rem)] text-terang">
             Tanya Sari. Ia jujur kalau tidak tahu.
@@ -479,14 +509,14 @@ export default function Beranda() {
           <div className="mt-8 flex flex-wrap gap-2">
             <Link
               href="/asisten"
-              className="group inline-flex items-center gap-2 bg-emas px-5 py-3 font-mono text-[0.6875rem] uppercase tracking-[0.12em] text-malam transition-colors hover:bg-emas-muda"
+              className="group inline-flex items-center gap-2 bg-emas px-5 py-3 font-mono text-[0.75rem] uppercase tracking-[0.12em] text-malam transition-colors hover:bg-emas-muda"
             >
               Tanya Asisten Sari
               <span aria-hidden="true" className="transition-transform group-hover:translate-x-1">→</span>
             </Link>
             <Link
               href="/metodologi"
-              className="inline-flex items-center gap-2 border border-terang/30 px-5 py-3 font-mono text-[0.6875rem] uppercase tracking-[0.12em] text-terang transition-colors hover:border-terang"
+              className="inline-flex items-center gap-2 border border-terang/30 px-5 py-3 font-mono text-[0.75rem] uppercase tracking-[0.12em] text-terang transition-colors hover:border-terang"
             >
               Metodologi dan sumber
             </Link>

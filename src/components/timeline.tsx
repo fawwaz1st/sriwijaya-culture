@@ -38,13 +38,12 @@ export function TimelineSejarah() {
     <div>
       {/* Pita era: satu blok per zaman, tinggi sebanding jumlah tonggak. */}
       <ol className="grid grid-cols-2 gap-px border border-garis-malam bg-garis-malam sm:grid-cols-4">
-        {era.map((e, i) => (
+        {era.map((e) => (
           <li
             key={e.label}
             className="label-masuk bg-malam-2 p-3 sm:p-4"
-            style={{ animationDelay: `${i * 70}ms` }}
           >
-            <p className="font-mono text-[0.5rem] uppercase tracking-[0.1em] text-terang-3">
+            <p className="font-mono text-[0.75rem] uppercase tracking-[0.1em] text-terang-3">
               {e.dari}–{e.sampai === 2100 ? "kini" : e.sampai}
             </p>
             <p className="mt-1 flex items-baseline gap-2">
@@ -56,7 +55,7 @@ export function TimelineSejarah() {
               >
                 {e.jumlah}
               </span>
-              <span className="font-mono text-[0.5625rem] uppercase tracking-[0.08em] text-terang-3">
+              <span className="font-mono text-[0.75rem] uppercase tracking-[0.08em] text-terang-3">
                 tonggak
               </span>
             </p>
@@ -65,8 +64,15 @@ export function TimelineSejarah() {
         ))}
       </ol>
 
-      {/* Tabel tonggak. */}
-      <ol className="mt-4 border-t border-garis-malam">
+      {/* Tabel tonggak.
+
+          Di layar lebar, tabel satu kolom selebar 1344px menyisakan
+          ruang kosong panjang di antara label dan jumlah sumber: baris
+          terbaca sebagai dua ujung yang berjauhan. Sekarang tonggak
+          dibagi dua kolom di layar >= lg, jadi kepadatan naik dan mata
+          tidak perlu melompat jauh. Urutan tetap kronologis karena
+          dibaca kolom demi kolom. */}
+      <ol className="mt-4 grid gap-x-10 border-t border-garis-malam lg:grid-cols-2">
         {peristiwa.map((p, i) => {
           const ref = p.ref.jenis === "destinasi" ? cariDestinasi(p.ref.id) : cariArtikel(p.ref.id);
           const href = p.ref.jenis === "destinasi" ? `/destinasi/${p.ref.id}` : `/artikel/${p.ref.id}`;
@@ -74,17 +80,16 @@ export function TimelineSejarah() {
             <li
               key={`${p.tahun}-${i}`}
               className="kartu-masuk border-b border-garis-malam"
-              style={{ animationDelay: `${Math.min(i, 8) * 45}ms` }}
             >
               <Link
                 href={href}
-                className="group grid grid-cols-[3.5rem_1fr_auto] items-baseline gap-3 py-2.5 transition-colors hover:bg-malam-3/60"
+                className="group flex items-baseline gap-3 py-2.5 transition-colors hover:bg-malam-3/60"
               >
-                <span className="tabular font-mono text-[0.6875rem] text-emas">{p.tahun}</span>
-                <span className="min-w-0 text-[0.8125rem] leading-snug text-terang-2 group-hover:text-terang">
+                <span className="tabular w-14 shrink-0 font-mono text-[0.75rem] text-emas">{p.tahun}</span>
+                <span className="min-w-0 flex-1 text-[0.8125rem] leading-snug text-terang-2 group-hover:text-terang">
                   {p.label}
                 </span>
-                <span className="tabular shrink-0 font-mono text-[0.5rem] text-terang-3">
+                <span className="tabular shrink-0 font-mono text-[0.75rem] text-terang-3">
                   {ref?.sumber.length ?? 0} sumber
                 </span>
               </Link>

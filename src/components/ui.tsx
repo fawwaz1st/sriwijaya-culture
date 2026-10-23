@@ -73,7 +73,7 @@ export function Tombol({
   panah?: boolean;
 } & Omit<React.ComponentProps<typeof Link>, "href" | "className" | "children">) {
   const dasar =
-    "group inline-flex min-h-11 items-center justify-center gap-2 px-5 py-3 font-mono text-[0.6875rem] uppercase tracking-[0.12em] transition-all duration-300";
+    "group inline-flex min-h-11 items-center justify-center gap-2 px-5 py-3 font-mono text-[0.75rem] uppercase tracking-[0.12em] transition-all duration-300";
   const gaya = {
     terang:
       "bg-terang text-malam shadow-[inset_0_1px_0_rgba(255,255,255,0.4)] hover:-translate-y-0.5 hover:bg-emas",
@@ -130,7 +130,7 @@ export function Angka({
         )}
       >
         {nilai}
-        {satuan && <span className="font-mono text-[0.625rem] tracking-normal opacity-60">{satuan}</span>}
+        {satuan && <span className="font-mono text-[0.75rem] tracking-normal opacity-60">{satuan}</span>}
       </p>
     </div>
   );

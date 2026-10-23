@@ -79,7 +79,7 @@ export const destinasi = [
       },
       {
         "k": "Bentang tengah",
-        "v": "sekitar 71 meter (sumber menulis 71,5 dan 71,9 meter)"
+        "v": "71,5 meter; satu sumber menulis 71,9 meter"
       },
       {
         "k": "Mulai dibangun",

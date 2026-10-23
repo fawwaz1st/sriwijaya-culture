@@ -1,4 +1,4 @@
-import { ARTIKEL, DAFTAR_UMKM, DESTINASI } from "@/lib/arsip";
+import { ARTIKEL, DESTINASI, UMKM_PUBLIK } from "@/lib/arsip";
 import type { Artikel, Destinasi, UMKM } from "@/lib/types";
 
 /**
@@ -96,9 +96,25 @@ function dokumenArtikel(a: Artikel): Dokumen {
   };
 }
 
+/**
+ * Korpus pencarian.
+ *
+ * Usaha memakai `UMKM_PUBLIK`, bukan `DAFTAR_UMKM`.
+ *
+ * Alasannya ditemukan saat menguji asisten: ketika korpus masih memuat
+ * seluruh rekaman, pertanyaan "di mana bisa membeli songket?" dijawab
+ * dengan menyebut "Perajin Songket Rumahan 13 Ulu" seolah-olah usaha
+ * nyata, padahal entri itu berstatus `demonstrasi` dan alamatnya belum
+ * pernah diverifikasi. Asisten yang mengarang alamat adalah kegagalan
+ * yang paling merusak kepercayaan, jadi entri yang tidak layak tampil di
+ * direktori juga tidak layak masuk konteks model.
+ *
+ * Rute detail entri demonstrasi tetap hidup agar tautan lama tidak 404,
+ * tetapi asisten tidak lagi mengetahuinya.
+ */
 export const SEMUA_DOKUMEN: Dokumen[] = [
   ...DESTINASI.map(dokumenDestinasi),
-  ...DAFTAR_UMKM.map(dokumenUMKM),
+  ...UMKM_PUBLIK.map(dokumenUMKM),
   ...ARTIKEL.map(dokumenArtikel),
 ];
 

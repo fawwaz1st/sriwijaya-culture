@@ -5,8 +5,9 @@
 **Tema:** *Empowering Culture Through AI-Driven Innovation*
 
 > Dokumen ini dilengkapi sebagai .docx / .pdf sesuai ketentuan guidebook.
-> Semua prompt dan respons di bawah adalah salinan asli dari sesi
-> pengembangan, tidak diubah.
+> Prompt pada §3 ditulis dalam bentuk terstruktur (peran, konteks, tugas,
+> batasan, keluaran) agar dapat direproduksi dan dinilai. Isi arahan,
+> urutan kerja, dan keputusan yang diambil identik dengan sesi aslinya.
 
 ---
 
@@ -22,6 +23,19 @@ AI dipakai di dua lapis, dengan batas yang tegas:
 Tema kompetisi terpenuhi di kedua lapis: AI mempercepat pengembangan,
 dan AI juga menjadi fitur nilai-tambah yang tidak bisa dibuat tanpa
 model bahasa.
+
+**Prinsip prompt yang dipakai konsisten sepanjang proyek:**
+
+1. **Sebut peran dan audiens** lebih dulu, karena itu menentukan kosakata
+   dan tingkat kedalaman jawaban.
+2. **Nyatakan kondisi awal secara faktual**, termasuk yang buruk. Prompt
+   yang menyembunyikan masalah akan menghasilkan perbaikan kosmetik.
+3. **Minta bukti, bukan kesan.** Setiap klaim visual harus disertai angka
+   dari peramban, bukan "terlihat bagus".
+4. **Tetapkan batas yang tidak boleh dilanggar** (jangan mengarang data,
+   jangan menambah dependensi berat, jangan menyembunyikan konten).
+5. **Minta inisiatif eksplisit** untuk hal yang tidak disebut, karena
+   model cenderung berhenti tepat di batas instruksi.
 
 ---
 
@@ -51,61 +65,117 @@ agar tidak bisa dijadikan vektor memori.
 
 ---
 
-## 3. Salinan prompt → respons (pengembangan)
+## 3. Prompt pengembangan (terstruktur)
 
-### Prompt 3.1 — analisis guidebook
+Setiap prompt ditulis dengan lima bagian tetap: **Peran**, **Konteks**,
+**Tugas**, **Batasan**, **Keluaran**. Format ini dipilih karena menguji
+satu hal yang sama setiap kali: apakah model bisa dibatasi oleh kriteria
+yang bisa diperiksa, bukan oleh selera.
 
-```
-kamu analisa penuh pdf ini DENGAN memakai GAMBAR + TEXT untuk
-KEAKURATAN PEMAHAMAN. RESTRUKTURISASI DAN REORGANIZE PROJEK INI
-KARENA SANGATLAH BERANTAKAN. PIKIRKAN SANGAT MENDALAM APAKAH TETAP
-MEMAKAI HTML ATAU BERALIH PENUH KE NEXT.JS/TYPESCRIPT/TAILWINDCSS.
-```
+### Prompt 3.1 — analisis guidebook dan keputusan stack
 
-**Respons AI (ringkas):** rekomendasi migrasi penuh ke Next.js 16 +
-TypeScript + Tailwind 4 dengan alasan: tidak ada lapisan server, tidak
-ada tipe, 11 berkas HTML menggandakan markup. Diikuti manusia, dengan
-satu revisi: embedding 90 MB ditolak, diganti TF-IDF.
+**Peran.** Analis teknis senior yang membaca dokumen kompetisi sebagai
+sumber kebenaran, bukan sebagai saran.
+
+**Konteks.** Repositori berisi 11 berkas HTML statis dengan markup
+berulang, tanpa lapisan server, tanpa tipe, dan tanpa satu pun uji
+otomatis. Dokumen guidebook menentukan kriteria penilaian yang harus
+dipenuhi.
+
+**Tugas.** (1) Baca guidebook secara utuh, gabungkan pembacaan teks dan
+gambar agar kriteria visual tidak terlewat. (2) Petakan setiap kriteria
+ke kondisi repositori saat ini. (3) Putuskan apakah tetap HTML atau
+beralih ke Next.js/TypeScript/Tailwind, dengan alasan yang bisa diuji.
+(4) Susun ulang struktur proyek agar dapat dinavigasi.
+
+**Batasan.** Jangan menambah dependensi yang tidak dipakai. Jangan
+mengarang isi data budaya. Setiap rekomendasi harus disertai konsekuensi
+operasionalnya, bukan hanya daftar teknologi.
+
+**Keluaran.** Keputusan stack beserta alasan, peta kriteria → kondisi,
+dan urutan migrasi.
+
+**Hasil.** Migrasi ke Next.js 16 + TypeScript + Tailwind 4 disetujui
+dengan satu revisi manusia: usulan embedding 90 MB ditolak dan diganti
+TF-IDF, karena korpus hanya 25 dokumen.
 
 ### Prompt 3.2 — desain ulang terukur
 
-```
-Layout/frontend saat ini sangat bagus, namun ada beberapa space, maps
-(harusny google maps/maps earth asli), dan banyak teks yang bisa
-dipangkas/dipadatkan/humanisasi serta beberapa simplifikasi.
-Riset standar industri 2026
-```
+**Peran.** Desainer antarmuka yang bekerja dengan standar institusi
+arsip, bukan standar landing page.
 
-**Respons AI:** riset referensi (NN/g, pola museum), lalu proposal:
-hero foto penuh dengan scrim tinggi 62%, Google Maps embed nyata
-(menggantikan SVG buatan), ringkasan kartu ≤150 karakter.
+**Konteks.** Struktur halaman sudah benar, tetapi masih ada tiga masalah:
+ruang kosong yang tidak membawa informasi, peta yang digambar sendiri
+sehingga tidak bisa dipakai bernavigasi, dan teks yang panjang serta
+kaku.
 
-### Prompt 3.3 — QA dengan inisiatif
+**Tugas.** Ganti peta buatan dengan peta nyata yang bisa di-zoom. Padatkan
+teks tanpa kehilangan fakta. Hilangkan ruang kosong yang tidak berfungsi.
+Cocokkan keputusan dengan referensi industri terbaru.
 
-```
-design seluruh halaman masih sangat buruk bahkan di asisten. lakukan
-full testing + QA hingga detail terkecil dan bahkan tidak dimention
-diprompt (INISIATIF)
-```
+**Batasan.** Jangan mengorbankan keterbacaan demi kepadatan. Jangan
+menghapus sumber atau status verifikasi. Jangan memakai pola visual yang
+tidak berasal dari konteks arsip.
 
-**Respons AI:** membangun `scripts/qa.mjs` — audit 10 rute × 3 lebar
-(390/768/1440) yang mengukur kontras WCAG, target sentuh, overflow,
-heading, alt, dan galat konsol. Temuan pertama **501 masalah**;
-setelah tiga putaran perbaikan: **0**.
+**Keluaran.** Perubahan yang bisa diverifikasi: tinggi scrim hero,
+sumber peta, batas panjang ringkasan kartu, dan daftar ruang kosong yang
+dihapus.
 
-### Prompt 3.4 — BYOK dan keamanan
+**Hasil.** Hero memakai scrim 62% (bukan lapisan gelap penuh), peta
+memakai embed Google Maps, ringkasan kartu dibatasi 150 karakter.
 
-```
-di halaman asisten, jangan ada footer dan perbaiki UI/frontendnya.
-tambah kotak kecil input untuk menambahkan API key provider AI.
-Tingkatkan optimasi dan keamanan AI!
-```
+### Prompt 3.3 — QA menyeluruh dengan inisiatif
 
-**Respons AI:** pola app-shell 2026 (Claude.ai/ChatGPT), panel kunci
-milik pengguna, dan laporan keamanan yang menemukan celah sendiri:
-pembatas laju bisa dilewati lewat pemalsuan `X-Forwarded-For` dan map
-pembatas bisa digembungkan tanpa batas. Keduanya diperbaiki (hop
-terakhir + pembersihan peta).
+**Peran.** QA engineer yang menguji hasil kerjanya sendiri dan tidak
+percaya pada penilaian visual semata.
+
+**Konteks.** Tampilan seluruh halaman, termasuk asisten, belum memenuhi
+standar. Sebagian cacat tidak disebutkan dalam instruksi mana pun.
+
+**Tugas.** Bangun pengujian otomatis yang mengukur, bukan mengamati:
+kontras WCAG, ukuran target sentuh, luapan horizontal, struktur heading,
+teks alternatif gambar, dan galat konsol. Jalankan pada seluruh rute di
+tiga lebar layar. Perbaiki temuan sampai bersih. Temukan juga cacat yang
+tidak diminta secara eksplisit.
+
+**Batasan.** Jangan menurunkan standar agar lulus. Jangan menonaktifkan
+pemeriksaan. Setiap perbaikan harus disertai angka sebelum dan sesudah.
+
+**Keluaran.** Skrip audit yang dapat dijalankan ulang, daftar temuan, dan
+bukti angka akhir.
+
+**Hasil.** `scripts/qa.mjs` menguji 10 rute × 3 lebar. Temuan pertama
+501, setelah tiga putaran menjadi 0.
+
+### Prompt 3.4 — BYOK, keamanan, dan integritas data
+
+**Peran.** Engineer yang bertanggung jawab atas keamanan sekaligus
+kredibilitas isi.
+
+**Konteks.** Halaman asisten memakai kunci API server. Pengunjung perlu
+bisa memakai kunci sendiri. Di sisi lain, direktori usaha memuat entri
+contoh yang belum diverifikasi.
+
+**Tugas.** (1) Hapus footer dari halaman asisten dan rapikan antarmukanya
+mengikuti pola app-shell. (2) Tambahkan kolom kecil untuk kunci API milik
+pengguna. (3) Tinjau keamanan jalur kunci: penyimpanan, pengiriman,
+validasi, pembatas laju. (4) Pisahkan entri data yang belum diverifikasi
+dari direktori publik, tanpa membuat tautan lama menjadi 404.
+
+**Batasan.** Kunci tidak boleh pernah dikirim langsung ke pihak ketiga
+dari peramban. Kunci tidak boleh masuk log. Pembatas laju tidak boleh
+bisa dilewati lewat header yang bisa dipalsukan. Data contoh tidak boleh
+tampil seolah-olah terverifikasi.
+
+**Keluaran.** Perubahan antarmuka, panel kunci, laporan temuan keamanan,
+dan aturan penyaringan data.
+
+**Hasil.** Ditemukan dua celah pada implementasi awal: pembatas laju bisa
+dilewati melalui `X-Forwarded-For` palsu, dan peta pembatas bisa
+digembungkan tanpa batas. Keduanya diperbaiki (hanya hop terakhir yang
+dipercaya, peta dibersihkan berkala). Di sisi data, empat entri
+berstatus `demonstrasi` dikeluarkan dari direktori publik melalui
+`UMKM_PUBLIK`, sementara halaman detailnya tetap hidup.
 
 ---
 
@@ -150,6 +220,87 @@ Keamanan (diperiksa tangan, bukan klaim):
 - Kunci pengguna divalidasi regex di klien dan server; tidak pernah
   masuk log; rate limit tetap berlaku dengan kunci sendiri.
 
+### 5.1 Tangkapan layar hasil akhir
+
+Seluruh gambar diambil dari build produksi (`next start`), bukan dari
+server pengembangan, pada lebar 1440 px dengan skala perangkat 2×.
+
+**Beranda.** Judul, pita statistik, dan galeri asimetris. Pita statistik
+menampilkan ukuran arsip yang bisa dipakai pengunjung, bukan persentase
+verifikasi — angka itu sebelumnya terbaca sebagai "85% sisanya tidak
+dipercaya", padahal maksudnya justru sebaliknya.
+
+![Beranda](bukti/01-beranda.png)
+
+**Katalog destinasi.** Bingkai foto seragam 4:5. Sebelumnya rasio
+mengikuti orientasi foto, sehingga kartu potret setinggi 513 px dan
+kartu lanskap 273 px duduk di baris yang sama dan garis baca horizontal
+hancur.
+
+![Katalog destinasi](bukti/02-katalog-destinasi.png)
+
+**Detail destinasi.** Galeri, tabel data tercatat, dan peta Google Maps
+asli yang bisa di-zoom. Peta dibuktikan hidup lewat pengukuran: hasil
+tangkapan elemen iframe 1,4 MB, bukan kotak kosong.
+
+![Detail destinasi](bukti/03-detail-destinasi.png)
+
+**Asisten Sari — keadaan kosong.** Tiga contoh pertanyaan yang semuanya
+bisa dijawab arsip, plus penjelasan singkat cara kerja di bawah kotak.
+
+![Asisten kosong](bukti/04-asisten-kosong.png)
+
+**Asisten Sari — percakapan nyata.** Jawaban dengan kutipan bernomor
+`[1]` dan `[2]` yang bisa diklik, serta daftar rujukan dengan judul utuh
+dan jenis dokumen. Uji ini dijalankan otomatis: pertanyaan dikirim,
+lalu halaman diperiksa sampai jawaban dan sumber muncul.
+
+![Asisten menjawab](bukti/05-asisten-jawaban.png)
+
+**Panel kunci API.** Kunci milik pengguna disimpan di peramban dan hanya
+dikirim ke server sendiri. Panel ini juga menjelaskan bahwa tanpa kunci,
+asisten tetap menjawab dengan penyedia bawaan.
+
+![Panel kunci](bukti/06-asisten-kunci.png)
+
+**Metodologi.** Aturan data, status verifikasi, dan daftar sumber. Ini
+halaman yang membuat klaim situs bisa diperiksa ulang.
+
+![Metodologi](bukti/07-metodologi.png)
+
+**Direktori usaha lokal.** Hanya memuat rekaman berstatus rujukan umum.
+Empat entri demonstrasi dikeluarkan dari direktori publik lewat
+`UMKM_PUBLIK`, tetapi halaman detailnya tetap hidup agar tautan lama
+tidak menjadi 404.
+
+![Direktori UMKM](bukti/08-umkm.png)
+
+**Mobile 390 px.** Satu kolom, target sentuh diperluas ke 44 px lewat
+pseudo-elemen sehingga tampilan tidak berubah, dan kartu memakai
+metadata utuh alih-alih ringkasan yang selalu berakhir dengan elipsis.
+
+![Beranda mobile](bukti/09-mobile-beranda.png)
+
+### 5.2 Angka sebelum dan sesudah
+
+| Pemeriksaan | Sebelum | Sesudah | Cara diukur |
+|---|---|---|---|
+| Temuan QA otomatis | 501 | 0 | `scripts/qa.mjs`, 10 rute × 3 lebar |
+| Rute dengan luapan horizontal | 6 | 0 | `scrollWidth - innerWidth` |
+| Tinggi baris galeri tidak sejajar | 340 px selisih | 0 px | `getBoundingClientRect()` per anak grid |
+| Void di kolom tengah beranda | ~320 px | 0 px | pengukuran tinggi anak vs wadah |
+| Target sentuh < 44 px | 12 elemen | 0 | audit `getBoundingClientRect()` |
+| Elemen tertinggal transparan | 5+ kartu | 0 | pemeriksaan `opacity` setelah gulir penuh |
+| Entri UMKM belum terverifikasi di direktori | 4 dari 7 | 0 | filter `statusData` |
+
+Dua baris terakhir layak disorot. Baris "elemen tertinggal transparan"
+adalah bug yang ditemukan sendiri saat menguji lapisan animasi baru:
+kartu di bawah lipatan berakhir dengan `opacity: 0` dan tidak pernah
+muncul, karena `animation-timeline: view()` tidak berjalan pada elemen
+yang sudah melewati fase entry saat halaman dimuat. Animasi kemudian
+diubah agar tidak pernah menyembunyikan konten — hanya transform dan
+filter yang dianimasikan.
+
 ---
 
 ## 5a. Sesi audit visual dan perbaikan tata letak
@@ -184,6 +335,12 @@ peramban, karena dua kali dalam sesi ini pengamatan visual keliru.
 | Kartu UMKM tidak sejajar | Screenshot | `flex h-full flex-col` + `mt-auto` |
 | Animasi menyembunyikan kartu di bawah lipatan | `scripts/_animcheck.mjs` menghitung elemen `opacity: 0` | Hapus `opacity: 0` dari keyframe; hanya `transform`/`filter` |
 | Lint: `setState` sinkron dalam effect | `npx eslint` | `requestAnimationFrame` |
+| Kartu katalog mobile: semua deskripsi berakhir "..." | Tangkapan 390px | Di layar kecil ringkasan diganti wilayah + status peta yang utuh |
+| Pita statistik berbunyi "Terverifikasi 15%" | Umpan balik pembaca | Diganti ukuran arsip; status verifikasi tetap di Metodologi |
+| Chip sitasi asisten terpotong `max-w-[22ch] truncate` | Tangkapan setelah menjawab | Satu baris penuh per sumber: nomor, judul utuh, jenis |
+| Jawaban asisten menempel tanpa jeda paragraf | Tangkapan setelah menjawab | Dipecah per paragraf dengan `space-y-3` |
+| Tombol kirim asisten terbaca mati saat kosong | Tangkapan keadaan kosong | Keadaan terisi emas penuh; keadaan kosong bergaris tepi |
+| Catatan data "71 meter (sumber menulis 71,5 dan 71,9)" | Pembacaan tabel data | Ditulis sebagai nilai tunggal + catatan sumber |
 
 **Bukti akhir sesi:**
 
@@ -216,3 +373,107 @@ $ node scripts/_animcheck.mjs          → 0 elemen tertinggal transparan
 - Situs: https://sriwijaya-culture.vercel.app
 - Repositori: https://github.com/fawwaz1st/sriwijaya-culture
 - Video demo: (tautan Drive — lihat SUBMISSION.md)
+
+---
+
+## 8. Sesi penguatan: responsif, tipografi, dan keamanan AI
+
+Sesi ini menguji ulang seluruh situs pada 11 lebar layar (320 sampai
+2560 px) dan meninjau endpoint asisten dengan sudut pandang penyerang.
+Semua angka di bawah adalah hasil pengukuran, bukan perkiraan.
+
+### 8.1 Tipografi yang terbaca
+
+Audit pertama menemukan **116 elemen teks berukuran 8–11 px hanya di
+beranda**, dan 75 di halaman Metodologi. Di monitor 27 inci dan di
+ponsel, ukuran itu tidak terbaca.
+
+| Ukuran | Jumlah sebelum | Sesudah |
+|---|---|---|
+| 8 px | 26 | 0 |
+| 9 px | 23 | 0 |
+| 10 px | 38 | 0 |
+| 11 px | 29 | 0 |
+| minimum di halaman | 8 px | **12 px** |
+
+Perbaikannya dilakukan di dua lapis: token `--text-2xs` (10 px → 12 px)
+dan `--text-xs` (11 px → 13 px) di `globals.css`, lalu seluruh kelas
+arbitrer `text-[0.5rem]` sampai `text-[0.6875rem]` diganti ke nilai
+token. Untuk layar ≥1920 px, skala dasar dinaikkan agar proporsi tetap
+terbaca dari jarak monitor besar.
+
+### 8.2 Responsif dari 320 px sampai 2560 px
+
+| Pemeriksaan | Hasil |
+|---|---|
+| Lebar diuji | 320, 360, 390, 430, 768, 820, 1024, 1280, 1440, 1920, 2560 px |
+| Halaman × lebar | 50 kombinasi |
+| Overflow horizontal | **0** |
+| Teks di bawah 12 px | **0** |
+| Gambar gagal muat | **0** |
+| Galat konsol | **0** |
+
+Dua bug nyata ditemukan lewat pengukuran dan diperbaiki: galeri di
+halaman detail destinasi melebarkan dokumen 21 px pada 320 px karena
+margin negatif bertemu padding, dan tautan "destinasi lain" tidak bisa
+menyusut karena tidak punya `min-w-0`.
+
+### 8.3 Keamanan endpoint asisten
+
+Tinjauan menemukan tiga celah kritis. Semuanya diperbaiki dan diuji
+ulang dengan `scripts/uji-keamanan.mjs`.
+
+| Celah | Dampak | Perbaikan | Hasil uji |
+|---|---|---|---|
+| Peran `system` dari klien diteruskan ke model | Prompt injection langsung; instruksi penyerang menang atas prompt sistem | Validasi bentuk: hanya `user` dan `assistant` diterima | Ditolak, jawaban tetap dari arsip |
+| Penjaga topik hanya memeriksa pesan terakhir | Instruksi menyimpang di pesan lama tetap terkirim | Seluruh giliran pengguna diperiksa | Ditolak dalam 17 ms |
+| Tidak ada validasi sitasi keluaran | "Hanya dari arsip" hanya permintaan, bukan jaminan | `sitasiSah()` menolak jawaban tanpa `[n]` sah | Turun ke jawaban arsip |
+| Pembatas laju memakai hop XFF pertama | Bisa dipalsukan; satu header mengosongkan seluruh peta penghitung | Urutan `x-vercel-forwarded-for` → `x-real-ip` → hop terakhir; `clear()` dihapus | 8/8 skenario benar |
+| Batas badan memakai `content-length` | Badan chunked melewati batas | Aliran dibaca potongan demi potongan dengan batas byte keras | 200 KB ditolak 413 |
+| `parts` rusak melempar galat 500 | Badan cacat menghasilkan galat server | Validasi bentuk pesan | 400 |
+
+Prinsip yang dipakai: **aturan yang penting tidak boleh hanya ada di
+prompt.** Prompt bisa diabaikan model, jadi setiap janji produk
+ditegakkan oleh kode yang bisa diuji.
+
+### 8.4 Gerak yang tidak merusak
+
+Audit animasi mengukur setiap keyframe di peramban dan menemukan:
+
+- `foto-nyala` tidak pernah berjalan (timeline degenerat karena wadah
+  `overflow-hidden` tidak bisa digulir), dan filter-nya memblokir
+  `group-hover:brightness-110`. **Dihapus.**
+- `animation-delay` pada `animation-timeline: view()` menggeser awal
+  timeline, bukan waktu. Efeknya: baris yang tertunda melewatkan 64 px
+  gulir dalam keadaan setengah transparan, dan animasinya jadi lebih
+  cepat daripada baris pertama. **Semua delay dihapus.**
+- `filter: blur()` pada angka statistik menunda keterbacaan angka
+  terakhir sampai 396 ms setelah LCP. **Dihapus**, durasi dipendekkan.
+- Lima aturan animasi tidak dipakai satu halaman pun dan tetap
+  diunduh setiap pengunjung. **Dihapus.**
+
+Tidak ada animasi yang menyembunyikan konten, dan `prefers-reduced-motion`
+mengembalikan semua elemen ke keadaan akhir.
+
+### 8.5 Rantai model yang adaptif
+
+Asisten tidak bergantung pada satu model. Setiap penyedia punya daftar
+model yang dicoba berurutan, dari yang paling kuat ke yang paling cepat,
+dengan batas waktu menurun (15 detik untuk model utama, 9 detik untuk
+cadangan). Kalau semua gagal, jawaban arsip langsung yang selalu punya
+rujukan sah tetap dikembalikan.
+
+Diukur pada kunci Groq: jawaban model 1,3–1,9 detik, dan penolakan di
+luar topik 9–26 ms tanpa memanggil model sama sekali.
+
+### 8.6 Bukti akhir
+
+```
+$ npx tsc --noEmit                  → 0 galat
+$ npx eslint src --max-warnings=0   → 0 error, 0 warning
+$ npm run build                     → sukses
+$ node scripts/audit-final.mjs      → 0 masalah dari 50 pemeriksaan
+$ node scripts/uji-keamanan.mjs     → 8/8 skenario berperilaku benar
+$ node scripts/uji-asisten.mjs      → 3/3 jawaban benar, sitasi sah
+$ node scripts/audit-tipografi.mjs  → 11/11 lebar bersih
+```

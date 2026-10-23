@@ -102,7 +102,7 @@ export function Peta({
               onClick={() => setLapisan(v)}
               aria-pressed={lapisan === v}
               className={cn(
-                "flex min-h-8 items-center px-2.5 py-1 font-mono text-[0.5625rem] uppercase tracking-[0.1em] transition-colors",
+                "flex min-h-8 items-center px-2.5 py-1 font-mono text-[0.75rem] uppercase tracking-[0.1em] transition-colors",
                 lapisan === v ? "bg-terang text-malam" : "text-terang-2 hover:text-terang",
               )}
             >
@@ -118,7 +118,7 @@ export function Peta({
         {aktif && (
           <Link
             href={`/destinasi/${aktif.id}`}
-            className="flex min-h-8 items-center gap-1.5 bg-emas px-2.5 py-1 font-mono text-[0.5625rem] uppercase tracking-[0.1em] text-malam"
+            className="flex min-h-8 items-center gap-1.5 bg-emas px-2.5 py-1 font-mono text-[0.75rem] uppercase tracking-[0.1em] text-malam"
           >
             Buka halaman
             <span aria-hidden="true">→</span>
@@ -171,7 +171,7 @@ export function Peta({
                 <path d="M0 40 H400" />
               </svg>
               <span className="relative h-9 w-9 animate-pulse rounded-full border border-emas/40 bg-emas/10" />
-              <span className="relative font-mono text-[0.5625rem] uppercase tracking-[0.14em] text-terang-3">
+              <span className="relative font-mono text-[0.75rem] uppercase tracking-[0.14em] text-terang-3">
                 Memuat peta
               </span>
             </div>
@@ -200,7 +200,7 @@ export function Peta({
                   >
                     <span
                       className={cn(
-                        "tabular w-4 shrink-0 font-mono text-[0.5625rem]",
+                        "tabular w-4 shrink-0 font-mono text-[0.75rem]",
                         on ? "text-emas" : "text-terang-3",
                       )}
                     >
@@ -208,7 +208,7 @@ export function Peta({
                     </span>
                     <span
                       className={cn(
-                        "min-w-0 truncate text-[0.75rem] leading-tight",
+                        "min-w-0 truncate text-[0.8125rem] leading-tight",
                         on ? "text-emas" : "text-terang-2",
                       )}
                     >
@@ -221,14 +221,14 @@ export function Peta({
           </ul>
 
           {tanpa.length > 0 && (
-            <p className="border-t border-garis-malam px-3 py-2 text-[0.625rem] leading-snug text-terang-3">
+            <p className="border-t border-garis-malam px-3 py-2 text-[0.75rem] leading-snug text-terang-3">
               Tanpa koordinat: {tanpa.map((d) => d.nama).join(", ")}.
             </p>
           )}
         </div>
       </div>
 
-      <p className="border-t border-garis-malam px-3 py-2 font-mono text-[0.5rem] uppercase tracking-[0.1em] text-terang-3">
+      <p className="border-t border-garis-malam px-3 py-2 font-mono text-[0.75rem] uppercase tracking-[0.1em] text-terang-3">
         Peta: Google Maps · citra satelit dan data jalan © Google
       </p>
     </div>
@@ -270,7 +270,7 @@ export function PetaDestinasi({ destinasi }: { destinasi: Destinasi }) {
               onClick={() => setLapisan(v)}
               aria-pressed={lapisan === v}
               className={cn(
-                "flex min-h-7 items-center px-2 py-0.5 font-mono text-[0.5rem] uppercase tracking-[0.1em] transition-colors",
+                "flex min-h-7 items-center px-2 py-0.5 font-mono text-[0.75rem] uppercase tracking-[0.1em] transition-colors",
                 lapisan === v ? "bg-gelap text-kertas" : "text-gelap-2 hover:text-gelap",
               )}
             >
@@ -278,7 +278,7 @@ export function PetaDestinasi({ destinasi }: { destinasi: Destinasi }) {
             </button>
           ))}
         </div>
-        <span className="tabular font-mono text-[0.5rem] text-gelap-3">
+        <span className="tabular font-mono text-[0.75rem] text-gelap-3">
           {koordinatTeks(lat, lng)}
         </span>
       </div>
@@ -297,7 +297,7 @@ export function PetaDestinasi({ destinasi }: { destinasi: Destinasi }) {
           href={`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex-1 px-2 py-2 text-center font-mono text-[0.5625rem] uppercase tracking-[0.1em] text-gelap hover:bg-kertas-2"
+          className="flex-1 px-2 py-2 text-center font-mono text-[0.75rem] uppercase tracking-[0.1em] text-gelap hover:bg-kertas-2"
         >
           Rute →
         </a>

@@ -56,7 +56,7 @@ export function SiteHeader() {
           : "border-b border-transparent bg-transparent",
       )}
     >
-      <div className="mx-auto flex h-16 max-w-[1600px] items-center gap-3 px-5 sm:px-8 lg:px-12">
+      <div className="mx-auto flex h-16 max-w-[1760px] items-center gap-3 px-5 sm:px-8 lg:px-12">
         <Link href="/" className="group flex items-center gap-2.5" aria-label="Sriwijaya Culture">
           <svg viewBox="0 0 28 28" className="h-6 w-6 flex-none" aria-hidden="true">
             <path
@@ -118,7 +118,7 @@ export function SiteHeader() {
             <svg viewBox="0 0 18 18" className="h-3.5 w-3.5 flex-none" fill="none" stroke="currentColor" strokeWidth="1.4" aria-hidden="true">
               <path d="M9 2.2 10.5 6.4 14.8 8 10.5 9.6 9 13.8 7.5 9.6 3.2 8 7.5 6.4z" />
             </svg>
-            <span className="hidden whitespace-nowrap font-mono text-[0.625rem] uppercase tracking-[0.12em] sm:inline">
+            <span className="hidden whitespace-nowrap font-mono text-[0.75rem] uppercase tracking-[0.12em] sm:inline">
               Tanya Sari
             </span>
           </Link>
@@ -173,7 +173,7 @@ export function SiteHeader() {
               onClick={() => setBuka(false)}
               className="mt-8 flex items-center justify-between border border-emas/40 px-4 py-3 text-emas"
             >
-              <span className="font-mono text-[0.6875rem] uppercase tracking-[0.12em]">Tanya Asisten Sari</span>
+              <span className="font-mono text-[0.75rem] uppercase tracking-[0.12em]">Tanya Asisten Sari</span>
               <span aria-hidden="true">→</span>
             </Link>
           </nav>

@@ -13,7 +13,7 @@ export default function HalamanTentang() {
   const s = statistikArsip();
 
   return (
-    <div className="mx-auto max-w-[1600px] px-5 pb-20 pt-28 sm:px-8 lg:px-12">
+    <div className="mx-auto max-w-[1760px] px-5 pb-20 pt-28 sm:px-8 lg:px-12">
       <header>
         <p className="meta-emas">Tentang</p>
         <div className="mt-3 flex flex-wrap items-end justify-between gap-x-10 gap-y-5">
@@ -40,7 +40,7 @@ export default function HalamanTentang() {
               className="w-full object-cover"
             />
           </div>
-          <p className="mt-2 font-mono text-[0.5625rem] uppercase tracking-[0.1em] text-terang-3">
+          <p className="mt-2 font-mono text-[0.75rem] uppercase tracking-[0.1em] text-terang-3">
             Sungai Musi · Wikimedia Commons, CC BY-SA 4.0
           </p>
         </div>
@@ -88,7 +88,7 @@ export default function HalamanTentang() {
               { k: "Tonggak waktu", v: s.peristiwa },
             ].map((n) => (
               <div key={n.k}>
-                <dt className="font-mono text-[0.5625rem] uppercase tracking-[0.1em] text-terang-3">
+                <dt className="font-mono text-[0.75rem] uppercase tracking-[0.1em] text-terang-3">
                   {n.k}
                 </dt>
                 <dd className="tabular mt-1 font-display text-3xl leading-none text-terang">
@@ -114,10 +114,10 @@ export default function HalamanTentang() {
             { nama: "Richa Karina", kode: "062640833326", peran: "Desain dan konten" },
           ].map((p, i) => (
             <li key={p.kode} className="border-t border-garis-malam pt-4">
-              <p className="tabular font-mono text-[0.625rem] text-emas">{String(i + 1).padStart(2, "0")}</p>
+              <p className="tabular font-mono text-[0.75rem] text-emas">{String(i + 1).padStart(2, "0")}</p>
               <p className="mt-2 font-display text-lg leading-tight text-terang">{p.nama}</p>
-              <p className="mt-1 font-mono text-[0.5625rem] uppercase tracking-[0.1em] text-terang-3">{p.peran}</p>
-              <p className="tabular mt-3 font-mono text-[0.5625rem] text-terang-3">{p.kode}</p>
+              <p className="mt-1 font-mono text-[0.75rem] uppercase tracking-[0.1em] text-terang-3">{p.peran}</p>
+              <p className="tabular mt-3 font-mono text-[0.75rem] text-terang-3">{p.kode}</p>
             </li>
           ))}
         </ul>
@@ -156,7 +156,7 @@ export default function HalamanTentang() {
             },
           ].map((t, i) => (
             <div key={t.k} className="border-t border-garis-malam pt-4">
-              <p className="tabular font-mono text-[0.5625rem] text-terang-3">
+              <p className="tabular font-mono text-[0.75rem] text-terang-3">
                 {String(i + 1).padStart(2, "0")}
               </p>
               <p className="mt-1.5 font-display text-base leading-tight text-terang">{t.k}</p>
@@ -183,7 +183,7 @@ export default function HalamanTentang() {
         </div>
       </section>
 
-      <p className="mt-10 text-[0.75rem] leading-relaxed text-terang-3">
+      <p className="mt-10 text-[0.8125rem] leading-relaxed text-terang-3">
         Data diperiksa terakhir 20 Oktober 2026. Kode sumber tersedia di repositori
         publik. Untuk koreksi data, sertakan tautan sumber agar bisa kami periksa.
       </p>

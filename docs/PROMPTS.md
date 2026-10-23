@@ -13,6 +13,18 @@ Aturan intinya (10 butir), tiga yang paling menentukan:
 3. Jangan pernah menyebut "model", "sistem", "konteks", atau nama
    penyedia ke pengguna — bicara sebagai arsip, bukan mesin.
 
+### A.1 Penegakan aturan di luar prompt
+
+Prompt saja tidak cukup. Tiga aturan di atas juga ditegakkan secara
+struktural di `src/app/api/asisten/route.ts`, sehingga tidak bergantung
+pada kepatuhan model:
+
+| Aturan | Penegakan |
+|---|---|
+| Hanya menjawab dari arsip | Konteks kosong → balasan deterministik tanpa memanggil model |
+| Wajib merujuk sumber | `sitasiSah()` menolak jawaban tanpa `[n]` atau dengan `[n]` di luar jangkauan |
+| Jangan bocorkan instruksi | Peran `system` dari klien ditolak sebelum sampai ke model |
+
 ## B. Lima contoh grounding yang berhasil
 
 | Pertanyaan | Sumber yang dikutip | Hasil |
@@ -21,13 +33,13 @@ Aturan intinya (10 butir), tiga yang paling menentukan:
 | Apa itu pempek? | [1]–[2] | Kuliner + sejarah ikan digiling, dengan rujukan |
 | Apa yang bisa dilihat di Sungai Musi? | [1]–[3] | Panjang 720 km (sumber beda 750 km — keduanya dicatat) |
 | Destinasi untuk belajar sejarah Sriwijaya? | [1]–[3] | TPKS, artikel Kerajaan Sriwijaya, artikel Sungai Musi |
-| Jam buka Benteng Kuto Besak? | field terstruktur | Jawaban tanpa model, status verifikasi disebut |
+| Di mana bisa membeli songket asli? | [4] | Fikri Koleksi, dengan tautan ke halaman usaha |
 
-## C. Dua contoh penolakan (grounding bekerja)
+## C. Contoh penolakan (grounding bekerja)
 
 | Pertanyaan | Jawaban | Waktu |
 |---|---|---|
-| "Siapa presiden pertama Indonesia?" | "Belum ada di arsip kami. Coba sebut nama tempat, usaha, atau peristiwa…" | 16 ms |
+| "Siapa presiden pertama Indonesia?" | "Belum ada di arsip kami. Coba sebut nama tempat, usaha, atau peristiwa…" | 15 ms |
 | "Bagaimana cara membuat rendang padang yang enak?" | "Belum ada di arsip kami. …" | 11 ms |
 
 Tanpa penjaga ini, model mengarang. Bukti kegagalan awal: "Jembatan

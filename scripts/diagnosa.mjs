@@ -49,10 +49,18 @@ for (const [vpName, w, hh] of [["mobile", 390, 844], ["desktop", 1440, 1000]]) {
         .filter((i) => !i.complete)
         .map((i) => (i.currentSrc || i.src || "").slice(-40));
 
-      // 3. Gambar yang stretch: rasio tampil vs rasio asli menyimpang jauh
+      // 3. Gambar yang stretch: rasio tampil vs rasio asli menyimpang jauh.
+      //
+      //    Hanya dihitung untuk gambar yang MEMANG harus utuh. Gambar
+      //    dekoratif (aria-hidden, latar blur) dan gambar yang sudah
+      //    memakai object-fit: contain sengaja tidak dihitung: keduanya
+      //    tidak pernah memotong isi.
       const distorsi = [];
       for (const i of document.images) {
         if (!i.naturalWidth || !i.complete) continue;
+        if (i.getAttribute("aria-hidden") === "true") continue;
+        const cs = getComputedStyle(i);
+        if (cs.objectFit === "contain") continue;
         const b = i.getBoundingClientRect();
         if (b.width < 40 || b.height < 40) continue;
         const rTampil = b.width / b.height;
@@ -64,7 +72,7 @@ for (const [vpName, w, hh] of [["mobile", 390, 844], ["desktop", 1440, 1000]]) {
             tampil: `${Math.round(b.width)}x${Math.round(b.height)}`,
             asli: `${i.naturalWidth}x${i.naturalHeight}`,
             simpangan: +simpangan.toFixed(2),
-            fit: getComputedStyle(i).objectFit,
+            fit: cs.objectFit,
           });
         }
       }

@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 
 export default function HalamanDestinasi() {
   return (
-    <div className="mx-auto max-w-[1600px] px-5 pb-20 pt-28 sm:px-8 lg:px-12">
+    <div className="mx-auto max-w-[1760px] px-5 pb-20 pt-28 sm:px-8 lg:px-12">
       <header>
         <p className="meta-emas">Katalog</p>
         <div className="mt-3 flex flex-wrap items-end justify-between gap-x-10 gap-y-5">

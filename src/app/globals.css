@@ -74,12 +74,12 @@
 
   /* Skala tipe. Display jauh lebih besar dari v1; teks badan tetap 15px
      supaya tidak ada yang perlu diperbesar. */
-  --text-2xs: 0.625rem;
-  --text-2xs--line-height: 1.3;
-  --text-xs: 0.6875rem;
-  --text-xs--line-height: 1.4;
-  --text-sm: 0.75rem;
-  --text-sm--line-height: 1.5;
+  --text-2xs: 0.75rem;
+  --text-2xs--line-height: 1.35;
+  --text-xs: 0.8125rem;
+  --text-xs--line-height: 1.45;
+  --text-sm: 0.8125rem;
+  --text-sm--line-height: 1.55;
   --text-base: 0.9375rem;
   --text-base--line-height: 1.65;
   --text-lg: 1.0625rem;
@@ -149,7 +149,7 @@
     font-family: var(--font-display);
     font-weight: 500;
     font-variation-settings: "SOFT" 30, "WONK" 1;
-    letter-spacing: -0.03em;
+    letter-spacing: -0.018em;
     text-wrap: balance;
   }
 
@@ -237,14 +237,26 @@
   }
 
   /* Judul display. Fraunces dengan WONK aktif supaya hurufnya terasa
-     dicetak, bukan dirender. */
+     dicetak, bukan dirender.
+
+     Tracking negatif harus menyesuaikan ukuran huruf. Versi sebelumnya
+     memakai -0.035em untuk semua ukuran, dan pada judul hero 112px itu
+     berarti -3.9px: huruf saling menempel dan "membentuk" terbaca
+     sebagai satu gumpalan. Nilai di bawah dipilih per ukuran, bukan
+     dengan satu angka untuk semua. */
   .display {
     font-family: var(--font-display);
     font-weight: 500;
     font-variation-settings: "SOFT" 40, "WONK" 1;
-    letter-spacing: -0.035em;
-    line-height: 0.92;
+    letter-spacing: -0.018em;
+    line-height: 0.94;
     text-wrap: balance;
+  }
+
+  /* Judul sangat besar butuh tracking lebih longgar, bukan lebih rapat.
+     Pada 112px, -0.018em masih menyisakan ruang antar huruf. */
+  .display-xl {
+    letter-spacing: -0.014em;
   }
 
   /* Paragraf baca. 66 karakter, bukan selebar layar. */
@@ -461,54 +473,17 @@
    Gerak
    ========================================================================== */
 
-/* Muncul saat masuk viewport. Konten sudah terlihat secara default;
-   animasi hanya menambah, tidak pernah menyembunyikan. */
-@keyframes naik {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
+/*
+  Catatan pemeliharaan: di sini dulu ada lima aturan yang tidak pernah
+  dipakai satu halaman pun (`muncul`, `buka-tirai`, `garis-tumbuh`,
+  `garis-gulir`, `foto-apung`). Semuanya dihapus setelah pemeriksaan
+  terhadap seluruh berkas TSX menunjukkan nol pemakaian. CSS yang tidak
+  dipakai tetap diunduh setiap pengunjung, jadi membiarkannya bukan
+  tanpa biaya.
+*/
 
-.muncul {
-  animation: naik 800ms var(--ease-keluar) both;
-  animation-timeline: view();
-  animation-range: entry 0% cover 25%;
-}
-
-/* Gambar membuka dari tengah. Dipakai hanya pada foto utama, karena
-   gerakan ini meniru tirai galeri yang dibuka. */
-@keyframes buka-tirai {
-  from {
-    clip-path: inset(0 0 100% 0);
-  }
-  to {
-    clip-path: inset(0 0 0 0);
-  }
-}
-
-.buka-tirai {
-  animation: buka-tirai 1100ms var(--ease-keluar) both;
-}
-
-@keyframes garis-tumbuh {
-  from {
-    transform: scaleX(0);
-  }
-  to {
-    transform: scaleX(1);
-  }
-}
-
-.garis-tumbuh {
-  transform-origin: left;
-  animation: garis-tumbuh 900ms var(--ease-keluar) both;
-}
-
+/* Denyut untuk indikator "sedang menyusun jawaban". Satu-satunya
+   animasi berulang di situs, dan memang hanya dipakai saat menunggu. */
 @keyframes denyut {
   0%,
   100% {
@@ -599,45 +574,31 @@
   animation-range: entry 0% cover 16%;
 }
 
-/* Angka statistik di hero. Ini animasi berbasis waktu, bukan scroll,
-   karena hero sudah terlihat saat halaman dibuka: `view()` pada elemen
-   yang sudah melewati fase entry tidak akan pernah berjalan. Opacity
-   tetap 1 dari awal sampai akhir, jadi angka tidak pernah hilang. */
+/* Angka statistik di hero.
+
+   Ini animasi berbasis waktu, bukan scroll, karena hero sudah terlihat
+   saat halaman dibuka: `view()` pada elemen yang sudah melewati fase
+   entry tidak akan pernah berjalan.
+
+   Dua koreksi dari pengukuran: `filter: blur()` dihapus karena membuat
+   angka terakhir baru terbaca 396 ms setelah LCP (blur pada teks mahal
+   untuk dirasterisasi dan terbaca seperti keadaan memuat), dan durasi
+   dipendekkan. Opacity tetap 1 dari awal sampai akhir, jadi angka tidak
+   pernah hilang. */
 @keyframes angka-naik {
   from {
-    transform: translateY(0.35em);
-    filter: blur(2px);
+    transform: translateY(0.3em);
   }
   to {
     transform: translateY(0);
-    filter: blur(0);
   }
 }
 
 .angka-naik {
-  animation: angka-naik 620ms var(--ease-keluar) both;
+  animation: angka-naik 420ms var(--ease-keluar) both;
 }
 
-/* Garis waktu: garis vertikal tumbuh mengikuti gulir. Progresnya
-   benar-benar mengikuti posisi baca, jadi pengunjung melihat sejauh
-   mana ia sudah masuk ke abad-abad itu. */
-@keyframes garis-gulir {
-  from {
-    transform: scaleY(0);
-  }
-  to {
-    transform: scaleY(1);
-  }
-}
-
-.garis-gulir {
-  transform-origin: top;
-  animation: garis-gulir linear both;
-  animation-timeline: scroll(root block);
-  animation-range: 0% 100%;
-}
-
-/* Hormati preferensi sistem. Semua di atas dimatikan, dan elemen
+/* Hormati preferensi sistem. Semua animasi dimatikan, dan elemen
    dikembalikan ke keadaan akhir supaya tidak ada yang tak terlihat. */
 @media (prefers-reduced-motion: reduce) {
   html {
@@ -652,18 +613,13 @@
     transition-duration: 0.001ms !important;
   }
 
-  .muncul,
-  .buka-tirai,
-  .garis-tumbuh,
   .kartu-masuk,
-  .foto-nyala,
   .label-masuk,
-  .garis-gulir,
-  .angka-naik {
+  .angka-naik,
+  .denyut {
     animation: none;
     opacity: 1;
     transform: none;
-    clip-path: none;
     filter: none;
   }
 }
@@ -671,21 +627,12 @@
 /* Peramban tanpa scroll-driven animation: tampilkan semuanya, jangan
    sembunyikan konten hanya karena animasi tidak didukung. */
 @supports not (animation-timeline: view()) {
-  .muncul,
   .kartu-masuk,
-  .foto-nyala,
   .label-masuk {
     animation: none;
     opacity: 1;
     transform: none;
     filter: none;
-  }
-}
-
-@supports not (animation-timeline: scroll()) {
-  .garis-gulir {
-    animation: none;
-    transform: scaleY(1);
   }
 }
 
@@ -722,4 +669,177 @@ body:has(.asisten-halaman) [data-chrome="true"] {
 body:has(.asisten-halaman) #konten {
   height: 100svh;
   overflow: hidden;
+}
+
+/* ============================================================================
+   Penyesuaian per rentang layar.
+
+   Diukur pada 11 lebar (320 sampai 2560 px). Tiga rentang butuh perlakuan
+   berbeda, dan tidak satu pun bisa diselesaikan dengan satu nilai tetap.
+   ========================================================================== */
+
+/* Layar sangat besar (>= 1920px): teks kecil di 11-13px terbaca terlalu
+   mungil ketika mata berjarak jauh dari monitor 27 inci. Skala dasar
+   dinaikkan sedikit agar proporsinya tetap, tanpa membuat layout melar. */
+@media (min-width: 1920px) {
+  html {
+    font-size: 17px;
+  }
+}
+
+@media (min-width: 2560px) {
+  html {
+    font-size: 18px;
+  }
+}
+
+/* Tablet potret (768-1023px): grid dua kolom untuk kartu membuat judul
+   terpotong di tengah kata. Di rentang ini kartu memakai satu kolom
+   penuh agar judul dan ringkasan utuh. */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .kartu-padat {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* Ponsel sangat kecil (<= 360px): jarak tepi dikurangi agar isi tidak
+   terjepit, dan teks meta tidak lagi dipaksa huruf kapital berjarak
+   lebar yang memakan lebar. */
+@media (max-width: 360px) {
+  .meta {
+    letter-spacing: 0.04em;
+  }
+
+  .display {
+    letter-spacing: -0.02em;
+  }
+}
+
+/* Perangkat sentuh: semua kontrol interaktif minimal 44px, termasuk
+   chip filter dan tautan teks pendek. Ini melengkapi kelas `.sentuh`
+   yang dipakai manual. */
+@media (pointer: coarse) {
+  button,
+  [role="button"],
+  a[data-sentuh="ya"] {
+    min-height: 44px;
+  }
+}
+
+/* ============================================================================
+   Keunikan ekspresif.
+
+   Bukan hiasan acak. Setiap elemen di bawah menjawab satu pertanyaan:
+   apa yang membuat arsip ini terasa seperti arsip, bukan blog wisata?
+   ========================================================================== */
+
+/* 1. Indikator progres baca.
+
+   Arsip ini panjang: halaman detail mencapai 6.000 px di ponsel. Garis
+   tipis di puncak layar menunjukkan sejauh mana pembaca masuk ke satu
+   entri, seperti bookmark fisik yang bergerak. Memakai scroll-timeline
+   sehingga tidak perlu JavaScript sama sekali. */
+.bilah-baca {
+  position: fixed;
+  inset-inline: 0;
+  top: 0;
+  height: 2px;
+  z-index: 60;
+  transform-origin: left;
+  background: linear-gradient(90deg, var(--color-emas), var(--color-emas-muda));
+  transform: scaleX(0);
+  animation: bilah-baca linear both;
+  animation-timeline: scroll(root block);
+  animation-range: 0% 100%;
+}
+
+@keyframes bilah-baca {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@supports not (animation-timeline: scroll()) {
+  .bilah-baca {
+    display: none;
+  }
+}
+
+/* 2. Nomor indeks besar di sudut bagian.
+
+   Katalog museum memberi nomor pada setiap bagian. Angka besar yang
+   sangat redup di belakang judul membuat halaman terasa seperti lembar
+   katalog, bukan halaman web biasa. */
+.nomor-bagian {
+  position: absolute;
+  top: -0.35em;
+  right: 0;
+  font-family: var(--font-display);
+  font-size: clamp(4rem, 12vw, 9rem);
+  line-height: 0.8;
+  color: var(--color-terang);
+  opacity: 0.045;
+  pointer-events: none;
+  user-select: none;
+  letter-spacing: -0.04em;
+}
+
+/* 3. Tekstur kertas halus untuk bagian terang.
+
+   Bagian peta dan bagian editorial memakai latar kertas. Butir halus
+   membuatnya terbaca sebagai kertas, bukan sebagai blok warna datar.
+   Dibuat dari gradien, bukan berkas gambar, supaya tidak menambah
+   unduhan. */
+.kertas::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.5;
+  background-image:
+    radial-gradient(circle at 20% 30%, rgba(26, 22, 18, 0.05) 0.5px, transparent 0.5px),
+    radial-gradient(circle at 70% 60%, rgba(26, 22, 18, 0.04) 0.5px, transparent 0.5px);
+  background-size: 7px 7px, 11px 11px;
+}
+
+/* 4. Garis bawah yang tumbuh saat disentuh.
+
+   Tautan teks di seluruh situs memakai garis yang tumbuh dari kiri.
+   Ini meniru cara pembaca menandai baris penting, dan memberi umpan
+   balik yang jelas tanpa mengubah warna teks. */
+.tautan-tumbuh {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.tautan-tumbuh::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -2px;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 380ms var(--ease-keluar);
+}
+
+.tautan-tumbuh:hover::after,
+.tautan-tumbuh:focus-visible::after {
+  transform: scaleX(1);
+}
+
+/* 5. Sorotan emas pada kartu yang difokus keyboard.
+
+   Navigasi keyboard harus sama jelasnya dengan navigasi tetikus. */
+.kartu:focus-visible,
+a:focus-visible,
+button:focus-visible {
+  outline: 2px solid var(--color-emas);
+  outline-offset: 3px;
 }

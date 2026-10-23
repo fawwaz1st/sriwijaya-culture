@@ -29,22 +29,39 @@ export default async function DetailUMKM({ params }: { params: Promise<{ id: str
   return (
     <article>
       <header className="relative">
-        <div className="relative max-h-[62svh] overflow-hidden">
+        {/*
+          Hero UMKM.
+
+          Sama seperti hero artikel: `object-cover` di wadah
+          `max-h-[62svh]` memotong foto lanskap 1152x864 menjadi pita
+          1440x620, dan sekitar 74% isinya hilang. Foto produk dan
+          tempat usaha adalah bukti utama di halaman ini, jadi sekarang
+          ditampilkan utuh dengan latar blur sebagai pengisi.
+        */}
+        <div className="relative isolate max-h-[62svh] overflow-hidden bg-malam">
+          <Foto
+            src={u.gambar[0].src}
+            alt=""
+            aria-hidden
+            sizes="100vw"
+            className="absolute inset-0 -z-10 h-full w-full scale-110 object-cover opacity-25 blur-2xl"
+          />
           <Foto
             src={u.gambar[0].src}
             alt={u.gambar[0].caption}
             prioritas
+            utuh
             sizes="100vw"
-            className="max-h-[62svh] w-full object-cover"
+            className="mx-auto max-h-[62svh] w-full"
           />
-          <div className="absolute inset-0 bg-linear-to-t from-malam via-malam/30 to-malam/40" />
+          <div className="pointer-events-none absolute inset-0 bg-linear-to-t from-malam via-malam/20 to-malam/35" />
         </div>
 
         <div className="absolute inset-x-0 bottom-0">
-          <div className="mx-auto max-w-[1600px] px-5 pb-8 sm:px-8 lg:px-12">
+          <div className="mx-auto max-w-[1760px] px-5 pb-8 sm:px-8 lg:px-12">
             <nav
               aria-label="Remah roti"
-              className="flex items-center gap-2 font-mono text-[0.5625rem] uppercase tracking-[0.12em] text-terang-2"
+              className="flex items-center gap-2 font-mono text-[0.75rem] uppercase tracking-[0.12em] text-terang-2"
             >
               <Link href="/umkm" className="inline-flex min-h-8 items-center hover:text-terang">
                 Usaha
@@ -62,7 +79,7 @@ export default async function DetailUMKM({ params }: { params: Promise<{ id: str
       </header>
 
       <div className="kertas">
-        <div className="mx-auto max-w-[1600px] px-5 py-12 sm:px-8 lg:px-12 lg:py-16">
+        <div className="mx-auto max-w-[1760px] px-5 py-12 sm:px-8 lg:px-12 lg:py-16">
           <div className="grid gap-10 lg:grid-cols-[minmax(0,1.55fr)_minmax(0,1fr)] lg:gap-14">
             <div className="min-w-0">
               <div
@@ -100,7 +117,7 @@ export default async function DetailUMKM({ params }: { params: Promise<{ id: str
                   {u.produk.map((p, i) => (
                     <li key={p.nama}>
                       <p className="flex items-baseline gap-2">
-                        <span className="tabular font-mono text-[0.5625rem] text-emas-tinta">
+                        <span className="tabular font-mono text-[0.75rem] text-emas-tinta">
                           {String(i + 1).padStart(2, "0")}
                         </span>
                         <span className="font-display text-base leading-tight text-gelap">{p.nama}</span>
@@ -131,7 +148,7 @@ export default async function DetailUMKM({ params }: { params: Promise<{ id: str
                       >
                         {s.judul}
                       </a>
-                      <p className="mt-0.5 font-mono text-[0.5625rem] uppercase tracking-[0.1em] text-gelap-3">
+                      <p className="mt-0.5 font-mono text-[0.75rem] uppercase tracking-[0.1em] text-gelap-3">
                         {s.penulis}
                       </p>
                     </li>
@@ -228,7 +245,7 @@ export default async function DetailUMKM({ params }: { params: Promise<{ id: str
 
       {terkait.length > 0 && (
         <section className="border-t border-garis-malam py-14">
-          <div className="mx-auto max-w-[1600px] px-5 sm:px-8 lg:px-12">
+          <div className="mx-auto max-w-[1760px] px-5 sm:px-8 lg:px-12">
             <p className="meta-emas">Usaha terkait</p>
             <ul className="mt-5 grid grid-cols-2 gap-4 lg:grid-cols-4">
               {terkait.map((t) => (

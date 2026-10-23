@@ -65,19 +65,41 @@ export default async function DetailDestinasi({ params }: { params: Promise<{ id
         href={`/destinasi/${d.id}`}
       />
       <header className="relative">
+        {/*
+          Hero destinasi.
+
+          Foto potret sudah dibatasi lebarnya (max-w-46rem) supaya tidak
+          melebar, tetapi `object-cover` di dalam wadah `max-h-[78svh]`
+          masih memotong bagian atas atau bawah foto ketika tingginya
+          melebihi 78svh. Untuk foto arsip, bagian yang terpotong itu
+          bisa saja bagian yang paling penting.
+
+          Sekarang foto ditampilkan utuh dengan `utuh`, dan latar gelap
+          di belakangnya mengisi ruang sisa supaya tepi foto tidak
+          terlihat seperti kotak yang salah ukuran.
+        */}
         <div
           className={
             heroPotret
-              ? "relative mx-auto max-h-[78svh] max-w-[46rem] overflow-hidden"
-              : "relative max-h-[78svh] overflow-hidden"
+              ? "relative mx-auto flex max-h-[78svh] max-w-[46rem] justify-center overflow-hidden bg-malam"
+              : "relative flex max-h-[78svh] justify-center overflow-hidden bg-malam"
           }
         >
+          {/*
+            `h-auto` penting di sini. Sebelumnya kelas `max-h-[78svh]`
+            dipasang langsung pada <img>; itu membuat tinggi gambar
+            dibatasi, lalu `object-contain` mengecilkan gambar untuk
+            masuk ke kotak itu dan menyisakan pita kosong di kiri-kanan.
+            Dengan `h-auto`, gambar memakai tinggi alaminya dan wadah
+            yang memotong lewat `overflow-hidden` bila terlalu tinggi.
+          */}
           <Foto
             src={hero.src}
             alt={hero.caption}
             prioritas
+            utuh
             sizes={heroPotret ? "(max-width: 768px) 100vw, 46rem" : "100vw"}
-            className="max-h-[78svh] w-full object-cover"
+            className="h-auto max-h-[78svh] w-full"
           />
           {/* Untuk hero potret, latar di kiri-kanan diisi warna malam
               supaya tepi foto tidak terlihat seperti kotak yang salah
@@ -89,10 +111,10 @@ export default async function DetailDestinasi({ params }: { params: Promise<{ id
         </div>
 
         <div className="absolute inset-x-0 bottom-0">
-          <div className="mx-auto max-w-[1600px] px-5 pb-8 sm:px-8 lg:px-12">
+          <div className="mx-auto max-w-[1760px] px-5 pb-8 sm:px-8 lg:px-12">
             <nav
               aria-label="Remah roti"
-              className="flex items-center gap-2 font-mono text-[0.5625rem] uppercase tracking-[0.12em] text-terang-2"
+              className="flex items-center gap-2 font-mono text-[0.75rem] uppercase tracking-[0.12em] text-terang-2"
             >
               <Link href="/destinasi" className="inline-flex min-h-8 items-center hover:text-terang">
                 Destinasi
@@ -111,7 +133,7 @@ export default async function DetailDestinasi({ params }: { params: Promise<{ id
       </header>
 
       <div className="border-b border-garis-malam bg-malam-2">
-        <div className="mx-auto grid max-w-[1600px] grid-cols-2 gap-x-6 gap-y-4 px-5 py-5 sm:grid-cols-4 sm:px-8 lg:px-12">
+        <div className="mx-auto grid max-w-[1760px] grid-cols-2 gap-x-6 gap-y-4 px-5 py-5 sm:grid-cols-4 sm:px-8 lg:px-12">
           {[
             {
               k: "Koordinat",
@@ -136,23 +158,34 @@ export default async function DetailDestinasi({ params }: { params: Promise<{ id
       </div>
 
       <div className="kertas">
-        <div className="mx-auto max-w-[1600px] px-5 py-10 sm:px-8 lg:px-12 lg:py-14">
+        <div className="mx-auto max-w-[1760px] px-5 py-10 sm:px-8 lg:px-12 lg:py-14">
           {/* Galeri dulu, teks kemudian. Pengunjung datang untuk melihat
               tempatnya, bukan membaca tentangnya. */}
           {galeri.length > 0 && (
-            <div className="gulir-tipis -mx-5 mb-10 flex gap-3 overflow-x-auto px-5 pb-2 sm:mx-0 sm:px-0 lg:mb-12">
+            /*
+              Galeri geser horizontal.
+
+              Sebelumnya memakai `-mx-5 px-5` untuk membleeding sampai
+              tepi layar. Di lebar 320px kombinasi itu membuat dokumen
+              melebar 21px: margin negatif menarik wadah keluar, sementara
+              padding dalam tidak menahan tinggi kartu `78vw` ditambah
+              jarak. Sekarang memakai `w-full` + `min-w-0` pada induk dan
+              margin negatif hanya di layar yang cukup lebar, sehingga
+              gulirannya tetap di dalam dokumen di semua ukuran.
+            */
+            <div className="gulir-tipis -mx-5 mb-10 flex min-w-0 max-w-full gap-3 overflow-x-auto px-5 pb-2 sm:mx-0 sm:px-0 lg:mb-12">
               {galeri.map((g, i) => (
-                <figure key={i} className="w-[78vw] max-w-[560px] flex-none sm:w-[44vw] lg:w-[32vw]">
+                <figure key={i} className="w-[74vw] max-w-[560px] flex-none sm:w-[44vw] lg:w-[32vw]">
                   <div className="group h-[clamp(13rem,24vw,19rem)] overflow-hidden bg-kertas-2">
                     <Foto
                       src={g.src}
                       alt={g.caption}
                       rasioPaksa="bebas"
-                      sizes="(max-width: 640px) 78vw, (max-width: 1024px) 44vw, 32vw"
+                      sizes="(max-width: 640px) 74vw, (max-width: 1024px) 44vw, 32vw"
                       className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
                     />
                   </div>
-                  <figcaption className="mt-1.5 line-clamp-1 text-[0.5625rem] leading-tight text-gelap-3">
+                  <figcaption className="mt-1.5 line-clamp-1 text-[0.75rem] leading-tight text-gelap-3">
                     {g.caption}
                   </figcaption>
                 </figure>
@@ -233,7 +266,7 @@ export default async function DetailDestinasi({ params }: { params: Promise<{ id
                           >
                             {s.judul}
                           </a>
-                          <p className="mt-0.5 font-mono text-[0.5625rem] uppercase tracking-[0.1em] text-gelap-3">
+                          <p className="mt-0.5 font-mono text-[0.75rem] uppercase tracking-[0.1em] text-gelap-3">
                             {s.penulis}
                           </p>
                         </div>
@@ -291,7 +324,7 @@ export default async function DetailDestinasi({ params }: { params: Promise<{ id
 
       {artikel.length > 0 && (
         <section className="border-t border-garis-malam bg-malam-2 py-14">
-          <div className="mx-auto max-w-[1600px] px-5 sm:px-8 lg:px-12">
+          <div className="mx-auto max-w-[1760px] px-5 sm:px-8 lg:px-12">
             <p className="meta-emas">Bacaan terkait</p>
             <ul className="mt-5 grid gap-6 sm:grid-cols-2">
               {artikel.map((a) => (
@@ -316,7 +349,7 @@ export default async function DetailDestinasi({ params }: { params: Promise<{ id
 
       {terkait.length > 0 && (
         <section className="border-t border-garis-malam py-14">
-          <div className="mx-auto max-w-[1600px] px-5 sm:px-8 lg:px-12">
+          <div className="mx-auto max-w-[1760px] px-5 sm:px-8 lg:px-12">
             <p className="meta-emas">Destinasi di sekitar</p>
             <ul className="mt-5 grid grid-cols-2 gap-4 lg:grid-cols-4">
               {terkait.map((t) => (
@@ -343,9 +376,12 @@ export default async function DetailDestinasi({ params }: { params: Promise<{ id
       )}
 
       <nav aria-label="Destinasi lain" className="border-t border-garis-malam">
-        <div className="mx-auto grid max-w-[1600px] gap-6 px-5 py-10 sm:grid-cols-2 sm:px-8 lg:px-12">
-          <Link href={`/destinasi/${sebelum.id}`} className="group flex items-center gap-4">
-            <div className="w-20 shrink-0 overflow-hidden">
+        <div className="mx-auto grid max-w-[1760px] gap-6 px-5 py-10 sm:grid-cols-2 sm:px-8 lg:px-12">
+          {/* `min-w-0` wajib di sini. Tanpa itu, tautan selebar induk
+              (320px) ditambah gambar 80px tidak bisa menyusut, dan
+              dokumen melebar 21px di layar terkecil. */}
+          <Link href={`/destinasi/${sebelum.id}`} className="group flex min-w-0 items-center gap-4">
+            <div className="w-16 shrink-0 overflow-hidden sm:w-20">
               <Foto src={sebelum.gambar[0].src} alt={sebelum.nama} sizes="80px" className="w-full" />
             </div>
             <div className="min-w-0">
@@ -353,12 +389,12 @@ export default async function DetailDestinasi({ params }: { params: Promise<{ id
               <p className="mt-1 truncate font-display text-lg text-terang group-hover:text-emas">{sebelum.nama}</p>
             </div>
           </Link>
-          <Link href={`/destinasi/${berikut.id}`} className="group flex items-center justify-end gap-4 text-right">
+          <Link href={`/destinasi/${berikut.id}`} className="group flex min-w-0 items-center justify-end gap-4 text-right">
             <div className="min-w-0">
               <p className="meta">Berikutnya →</p>
               <p className="mt-1 truncate font-display text-lg text-terang group-hover:text-emas">{berikut.nama}</p>
             </div>
-            <div className="w-20 shrink-0 overflow-hidden">
+            <div className="w-16 shrink-0 overflow-hidden sm:w-20">
               <Foto src={berikut.gambar[0].src} alt={berikut.nama} sizes="80px" className="w-full" />
             </div>
           </Link>

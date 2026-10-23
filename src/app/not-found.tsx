@@ -3,7 +3,7 @@ import { Tombol } from "@/components/ui";
 
 export default function TidakDitemukan() {
   return (
-    <div className="mx-auto flex min-h-[70svh] max-w-[1600px] flex-col justify-center px-5 py-28 sm:px-8 lg:px-12">
+    <div className="mx-auto flex min-h-[70svh] max-w-[1760px] flex-col justify-center px-5 py-28 sm:px-8 lg:px-12">
       <p className="meta-emas">404</p>
       <h1 className="display mt-3 max-w-[18ch] text-[clamp(2.5rem,7vw,5rem)] text-terang">
         Halaman ini tidak ada di arsip.

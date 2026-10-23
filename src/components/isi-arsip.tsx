@@ -32,7 +32,7 @@ export function IsiArsip({ r }: { r: RingkasArsip }) {
     <div className="mt-8 border-t border-garis-malam pt-5">
       <div className="flex flex-wrap items-baseline justify-between gap-3">
         <p className="meta">Yang Sari punya</p>
-        <p className="font-mono text-[0.5625rem] uppercase tracking-[0.1em] text-terang-3">
+        <p className="font-mono text-[0.75rem] uppercase tracking-[0.1em] text-terang-3">
           {r.rentangTahun}
         </p>
       </div>
@@ -40,7 +40,7 @@ export function IsiArsip({ r }: { r: RingkasArsip }) {
       <dl className="mt-3 grid grid-cols-2 gap-x-6 gap-y-4 sm:grid-cols-4">
         {kolom.map((k) => (
           <Link key={k.label} href={k.href} className="group">
-            <dt className="font-mono text-[0.5625rem] uppercase tracking-[0.1em] text-terang-3 group-hover:text-terang-2">
+            <dt className="font-mono text-[0.75rem] uppercase tracking-[0.1em] text-terang-3 group-hover:text-terang-2">
               {k.label}
             </dt>
             <dd className={cn("tabular mt-1 font-display text-2xl leading-none", k.kelas)}>
@@ -60,7 +60,7 @@ export function IsiArsip({ r }: { r: RingkasArsip }) {
               className="group flex items-baseline justify-between gap-4 py-0.5 text-[0.8125rem] text-terang-2 transition-colors hover:text-emas"
             >
               <span className="truncate">{x.nama}</span>
-              <span className="shrink-0 font-mono text-[0.5rem] uppercase tracking-[0.1em] text-terang-3">
+              <span className="shrink-0 font-mono text-[0.75rem] uppercase tracking-[0.1em] text-terang-3">
                 {x.tag}
               </span>
             </Link>

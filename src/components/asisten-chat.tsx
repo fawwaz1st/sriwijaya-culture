@@ -325,7 +325,7 @@ export function AsistenChat({ ringkasArsip }: { ringkasArsip?: RingkasArsip }) {
               <button
                 type="button"
                 onClick={simpanKunci}
-                className="min-h-9 bg-emas px-3.5 font-mono text-[0.625rem] uppercase tracking-[0.1em] text-malam transition-colors hover:bg-emas-muda"
+                className="min-h-9 bg-emas px-3.5 font-mono text-[0.75rem] uppercase tracking-[0.1em] text-malam transition-colors hover:bg-emas-muda"
               >
                 Simpan
               </button>
@@ -333,7 +333,7 @@ export function AsistenChat({ ringkasArsip }: { ringkasArsip?: RingkasArsip }) {
                 <button
                   type="button"
                   onClick={hapusKunci}
-                  className="min-h-9 border border-garis-malam px-3.5 font-mono text-[0.625rem] uppercase tracking-[0.1em] text-terang-2 transition-colors hover:border-bahaya hover:text-bahaya"
+                  className="min-h-9 border border-garis-malam px-3.5 font-mono text-[0.75rem] uppercase tracking-[0.1em] text-terang-2 transition-colors hover:border-bahaya hover:text-bahaya"
                 >
                   Hapus
                 </button>
@@ -421,25 +421,63 @@ export function AsistenChat({ ringkasArsip }: { ringkasArsip?: RingkasArsip }) {
                         <div className="flex gap-3">
                           <span
                             aria-hidden="true"
-                            className="mt-0.5 grid h-6 w-6 flex-none place-items-center bg-emas/15 font-display text-[0.625rem] font-medium text-emas"
+                            className="mt-0.5 grid h-6 w-6 flex-none place-items-center bg-emas/15 font-display text-[0.75rem] font-medium text-emas"
                           >
                             S
                           </span>
                           <div className="min-w-0 flex-1">
-                            <p className="whitespace-pre-wrap text-[0.9375rem] leading-[1.7] text-terang">
-                              {m.teks}
-                            </p>
+                            {/*
+                              Jawaban dipecah per paragraf.
+
+                              Sebelumnya seluruh jawaban dirender sebagai
+                              satu <p> dengan `whitespace-pre-wrap`. Model
+                              mengembalikan baris baru tunggal antar
+                              paragraf, sehingga kalimat-kalimat berbeda
+                              topik menempel jadi satu blok abu-abu tanpa
+                              jeda — sulit dipindai, dan terlihat seperti
+                              teks hasil tempel. Sekarang setiap blok
+                              dipisah dan diberi jarak vertikal.
+                            */}
+                            <div className="space-y-3">
+                              {m.teks
+                                .split(/\n{2,}|\n/)
+                                .map((p) => p.trim())
+                                .filter(Boolean)
+                                .map((p, pi) => (
+                                  <p
+                                    key={pi}
+                                    className="text-[0.9375rem] leading-[1.75] text-terang"
+                                  >
+                                    {p}
+                                  </p>
+                                ))}
+                            </div>
                             {m.sumber.length > 0 && (
-                              <ul className="mt-3 flex flex-wrap gap-1.5">
+                              <ul className="mt-3 space-y-1.5">
                                 {m.sumber.map((s) => (
                                   <li key={s.no}>
+                                    {/*
+                                      Sebelumnya ini chip pil dengan
+                                      `max-w-[22ch] truncate`, jadi judul
+                                      sumber selalu terpotong ("Songket
+                                      Palembang: M..."). Pengunjung tidak
+                                      bisa memverifikasi apa pun, padahal
+                                      verifikasi adalah inti situs ini.
+                                      Sekarang satu baris penuh per sumber:
+                                      nomor, judul utuh, dan jenisnya.
+                                    */}
                                     <Link
                                       href={s.href}
-                                      className="group flex items-center gap-1.5 rounded-full border border-garis-malam bg-malam-2/60 px-2.5 py-1 font-mono text-[0.5625rem] uppercase tracking-[0.08em] text-terang-2 transition-colors hover:border-emas/60 hover:bg-emas/8 hover:text-emas"
+                                      className="group flex items-baseline gap-2 border-l border-garis-malam py-1 pl-2.5 transition-colors hover:border-emas"
                                     >
-                                      <span className="tabular text-emas">[{s.no}]</span>
-                                      <span className="max-w-[22ch] truncate normal-case tracking-normal">
+                                      <span className="tabular flex-none font-mono text-[0.75rem] text-emas">
+                                        [{s.no}]
+                                      </span>
+                                      <span className="min-w-0 flex-1 text-[0.8125rem] leading-snug text-terang-2 transition-colors group-hover:text-emas">
                                         {s.judul}
+                                      </span>
+                                      <span className="flex-none font-mono text-[0.75rem] uppercase tracking-[0.08em] text-terang-3">
+                                        {s.jenis}
                                       </span>
                                     </Link>
                                   </li>
@@ -504,7 +542,7 @@ export function AsistenChat({ ringkasArsip }: { ringkasArsip?: RingkasArsip }) {
               ×
             </button>
           </div>
-          <p className="mt-2 text-[0.75rem] leading-relaxed text-terang-3">
+          <p className="mt-2 text-[0.8125rem] leading-relaxed text-terang-3">
             Dokumen yang dipakai untuk pertanyaan terakhir.
           </p>
           <ul className="mt-4 space-y-2">
@@ -512,15 +550,15 @@ export function AsistenChat({ ringkasArsip }: { ringkasArsip?: RingkasArsip }) {
               <li key={r.no}>
                 <Link href={r.href} className="group block border border-garis-malam p-2.5 hover:border-emas">
                   <p className="flex items-baseline gap-1.5">
-                    <span className="tabular font-mono text-[0.5625rem] text-emas">[{r.no}]</span>
-                    <span className="font-mono text-[0.5rem] uppercase tracking-[0.1em] text-terang-3">
+                    <span className="tabular font-mono text-[0.75rem] text-emas">[{r.no}]</span>
+                    <span className="font-mono text-[0.75rem] uppercase tracking-[0.1em] text-terang-3">
                       {r.jenis}
                     </span>
                   </p>
                   <p className="mt-1 text-[0.8125rem] font-medium leading-tight text-terang group-hover:text-emas">
                     {r.judul}
                   </p>
-                  <p className="mt-0.5 font-mono text-[0.5rem] uppercase tracking-[0.1em] text-terang-3">
+                  <p className="mt-0.5 font-mono text-[0.75rem] uppercase tracking-[0.1em] text-terang-3">
                     {r.meta}
                   </p>
                 </Link>
@@ -593,10 +631,24 @@ function Composer({
           <span className="block h-2.5 w-2.5 bg-terang-2" />
         </button>
       ) : (
+        /*
+         * Tombol kirim.
+         *
+         * Sebelumnya keadaan kosong dan keadaan terisi memakai warna yang
+         * sama-sama redup, sehingga pengunjung mengira tombol ini mati.
+         * Sekarang keadaan terisi memakai emas penuh dengan bayangan
+         * dalam, dan keadaan kosong tetap terbaca sebagai tombol (bukan
+         * teks abu) lewat garis tepi, bukan hanya warna latar.
+         */
         <button
           type="submit"
           disabled={!input.trim()}
-          className="grid h-9 w-9 flex-none place-items-center bg-emas text-malam transition-colors hover:bg-emas-muda disabled:cursor-not-allowed disabled:bg-malam-5 disabled:text-terang-3"
+          className={cn(
+            "sentuh grid h-9 w-9 flex-none place-items-center transition-all",
+            input.trim()
+              ? "bg-emas text-malam shadow-[inset_0_1px_0_rgba(255,255,255,0.35)] hover:bg-emas-muda active:scale-95"
+              : "border border-garis-malam bg-transparent text-terang-3",
+          )}
           aria-label="Kirim pertanyaan"
         >
           <svg viewBox="0 0 20 20" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.8">
@@ -604,6 +656,9 @@ function Composer({
           </svg>
         </button>
       )}
+      {/* Petunjuk keyboard. Hanya tampil di layar yang punya papan ketik
+          fisik, karena di ponsel Enter berarti baris baru. */}
+      <span className="sr-only">Tekan Enter untuk mengirim, Shift+Enter untuk baris baru.</span>
     </form>
   );
 }
@@ -619,7 +674,7 @@ function SaranPertanyaan({ onPick }: { onPick: (t: string) => void }) {
             <button
               type="button"
               onClick={() => onPick(s)}
-              className="rounded-full border border-garis-malam px-3 py-1.5 text-left text-[0.75rem] leading-snug text-terang-2 transition-colors hover:border-emas hover:text-terang"
+              className="rounded-full border border-garis-malam px-3 py-1.5 text-left text-[0.8125rem] leading-snug text-terang-2 transition-colors hover:border-emas hover:text-terang"
             >
               {s}
             </button>

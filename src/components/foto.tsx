@@ -18,6 +18,13 @@ import { FOTO, rasio } from "@/lib/foto";
  * `rasioPaksa="bebas"` melepas rasio inline sepenuhnya. Dipakai saat
  * bingkai ditentukan oleh wadah ber-tinggi tetap (mis. pita sinematik),
  * karena inline aspect-ratio akan mengalahkan tinggi wadah.
+ *
+ * `utuh` mengganti `object-fit: cover` menjadi `contain`. Ini penting
+ * untuk foto potret yang ditempatkan di wadah lanskap: dengan `cover`,
+ * foto 1152x2048 yang dipaksa ke bingkai 1440x720 kehilangan sekitar
+ * 75% isinya — pada foto arsip itu berarti subjeknya hilang. Dengan
+ * `contain`, seluruh foto terlihat dan sisa ruang diisi latar wadah.
+ * Dipakai di hero dan galeri, bukan di grid katalog.
  */
 export function Foto({
   src,
@@ -27,6 +34,8 @@ export function Foto({
   sizes = "100vw",
   rasioPaksa,
   posisi = "center",
+  utuh = false,
+  ...sisa
 }: {
   src: string;
   alt: string;
@@ -36,6 +45,10 @@ export function Foto({
   /** Bingkai editorial seragam, mis. "4 / 5". */
   rasioPaksa?: string;
   posisi?: "center" | "top" | "bottom";
+  /** Tampilkan seluruh foto tanpa memotong (object-fit: contain). */
+  utuh?: boolean;
+  /** Atribut lain diteruskan ke elemen img (mis. aria-hidden). */
+  [kunci: string]: unknown;
 }) {
   const f = (FOTO as Record<string, { w: number; h: number; r: number }>)[src];
   const w = f?.w ?? 1280;
@@ -51,10 +64,12 @@ export function Foto({
       height={h}
       priority={prioritas}
       sizes={sizes}
+      {...sisa}
       className={cn(
         "foto",
-        posisi === "top" && "object-top",
-        posisi === "bottom" && "object-bottom",
+        utuh ? "object-contain" : "object-cover",
+        !utuh && posisi === "top" && "object-top",
+        !utuh && posisi === "bottom" && "object-bottom",
         className,
       )}
       style={r ? { aspectRatio: r } : undefined}

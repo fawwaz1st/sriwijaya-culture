@@ -17,13 +17,46 @@ fakta.
 
 Tiga hal yang membedakannya dari direktori wisata biasa:
 
-1. **Peta dari koordinat asli.** Jalan dan sungai digambar dari
-   OpenStreetMap, diproyeksikan linier. Destinasi tanpa koordinat
+1. **Peta yang benar-benar bisa dipakai.** Embed Google Maps asli
+   dengan dua lapisan (satelit dan jalan), sehingga pengunjung bisa
+   zoom dan melihat bangunan sekitar. Destinasi tanpa koordinat
    terverifikasi tidak digambar, bukan ditebak posisinya.
 2. **Tingkat verifikasi per sumber.** Tiga tingkat, badge yang sama di
-   seluruh situs. Angka yang tidak bisa ditelusuri tidak ditampilkan.
+   seluruh situs. Angka yang tidak bisa ditelusuri tidak ditampilkan,
+   dan entri yang belum diverifikasi tidak dipromosikan ke direktori.
 3. **Asisten yang mengaku kalau tidak tahu.** Sari hanya menjawab dari
-   arsip, menyebut nomor rujukan, dan menolak pertanyaan di luar topik.
+   arsip, menyebut nomor rujukan yang bisa diklik, dan menolak
+   pertanyaan di luar topik. Penolakan itu ditegakkan oleh kode, bukan
+   hanya oleh instruksi ke model.
+
+---
+
+## Menjalankan di mesin lokal
+
+```bash
+npm install
+cp .env.example .env.local   # lalu isi kunci penyedia model
+npm run dev                  # http://localhost:3000
+```
+
+### Variabel lingkungan
+
+| Nama | Wajib | Keterangan |
+|---|---|---|
+| `GROQ_API_KEY` | disarankan | Kunci Groq. Tanpa kunci, asisten tetap menjawab dalam mode arsip langsung. |
+| `GROQ_MODEL` | tidak | Model utama. Default `openai/gpt-oss-120b`. |
+| `GROQ_MODEL_CADANGAN` | tidak | Model kedua bila yang pertama gagal. |
+| `GROQ_MODEL_CEPAT` | tidak | Model ketiga, paling ringan. |
+| `OPENROUTER_API_KEY` | tidak | Alternatif Groq. |
+| `TOGETHER_API_KEY` | tidak | Alternatif lain. |
+| `NEXT_PUBLIC_SITE_URL` | tidak | Dipakai sitemap dan metadata. |
+
+**Catatan penting untuk penilai.** Proyek ini membutuhkan kunci
+penyedia model agar Asisten Sari menjawab dengan model bahasa. Kunci
+tidak pernah masuk repositori: berkas `.env.local` di-ignore, dan di
+produksi nilainya diisi lewat Environment Variables Vercel. Tanpa
+kunci, asisten tetap berfungsi dalam mode arsip langsung dan tidak
+pernah menampilkan jawaban kosong.
 
 ---
 
@@ -34,8 +67,9 @@ Tiga hal yang membedakannya dari direktori wisata biasa:
 | Framework | Next.js 16.4 (App Router) | Server component untuk katalog, rute dinamis untuk 25 rekaman, prerender 38 halaman |
 | Bahasa | TypeScript 5.9 | Skema data ditegakkan di satu tempat, kesalahan tertangkap saat build |
 | Styling | Tailwind CSS 4.3 | Token di CSS, kontras dihitung bukan dikira-kira |
-| AI | Vercel AI SDK 7 | Streaming jawaban, penyedia bisa diganti lewat env |
+| AI | Vercel AI SDK 7 | Streaming jawaban, rantai model berlapis lewat env |
 | Pencarian | TF-IDF di server | 25 dokumen tidak butuh embedding 90 MB |
+| Peta | Google Maps embed | Bisa di-zoom, tanpa kunci API berbayar |
 | Deploy | Vercel | Edge cache, image optimization bawaan |
 
 ---

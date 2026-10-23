@@ -32,7 +32,7 @@ export default function HalamanMetodologi() {
   const daftarUnik = [...unik.values()].sort((a, b) => a.judul.localeCompare(b.judul, "id"));
 
   return (
-    <div className="mx-auto max-w-[1600px] px-5 pb-20 pt-28 sm:px-8 lg:px-12">
+    <div className="mx-auto max-w-[1760px] px-5 pb-20 pt-28 sm:px-8 lg:px-12">
       <header>
         <p className="meta-emas">Metodologi</p>
         <div className="mt-3 flex flex-wrap items-end justify-between gap-x-10 gap-y-5">
@@ -88,7 +88,7 @@ export default function HalamanMetodologi() {
             },
           ].map((r, i) => (
             <li key={r.j} className="border-t border-garis-malam pt-4">
-              <p className="tabular font-mono text-[0.625rem] text-emas">{String(i + 1).padStart(2, "0")}</p>
+              <p className="tabular font-mono text-[0.75rem] text-emas">{String(i + 1).padStart(2, "0")}</p>
               <p className="mt-2 font-display text-lg leading-tight text-terang">{r.j}</p>
               <p className="mt-1.5 text-[0.8125rem] leading-relaxed text-terang-2">{r.i}</p>
             </li>
@@ -126,7 +126,7 @@ export default function HalamanMetodologi() {
               <BadgeVerifikasi tingkat={x.t} />
               <p className="mt-2 font-display text-lg leading-tight text-terang">{x.j}</p>
               <p className="mt-1.5 text-[0.8125rem] leading-relaxed text-terang-2">{x.i}</p>
-              <p className="tabular mt-3 font-mono text-[0.625rem] text-terang-3">
+              <p className="tabular mt-3 font-mono text-[0.75rem] text-terang-3">
                 {x.n} rujukan · {persen(x.n, v.total)}%
               </p>
             </div>
@@ -170,7 +170,7 @@ export default function HalamanMetodologi() {
             <p className="mt-3 text-[0.8125rem] leading-relaxed text-terang-2">
               Peta: data © OpenStreetMap contributors (ODbL).
             </p>
-            <p className="mt-4 border-t border-garis-malam pt-3 font-mono text-[0.5625rem] uppercase tracking-[0.1em] text-terang-3">
+            <p className="mt-4 border-t border-garis-malam pt-3 font-mono text-[0.75rem] uppercase tracking-[0.1em] text-terang-3">
               Data diperiksa terakhir 20 Oktober 2026
             </p>
           </div>
@@ -188,7 +188,7 @@ export default function HalamanMetodologi() {
               key={x.url}
               className="grid grid-cols-[2rem_1fr] items-start gap-2 border-b border-garis-malam py-2.5"
             >
-              <span className="tabular pt-0.5 font-mono text-[0.5625rem] text-terang-3">
+              <span className="tabular pt-0.5 font-mono text-[0.75rem] text-terang-3">
                 {String(i + 1).padStart(2, "0")}
               </span>
               <div className="min-w-0">
@@ -200,7 +200,7 @@ export default function HalamanMetodologi() {
                 >
                   {x.judul}
                 </a>
-                <p className="mt-0.5 font-mono text-[0.5rem] uppercase tracking-[0.08em] text-terang-3">
+                <p className="mt-0.5 font-mono text-[0.75rem] uppercase tracking-[0.08em] text-terang-3">
                   {x.penulis} · {x.induk}
                 </p>
               </div>

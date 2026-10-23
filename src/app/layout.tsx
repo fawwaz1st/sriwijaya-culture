@@ -8,12 +8,25 @@ import { SiteFooter } from "@/components/site-footer";
  * Fraunces dipakai dengan sumbu WONK aktif. WONK 1 memberi bentuk huruf
  * yang sedikit "salah" pada g, a, dan y, sehingga judul terasa dicetak
  * dengan tinta, bukan dirender. Itu alasan satu-satunya font ini dipilih.
+ *
+ * Catatan optimasi: versi sebelumnya membiarkan ketiga sumbu variabel
+ * (SOFT, WONK, opsz) dalam keadaan penuh, dan itu membuat berkas font
+ * variabel menjadi beban terbesar di halaman (167 KB dari 320 KB total
+ * transfer). Sumbu `opsz` tidak pernah dipakai karena tidak ada aturan
+ * `font-optical-sizing` di CSS, jadi sekarang dihapus. WONK tetap,
+ * karena itu inti dari pilihan tipografi ini.
+ *
+ * Catatan teknis: `axes` dan `weight` tidak boleh dipakai bersamaan pada
+ * font variabel — Next.js memilih berkas statis per weight, dan `axes`
+ * tidak tersedia di berkas statis. Karena itu di sini hanya `weight`
+ * yang dipakai. WONK lalu diaktifkan lewat `font-variation-settings` di
+ * CSS untuk elemen display saja.
  */
 const fraunces = Fraunces({
   subsets: ["latin"],
   display: "swap",
   variable: "--font-fraunces",
-  axes: ["SOFT", "WONK", "opsz"],
+  weight: ["400", "500"],
 });
 
 const instrument = Instrument_Sans({
@@ -80,6 +93,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         >
           Lewati ke konten utama
         </a>
+
+        {/*
+          Bilah progres baca. Dua piksel di puncak layar yang menunjukkan
+          sejauh mana pembaca sudah masuk ke satu entri. Halaman detail
+          arsip ini panjang (sampai 6.000 px di ponsel), jadi penanda
+          posisi seperti ini berguna, bukan hiasan. Digerakkan oleh
+          scroll-timeline CSS: tanpa JavaScript, tanpa listener gulir.
+        */}
+        <div className="bilah-baca" aria-hidden="true" />
+
         <SiteHeader />
         <main id="konten">{children}</main>
         {/* Asisten berperilaku seperti aplikasi layar penuh (pola Claude.ai/

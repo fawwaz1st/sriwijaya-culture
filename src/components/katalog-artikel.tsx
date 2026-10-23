@@ -60,7 +60,7 @@ export function KatalogArtikel({
           onClick={() => pilih("")}
           aria-pressed={!aktif}
           className={cn(
-            "px-2.5 py-1 font-mono text-[0.625rem] uppercase tracking-[0.1em] transition-colors",
+            "px-2.5 py-1 font-mono text-[0.75rem] uppercase tracking-[0.1em] transition-colors",
             !aktif ? "bg-terang text-malam" : "text-terang-2 hover:text-terang",
           )}
         >
@@ -77,7 +77,7 @@ export function KatalogArtikel({
               onClick={() => pilih(k)}
               aria-pressed={on}
               className={cn(
-                "flex items-center gap-1.5 px-2.5 py-1 font-mono text-[0.625rem] uppercase tracking-[0.1em] transition-colors",
+                "flex items-center gap-1.5 px-2.5 py-1 font-mono text-[0.75rem] uppercase tracking-[0.1em] transition-colors",
                 on ? "bg-terang text-malam" : "text-terang-2 hover:text-terang",
               )}
             >
@@ -169,12 +169,11 @@ export function KatalogArtikel({
 
           {/* Dua berikutnya: bingkai 3:2 seragam supaya sepasang. */}
           <div className="mt-8 grid items-start gap-6 sm:grid-cols-2">
-            {[kedua, ketiga].filter(Boolean).map((a, i) => (
+            {[kedua, ketiga].filter(Boolean).map((a) => (
               <Link
                 key={a.id}
                 href={`/artikel/${a.id}`}
                 className="kartu-masuk group block"
-                style={{ animationDelay: `${i * 80}ms` }}
               >
                 <div className="overflow-hidden">
                   <Foto
@@ -182,7 +181,7 @@ export function KatalogArtikel({
                     alt={a.gambarCaption}
                     rasioPaksa="3 / 2"
                     sizes="(max-width: 640px) 100vw, 50vw"
-                    className="foto-nyala w-full object-cover transition-[filter,transform] duration-700 group-hover:scale-[1.02] group-hover:brightness-110"
+                    className="w-full object-cover transition-[filter,transform] duration-700 group-hover:scale-[1.02] group-hover:brightness-110"
                   />
                 </div>
                 <p className="meta mt-3">

@@ -47,23 +47,46 @@ export default async function DetailArtikel({ params }: { params: Promise<{ id: 
 
   return (
     <article>
+      {/*
+        Header artikel.
+
+        Sebelumnya foto dipaksa `object-cover` di dalam wadah
+        `max-h-[72svh]`. Untuk artikel yang fotonya potret (1152x2048),
+        bingkai 1440x720 itu memotong sekitar 75% gambar: yang terlihat
+        hanya bagian tengah, dan subjeknya hilang. Karena ini foto arsip
+        yang justru jadi bukti, memotongnya bukan pilihan.
+
+        Sekarang foto ditampilkan utuh (`utuh`), dan sisa ruang di kiri
+        kanan diisi salinan foto yang sama dalam keadaan gelap dan blur
+        sebagai latar. Efeknya seperti cetakan foto yang dipasang di
+        atas meja gelap: seluruh gambar terlihat, dan bingkai tetap penuh.
+      */}
       <header className="relative">
-        <div className="relative max-h-[72svh] overflow-hidden">
+        <div className="relative isolate max-h-[72svh] overflow-hidden bg-malam">
+          {/* Latar: foto yang sama, diperbesar dan digelapkan. */}
+          <Foto
+            src={a.gambar}
+            alt=""
+            aria-hidden
+            sizes="100vw"
+            className="absolute inset-0 -z-10 h-full w-full scale-110 object-cover opacity-30 blur-2xl"
+          />
           <Foto
             src={a.gambar}
             alt={a.gambarCaption}
             prioritas
+            utuh
             sizes="100vw"
-            className="max-h-[72svh] w-full object-cover"
+            className="mx-auto max-h-[72svh] w-full"
           />
-          <div className="absolute inset-0 bg-linear-to-t from-malam via-malam/30 to-malam/50" />
+          <div className="pointer-events-none absolute inset-0 bg-linear-to-t from-malam via-malam/25 to-malam/40" />
         </div>
 
         <div className="absolute inset-x-0 bottom-0">
           <div className="mx-auto max-w-[1100px] px-5 pb-8 sm:px-8">
             <nav
               aria-label="Remah roti"
-              className="flex items-center gap-2 font-mono text-[0.5625rem] uppercase tracking-[0.12em] text-terang-2"
+              className="flex items-center gap-2 font-mono text-[0.75rem] uppercase tracking-[0.12em] text-terang-2"
             >
               <Link href="/artikel" className="inline-flex min-h-8 items-center hover:text-terang">
                 Sejarah
@@ -102,7 +125,7 @@ export default async function DetailArtikel({ params }: { params: Promise<{ id: 
                       href={`#bagian-${i + 1}`}
                       className="flex gap-2 border-b border-garis-kertas py-2 text-[0.75rem] leading-snug text-gelap-2 hover:text-gelap"
                     >
-                      <span className="tabular shrink-0 font-mono text-[0.5625rem] text-emas-tinta">
+                      <span className="tabular shrink-0 font-mono text-[0.75rem] text-emas-tinta">
                         {String(i + 1).padStart(2, "0")}
                       </span>
                       {b.subjudul}
@@ -118,7 +141,7 @@ export default async function DetailArtikel({ params }: { params: Promise<{ id: 
               {a.bagian.map((b, i) => (
                 <section key={i} id={`bagian-${i + 1}`} className="mt-10 scroll-mt-24">
                   <h2 className="flex items-baseline gap-3 border-t border-garis-kertas pt-5 font-display text-xl leading-tight text-gelap sm:text-2xl">
-                    <span className="tabular shrink-0 font-mono text-[0.6875rem] text-emas-tinta">
+                    <span className="tabular shrink-0 font-mono text-[0.75rem] text-emas-tinta">
                       {String(i + 1).padStart(2, "0")}
                     </span>
                     {b.subjudul}
@@ -149,7 +172,7 @@ export default async function DetailArtikel({ params }: { params: Promise<{ id: 
                       >
                         {s.judul}
                       </a>
-                      <p className="mt-0.5 font-mono text-[0.5625rem] uppercase tracking-[0.1em] text-gelap-3">
+                      <p className="mt-0.5 font-mono text-[0.75rem] uppercase tracking-[0.1em] text-gelap-3">
                         {s.penulis}
                         {s.tahun ? ` · ${s.tahun}` : ""}
                       </p>
@@ -176,7 +199,7 @@ export default async function DetailArtikel({ params }: { params: Promise<{ id: 
 
       {destinasi.length > 0 && (
         <section className="border-t border-garis-malam py-14">
-          <div className="mx-auto max-w-[1600px] px-5 sm:px-8 lg:px-12">
+          <div className="mx-auto max-w-[1760px] px-5 sm:px-8 lg:px-12">
             <p className="meta-emas">Destinasi yang disebut</p>
             <ul className="mt-5 grid grid-cols-2 gap-4 lg:grid-cols-4">
               {destinasi.map((d) => (
@@ -204,7 +227,7 @@ export default async function DetailArtikel({ params }: { params: Promise<{ id: 
 
       {terkait.length > 0 && (
         <section className="border-t border-garis-malam py-14">
-          <div className="mx-auto max-w-[1600px] px-5 sm:px-8 lg:px-12">
+          <div className="mx-auto max-w-[1760px] px-5 sm:px-8 lg:px-12">
             <p className="meta-emas">Bacaan lain</p>
             <ul className="mt-5 grid gap-6 md:grid-cols-3">
               {terkait.map((t) => (

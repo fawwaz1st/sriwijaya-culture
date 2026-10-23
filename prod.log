@@ -1,0 +1,8 @@
+npm notice run sriwijaya-culture@1.0.0 npx
+npm notice run next start -p 3100
+▲ Next.js 16.4.2
+- Local:         http://localhost:3100
+- Network:       http://100.116.62.12:3100
+✓ Ready in 553ms
+✓ Running next.config.ts took 122ms
+[asisten] jawaban tanpa rujukan sah ( groq ), memakai jawaban arsip langsung
