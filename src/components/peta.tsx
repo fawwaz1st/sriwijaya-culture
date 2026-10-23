@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import type { Destinasi } from "@/lib/types";
 import { koordinatTeks } from "@/lib/format";
@@ -36,6 +36,42 @@ export function Peta({
   const [lapisan, setLapisan] = useState<"k" | "m">("k");
   const [dimuat, setDimuat] = useState(false);
   const [aktif, setAktif] = useState<Destinasi | null>(fokus ?? daftar[0] ?? null);
+  const wadah = useRef<HTMLDivElement>(null);
+
+  /**
+   * Muat peta saat benar-benar masuk viewport.
+   *
+   * Sebelumnya peta hanya dimuat setelah tombol diklik. Akibatnya
+   * bagian ini tampil sebagai kotak gelap kosong setinggi 560px, dan
+   * pengunjung melihat "lubang" di tengah beranda. IntersectionObserver
+   * memberi penundaan yang sama hematnya tanpa mengorbankan tampilan:
+   * iframe baru diunduh ketika bagian ini akan terlihat, bukan saat
+   * halaman pertama dibuka.
+   */
+  useEffect(() => {
+    const el = wadah.current;
+    if (!el) return;
+
+    // Peramban tanpa IntersectionObserver tidak punya cara menunda,
+    // jadi peta dimuat langsung. Ini bukan setState sinkron di badan
+    // effect: nilainya ditetapkan di dalam callback, dan hanya sekali.
+    if (typeof IntersectionObserver === "undefined") {
+      const id = requestAnimationFrame(() => setDimuat(true));
+      return () => cancelAnimationFrame(id);
+    }
+
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((e) => e.isIntersecting)) {
+          setDimuat(true);
+          io.disconnect();
+        }
+      },
+      { rootMargin: "200px" },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
 
   const denganKoordinat = daftar.filter((d) => d.koordinat);
   const tanpa = daftar.filter((d) => !d.koordinat);
@@ -50,7 +86,7 @@ export function Peta({
     `&t=${lapisan}&z=${aktif ? 16 : 13}&hl=id&output=embed`;
 
   return (
-    <div className="pulau-gelap border border-garis-malam bg-malam-2">
+    <div className="pulau-gelap border border-garis-malam bg-malam-2" ref={wadah}>
       {/* Bar kontrol */}
       <div className="flex flex-wrap items-center justify-between gap-2 border-b border-garis-malam bg-malam-2 px-3 py-2">
         <div className="flex items-center gap-1">
@@ -112,28 +148,33 @@ export function Peta({
              * pengunjung benar-benar mau melihat peta — satu-satunya
              * optimasi berdampak besar yang tersisa di situs ini.
              */
-            <button
-              type="button"
-              onClick={() => setDimuat(true)}
-              className="group relative flex w-full flex-col items-center justify-center gap-2 bg-malam-3"
+            <div
+              className="relative flex w-full flex-col items-center justify-center gap-3 overflow-hidden bg-malam-3"
               style={{ height: tinggi }}
-              aria-label={`Muat peta interaktif: ${judul}`}
+              aria-hidden="true"
             >
-              <span
-                aria-hidden="true"
-                className="grid h-11 w-11 place-items-center rounded-full bg-emas text-malam transition-transform group-hover:scale-110"
+              {/* Kisi jalan samar: memberi tahu bahwa ini peta yang sedang
+                  disiapkan, bukan kotak kosong yang rusak. */}
+              <svg
+                className="absolute inset-0 h-full w-full text-malam-5 opacity-40"
+                preserveAspectRatio="none"
+                viewBox="0 0 400 300"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1"
               >
-                <svg viewBox="0 0 20 20" className="h-4 w-4" fill="currentColor">
-                  <path d="M7 4.5v11l9-5.5-9-5.5Z" />
-                </svg>
+                <path d="M0 210 Q120 170 200 195 T400 150" />
+                <path d="M0 120 Q90 140 170 105 T400 80" />
+                <path d="M60 0 L90 300" />
+                <path d="M250 0 L230 300" />
+                <path d="M330 0 L350 300" />
+                <path d="M0 40 H400" />
+              </svg>
+              <span className="relative h-9 w-9 animate-pulse rounded-full border border-emas/40 bg-emas/10" />
+              <span className="relative font-mono text-[0.5625rem] uppercase tracking-[0.14em] text-terang-3">
+                Memuat peta
               </span>
-              <span className="font-mono text-[0.625rem] uppercase tracking-[0.12em] text-terang-2 group-hover:text-terang">
-                Muat peta interaktif
-              </span>
-              <span className="font-mono text-[0.5rem] uppercase tracking-[0.1em] text-terang-3">
-                {aktif ? aktif.nama : "Palembang"} · Google Maps
-              </span>
-            </button>
+            </div>
           )}
         </div>
 

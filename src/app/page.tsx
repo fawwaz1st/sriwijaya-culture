@@ -94,8 +94,8 @@ export default function Beranda() {
               { k: "Catatan", v: s.artikel },
               { k: "Sumber", v: s.sumber },
               { k: "Terverifikasi", v: `${s.persenTerverifikasi}%` },
-            ].map((x) => (
-              <div key={x.k}>
+            ].map((x, i) => (
+              <div key={x.k} className="angka-naik" style={{ animationDelay: `${i * 60}ms` }}>
                 <dt className="meta">{x.k}</dt>
                 <dd className="tabular mt-0.5 font-display text-xl leading-none text-terang">{x.v}</dd>
               </div>
@@ -226,18 +226,44 @@ export default function Beranda() {
                 </li>
               ))}
             </ul>
+
+            {/* Tabel ukuran diambil dari field `fakta` di data, bukan
+                ditulis ulang di sini. Angkanya ikut berubah kalau data
+                diperbaiki. Mengisi sisa tinggi kolom yang tadinya kosong
+                ~320px di desktop. */}
+            <dl className="mt-6 hidden border-t border-garis-malam pt-5 md:block">
+              {ampera.fakta.slice(0, 6).map((f) => (
+                <div
+                  key={f.k}
+                  className="flex items-baseline justify-between gap-4 border-b border-garis-malam/60 py-1.5"
+                >
+                  <dt className="font-mono text-[0.5625rem] uppercase tracking-[0.1em] text-terang-3">
+                    {f.k}
+                  </dt>
+                  <dd className="tabular text-right font-mono text-[0.6875rem] text-terang-2">
+                    {f.v}
+                  </dd>
+                </div>
+              ))}
+            </dl>
           </div>
 
-          {/* Baris 1, kolom 10-12: Benteng Kuto Besak. Rasio lanskap
-              karena subjeknya dinding benteng, bukan menara vertikal. */}
-          <Link href={`/destinasi/${bkb.id}`} className="group md:col-span-3">
-            <div className="overflow-hidden">
+          {/* Baris 1, kolom 10-12: Benteng Kuto Besak.
+
+              Kolom ini tingginya 1/4 kolom potret di sebelah kiri, jadi
+              foto 4:3 menyisakan lubang ~340px di bawahnya. Sekarang
+              kartu mengisi tinggi baris: foto melar mengisi sisa ruang
+              (object-cover), teks menempel di dasar. Di mobile rasionya
+              kembali tetap 4:3 karena tidak ada tinggi baris yang perlu
+              diisi. */}
+          <Link href={`/destinasi/${bkb.id}`} className="group flex h-full flex-col md:col-span-3">
+            <div className="aspect-[4/3] overflow-hidden md:aspect-auto md:min-h-0 md:flex-1">
               <Foto
                 src={bkb.gambar[1]?.src ?? bkb.gambar[0].src}
                 alt={bkb.gambar[1]?.caption ?? bkb.gambar[0].caption}
-                rasioPaksa="4 / 3"
+                rasioPaksa="bebas"
                 sizes="(max-width: 768px) 100vw, 24vw"
-                className="w-full object-cover transition-[filter] duration-700 group-hover:brightness-110"
+                className="h-full w-full object-cover transition-[filter] duration-700 group-hover:brightness-110"
               />
             </div>
             <p className="meta mt-3">02 · {bkb.kategori[0]}</p>
@@ -267,6 +293,9 @@ export default function Beranda() {
               <h3 className="mt-1 font-display text-lg leading-tight text-terang group-hover:text-emas">
                 {d.nama}
               </h3>
+              <p className="mt-1.5 line-clamp-2 text-[0.75rem] leading-relaxed text-terang-3">
+                {d.ringkas}
+              </p>
             </Link>
           ))}
         </div>
@@ -332,6 +361,11 @@ export default function Beranda() {
         </div>
 
         <div className="mt-8 grid gap-8 lg:grid-cols-2">
+          {/* Foto unggulan memakai rasio tetap 16:10. Sebelumnya kolom ini
+              diberi flex-1, dan karena pasangan kolomnya bertumpuk panjang,
+              fotonya melar jadi potret raksasa. Rasio tetap lebih penting
+              daripada mengisi tinggi baris. Ringkasan di bawah judul yang
+              menutup sisa ruang. */}
           <Link href={`/artikel/${ARTIKEL[0].id}`} className="group">
             <div className="overflow-hidden">
               <Foto
@@ -346,16 +380,23 @@ export default function Beranda() {
             <h3 className="display mt-1.5 text-[clamp(1.4rem,2.4vw,1.9rem)] text-terang group-hover:text-emas">
               {ARTIKEL[0].judul}
             </h3>
+            <p className="mt-2 max-w-[48ch] text-[0.8125rem] leading-relaxed text-terang-2">
+              {ARTIKEL[0].ringkas}
+            </p>
           </Link>
 
-          <div className="flex flex-col justify-center">
+          {/* Tiga catatan lain: daftar rapat dengan garis pemisah.
+              `justify-between` sempat dipakai dan hasilnya celah
+              menggantung di antara baris, jadi sekarang mengalir
+              dari atas. */}
+          <div>
             {ARTIKEL.slice(1, 4).map((a) => (
               <Link
                 key={a.id}
                 href={`/artikel/${a.id}`}
-                className="group flex gap-4 border-t border-garis-malam py-4 first:border-t-0 first:pt-0"
+                className="group flex gap-4 border-b border-garis-malam py-4 first:pt-0 last:border-b-0"
               >
-                <div className="w-20 flex-none overflow-hidden sm:w-28">
+                <div className="w-20 flex-none self-start overflow-hidden sm:w-28">
                   <Foto src={a.gambar} alt={a.gambarCaption} rasioPaksa="1 / 1" sizes="112px" className="w-full object-cover" />
                 </div>
                 <div className="min-w-0">
@@ -363,6 +404,9 @@ export default function Beranda() {
                   <h3 className="mt-1 font-display text-lg leading-snug text-terang group-hover:text-emas">
                     {a.judul}
                   </h3>
+                  <p className="mt-1.5 line-clamp-2 text-[0.75rem] leading-relaxed text-terang-3">
+                    {a.ringkas}
+                  </p>
                 </div>
               </Link>
             ))}

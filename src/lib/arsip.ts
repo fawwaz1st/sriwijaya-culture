@@ -26,9 +26,27 @@ import { persen } from "@/lib/format";
 
 export const DESTINASI = destinasiRaw as unknown as readonly Destinasi[];
 export const ARTIKEL = artikelRaw as unknown as readonly Artikel[];
+
+/**
+ * Seluruh rekaman UMKM, termasuk entri demonstrasi.
+ *
+ * Dipakai oleh rute detail dan sitemap supaya tautan lama tidak jadi 404,
+ * dan supaya entri contoh tetap bisa diperiksa tim.
+ */
 export const DAFTAR_UMKM = umkmRaw as unknown as readonly UMKMRecord[];
+
+/**
+ * UMKM yang layak tampil di direktori publik.
+ *
+ * Empat dari tujuh rekaman di data masih berstatus `demonstrasi`: nama
+ * usaha, alamat, dan harga belum diverifikasi. Menampilkannya di grid
+ * publik membuat arsip terlihat seperti mockup, jadi direktori hanya
+ * memuat rekaman berstatus `rujukan-umum`. Entri demonstrasi tetap ada
+ * di data dan tetap punya halaman detail, hanya tidak dipromosikan.
+ */
+export const UMKM_PUBLIK = DAFTAR_UMKM.filter((u) => u.statusData !== "demonstrasi");
 /** Alias lama supaya pemanggilan di halaman tetap ringkas. */
-export const UMKM = DAFTAR_UMKM;
+export const UMKM = UMKM_PUBLIK;
 export const TIMELINE = timelineRaw as unknown as DataTimeline;
 export const KATEGORI_DESTINASI = kategoriDestinasi as unknown as readonly KategoriDestinasi[];
 export const KATEGORI_ARTIKEL = kategoriArtikel as unknown as readonly KategoriArtikel[];

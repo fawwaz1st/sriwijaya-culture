@@ -152,6 +152,52 @@ Keamanan (diperiksa tangan, bukan klaim):
 
 ---
 
+## 5a. Sesi audit visual dan perbaikan tata letak
+
+Sesi lanjutan yang berfokus pada kualitas tampilan, bukan fitur baru.
+Metodenya sengaja dibuat terukur: setiap klaim harus punya angka dari
+peramban, karena dua kali dalam sesi ini pengamatan visual keliru.
+
+**Dua koreksi terhadap pembacaan visual:**
+
+1. Peta sempat dilaporkan "hitam total" di beranda dan "kotak putih
+   kosong" di halaman detail. Pengukuran iframe membuktikan sebaliknya:
+   screenshot elemen iframe berukuran 233 KB–1,4 MB, artinya peta hidup.
+   Penyebab kesan keliru: `page.screenshot({ fullPage: true })` tidak
+   menangkap isi iframe lintas-origin, jadi yang terekam hanya latar
+   gelap di belakang iframe.
+2. "Distorsi gambar" pada laporan awal ternyata sebagian besar adalah
+   *crop* yang disengaja (`object-fit: cover`). Yang benar-benar rusak
+   hanya crop ekstrem, misalnya foto potret 1119x1991 dipaksa menjadi
+   pita 1344x480 (rasio 4:1).
+
+**Bug yang ditemukan dan diperbaiki:**
+
+| Bug | Cara ditemukan | Perbaikan |
+|---|---|---|
+| 4 dari 7 entri UMKM adalah placeholder "demonstrasi" tampil di direktori publik | Pencarian teks di `src/lib/data/umkm.ts` | `UMKM_PUBLIK` memfilter `statusData === "demonstrasi"`; direktori menjelaskan berapa entri ditahan |
+| Lubang ~340px di bawah kartu Benteng Kuto Besak | Pengukuran tinggi baris grid | Kartu `flex-col`, foto `flex-1` |
+| Kolom tengah "paling dikenal" kosong ~320px | Pengukuran grid | Tabel fakta dari field `fakta` |
+| Komposer asisten mengambang di tengah, void ~400px | Screenshot asisten setelah menjawab | Pembungkus `flex h-full flex-col`, daftar `flex-1` |
+| Header asisten pecah 3 baris di 390px | Screenshot mobile | Status dipendekkan, reset jadi ikon |
+| Foto unggulan artikel terpotong 4:1 | Pengukuran rasio tampil vs asli | Layout dua kolom, foto 4:5 |
+| Kartu UMKM tidak sejajar | Screenshot | `flex h-full flex-col` + `mt-auto` |
+| Animasi menyembunyikan kartu di bawah lipatan | `scripts/_animcheck.mjs` menghitung elemen `opacity: 0` | Hapus `opacity: 0` dari keyframe; hanya `transform`/`filter` |
+| Lint: `setState` sinkron dalam effect | `npx eslint` | `requestAnimationFrame` |
+
+**Bukti akhir sesi:**
+
+```
+$ npx tsc --noEmit                     → 0 galat
+$ npx eslint src --max-warnings=0      → 0 error, 0 warning
+$ npm run build                        → sukses, BUILD_ID baru
+$ node scripts/verify-visual.mjs       → 33/33 lolos, 0 bermasalah
+$ node scripts/_asistentest.mjs        → jawaban nyata + sitasi [1][2]
+$ node scripts/_animcheck.mjs          → 0 elemen tertinggal transparan
+```
+
+---
+
 ## 6. Pembagian kerja manusia–AI
 
 | Keputusan | Pembuat | Alasan |

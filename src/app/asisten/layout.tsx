@@ -16,5 +16,7 @@ import type { ReactNode } from "react";
  * yang dipakai Claude.ai dan ChatGPT.
  */
 export default function LayoutAsisten({ children }: { children: ReactNode }) {
-  return <div className="asisten-halaman h-[100svh] overflow-hidden">{children}</div>;
+  return (
+    <div className="asisten-halaman h-[calc(100svh-4rem)] overflow-hidden">{children}</div>
+  );
 }

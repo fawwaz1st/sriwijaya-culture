@@ -46,6 +46,14 @@ export default async function DetailDestinasi({ params }: { params: Promise<{ id
   // (0.56) tidak punya subjek yang terbaca saat dipotong selebar layar.
   const hero = d.gambar.find((g) => !potret(g.src)) ?? utama;
   const galeri = d.gambar.filter((g) => g.src !== hero.src);
+  /**
+   * Kalau semua foto entri ini potret (Jembatan Ampera, misalnya),
+   * memaksa hero selebar layar berarti memotong ~70% tinggi foto dan
+   * menyisakan sebagian menara saja. Untuk kasus itu hero dibatasi
+   * tingginya dan fotonya diposisikan di tengah, bukan dilebarkan
+   * penuh. Hasilnya foto potret tetap terbaca sebagai potret.
+   */
+  const heroPotret = potret(hero.src);
 
   return (
     <article>
@@ -57,14 +65,26 @@ export default async function DetailDestinasi({ params }: { params: Promise<{ id
         href={`/destinasi/${d.id}`}
       />
       <header className="relative">
-        <div className="relative max-h-[78svh] overflow-hidden">
+        <div
+          className={
+            heroPotret
+              ? "relative mx-auto max-h-[78svh] max-w-[46rem] overflow-hidden"
+              : "relative max-h-[78svh] overflow-hidden"
+          }
+        >
           <Foto
             src={hero.src}
             alt={hero.caption}
             prioritas
-            sizes="100vw"
+            sizes={heroPotret ? "(max-width: 768px) 100vw, 46rem" : "100vw"}
             className="max-h-[78svh] w-full object-cover"
           />
+          {/* Untuk hero potret, latar di kiri-kanan diisi warna malam
+              supaya tepi foto tidak terlihat seperti kotak yang salah
+              ukuran. */}
+          {heroPotret && (
+            <div className="pointer-events-none absolute inset-0 ring-1 ring-inset ring-terang/8" />
+          )}
           <div className="absolute inset-0 bg-linear-to-t from-malam via-malam/55 to-malam/70" />
         </div>
 
@@ -123,15 +143,16 @@ export default async function DetailDestinasi({ params }: { params: Promise<{ id
             <div className="gulir-tipis -mx-5 mb-10 flex gap-3 overflow-x-auto px-5 pb-2 sm:mx-0 sm:px-0 lg:mb-12">
               {galeri.map((g, i) => (
                 <figure key={i} className="w-[78vw] max-w-[560px] flex-none sm:w-[44vw] lg:w-[32vw]">
-                  <div className="group overflow-hidden">
+                  <div className="group h-[clamp(13rem,24vw,19rem)] overflow-hidden bg-kertas-2">
                     <Foto
                       src={g.src}
                       alt={g.caption}
+                      rasioPaksa="bebas"
                       sizes="(max-width: 640px) 78vw, (max-width: 1024px) 44vw, 32vw"
-                      className="w-full transition-transform duration-700 ease-out group-hover:scale-[1.03]"
+                      className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
                     />
                   </div>
-                  <figcaption className="mt-1.5 text-[0.5625rem] leading-tight text-gelap-3">
+                  <figcaption className="mt-1.5 line-clamp-1 text-[0.5625rem] leading-tight text-gelap-3">
                     {g.caption}
                   </figcaption>
                 </figure>

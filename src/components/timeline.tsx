@@ -38,8 +38,12 @@ export function TimelineSejarah() {
     <div>
       {/* Pita era: satu blok per zaman, tinggi sebanding jumlah tonggak. */}
       <ol className="grid grid-cols-2 gap-px border border-garis-malam bg-garis-malam sm:grid-cols-4">
-        {era.map((e) => (
-          <li key={e.label} className="bg-malam-2 p-3 sm:p-4">
+        {era.map((e, i) => (
+          <li
+            key={e.label}
+            className="label-masuk bg-malam-2 p-3 sm:p-4"
+            style={{ animationDelay: `${i * 70}ms` }}
+          >
             <p className="font-mono text-[0.5rem] uppercase tracking-[0.1em] text-terang-3">
               {e.dari}–{e.sampai === 2100 ? "kini" : e.sampai}
             </p>
@@ -67,7 +71,11 @@ export function TimelineSejarah() {
           const ref = p.ref.jenis === "destinasi" ? cariDestinasi(p.ref.id) : cariArtikel(p.ref.id);
           const href = p.ref.jenis === "destinasi" ? `/destinasi/${p.ref.id}` : `/artikel/${p.ref.id}`;
           return (
-            <li key={`${p.tahun}-${i}`} className="border-b border-garis-malam">
+            <li
+              key={`${p.tahun}-${i}`}
+              className="kartu-masuk border-b border-garis-malam"
+              style={{ animationDelay: `${Math.min(i, 8) * 45}ms` }}
+            >
               <Link
                 href={href}
                 className="group grid grid-cols-[3.5rem_1fr_auto] items-baseline gap-3 py-2.5 transition-colors hover:bg-malam-3/60"

@@ -14,6 +14,10 @@ import { FOTO, rasio } from "@/lib/foto";
  *    Pemotongan ini disengaja dan tidak mengurangi isi halaman detail.
  *
  * `prioritas` hanya untuk satu foto per halaman, yaitu kandidat LCP.
+ *
+ * `rasioPaksa="bebas"` melepas rasio inline sepenuhnya. Dipakai saat
+ * bingkai ditentukan oleh wadah ber-tinggi tetap (mis. pita sinematik),
+ * karena inline aspect-ratio akan mengalahkan tinggi wadah.
  */
 export function Foto({
   src,
@@ -36,7 +40,8 @@ export function Foto({
   const f = (FOTO as Record<string, { w: number; h: number; r: number }>)[src];
   const w = f?.w ?? 1280;
   const h = f?.h ?? 853;
-  const r = rasioPaksa ?? String(rasio(src));
+  const bebas = rasioPaksa === "bebas";
+  const r = bebas ? undefined : (rasioPaksa ?? String(rasio(src)));
 
   return (
     <Image
@@ -52,7 +57,7 @@ export function Foto({
         posisi === "bottom" && "object-bottom",
         className,
       )}
-      style={{ aspectRatio: r }}
+      style={r ? { aspectRatio: r } : undefined}
     />
   );
 }

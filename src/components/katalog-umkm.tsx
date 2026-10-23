@@ -103,7 +103,7 @@ export function KatalogUMKM({
       <p className="meta mt-4">
         <span className="tabular text-terang">{hasil.length}</span> usaha ·{" "}
         <span className="tabular text-terang">{jumlahProduk}</span> produk
-        tercatat (label Asli)
+        pada hasil ini
       </p>
 
       {hasil.length === 0 ? (
@@ -133,16 +133,21 @@ export function KatalogUMKM({
             const terverifikasi = u.statusData === "rujukan-umum";
             return (
               <li key={u.id} className="h-full">
-                <Link href={`/umkm/${u.id}`} className="group kartu block h-full p-2.5">
+                {/* flex-col + mt-auto: kartu mengisi tinggi baris dan
+                    baris meta (wilayah · produk) menempel di dasar, jadi
+                    tiga kartu dalam satu baris punya kaki yang sejajar
+                    walau panjang ringkasannya berbeda. */}
+                <Link href={`/umkm/${u.id}`} className="group kartu flex h-full flex-col p-2.5">
                   <div className="overflow-hidden">
                     <Foto
                       src={u.gambar[0].src}
                       alt={u.gambar[0].caption}
+                      rasioPaksa="4 / 3"
                       sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                      className="w-full transition-transform duration-700 ease-out group-hover:scale-[1.04]"
+                      className="w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]"
                     />
                   </div>
-                  <div className="px-1.5 pb-1.5 pt-3">
+                  <div className="flex flex-1 flex-col px-1.5 pb-1.5 pt-3">
                     <div className="flex items-start justify-between gap-2">
                       <p className="meta">{u.kategori}</p>
                       <span className={cn("status shrink-0", terverifikasi ? "text-ok" : "text-warn")}>
@@ -155,7 +160,7 @@ export function KatalogUMKM({
                     <p className="mt-1 line-clamp-2 text-[0.75rem] leading-relaxed text-terang-2">
                       {u.ringkas}
                     </p>
-                    <p className="mt-2 font-mono text-[0.5rem] uppercase tracking-[0.1em] text-terang-3">
+                    <p className="mt-auto pt-2 font-mono text-[0.5rem] uppercase tracking-[0.1em] text-terang-3">
                       {u.wilayah} · {u.produk.length} produk
                     </p>
                   </div>
@@ -163,6 +168,51 @@ export function KatalogUMKM({
               </li>
             );
           })}
+
+          {/*
+           * Sisa sel di baris terakhir. Tujuh kartu di tiga kolom
+           * menyisakan ruang kosong. Daripada meregangkan kartu ketujuh
+           * (fotonya jadi raksasa), sisa sel diisi panel yang berguna:
+           * jalan masuk ke asisten, yang memang bisa menjawab pertanyaan
+           * soal kuliner dan oleh-oleh.
+           *
+           * Lebar panel dihitung dari sisa, bukan ditumpuk sebagai
+           * beberapa kelas span. Sebelumnya `lg:col-span-2` dan
+           * `lg:col-span-1` sama-sama terpasang dan yang terakhir menang,
+           * jadi panel cuma selebar satu kolom dan menyisakan lubang.
+           */}
+          {hasil.length > 0 && (
+            <li
+              className={cn(
+                "h-full",
+                hasil.length % 3 === 1
+                  ? "sm:col-span-2 lg:col-span-2"
+                  : hasil.length % 3 === 2
+                    ? "sm:col-span-2 lg:col-span-1"
+                    : "sm:col-span-2 lg:col-span-3",
+              )}
+            >
+              <div className="kartu flex h-full flex-col justify-center gap-6 p-6 lg:p-8">
+                <div>
+                  <p className="meta-emas">Bingung memilih</p>
+                  <p className="mt-2 max-w-[34ch] font-display text-xl leading-snug text-terang sm:text-2xl">
+                    Tanya Sari soal pempek, songket, atau oleh-oleh yang tahan
+                    dibawa pulang.
+                  </p>
+                  <p className="mt-2 max-w-[46ch] text-[0.8125rem] leading-relaxed text-terang-2">
+                    Jawabannya diambil dari catatan yang sama dengan halaman
+                    ini. Kalau datanya tidak ada, ia bilang tidak tahu.
+                  </p>
+                </div>
+                <Link
+                  href="/asisten"
+                  className="inline-flex min-h-9 w-fit items-center gap-2 border border-emas/40 px-4 py-2 font-mono text-[0.6875rem] uppercase tracking-[0.12em] text-emas transition-colors hover:border-emas hover:bg-emas/10"
+                >
+                  Buka asisten →
+                </Link>
+              </div>
+            </li>
+          )}
         </ul>
       )}
     </>

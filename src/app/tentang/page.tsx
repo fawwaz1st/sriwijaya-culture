@@ -75,6 +75,28 @@ export default function HalamanTentang() {
               </li>
             ))}
           </ul>
+
+          {/* Isi arsip dalam angka. Semua dihitung dari data lewat
+              statistikArsip(), bukan diketik. Blok ini juga menutup
+              ruang kosong ~430px di bawah kolom kanan, karena foto
+              4:3 di kolom kiri lebih tinggi daripada dua daftar di sini. */}
+          <dl className="mt-6 grid grid-cols-2 gap-x-6 gap-y-4 border-t border-garis-malam pt-5 sm:grid-cols-4 lg:grid-cols-2">
+            {[
+              { k: "Destinasi", v: s.destinasi },
+              { k: "Usaha lokal", v: s.umkm },
+              { k: "Catatan", v: s.artikel },
+              { k: "Tonggak waktu", v: s.peristiwa },
+            ].map((n) => (
+              <div key={n.k}>
+                <dt className="font-mono text-[0.5625rem] uppercase tracking-[0.1em] text-terang-3">
+                  {n.k}
+                </dt>
+                <dd className="tabular mt-1 font-display text-3xl leading-none text-terang">
+                  {n.v}
+                </dd>
+              </div>
+            ))}
+          </dl>
         </div>
       </div>
 

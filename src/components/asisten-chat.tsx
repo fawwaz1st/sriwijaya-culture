@@ -5,6 +5,7 @@ import Link from "next/link";
 import { SAPAAN } from "@/lib/asisten-prompt";
 import { cariDokumen } from "@/lib/retrieval";
 import { cn } from "@/lib/cn";
+import { IsiArsip, type RingkasArsip } from "@/components/isi-arsip";
 
 /**
  * Asisten Sari — shell aplikasi layar penuh.
@@ -45,7 +46,7 @@ function bentukKunciValid(k: string): boolean {
   return /^(sk-or-v1-[a-f0-9]{64}|gsk_[A-Za-z0-9]{40,80}|sk-[A-Za-z0-9-_]{40,})$/.test(k.trim());
 }
 
-export function AsistenChat() {
+export function AsistenChat({ ringkasArsip }: { ringkasArsip?: RingkasArsip }) {
   const [input, setInput] = useState("");
   const [pesan, setPesan] = useState<PesanLokal[]>([]);
   const [sibuk, setSibuk] = useState(false);
@@ -225,25 +226,30 @@ export function AsistenChat() {
 
   return (
     <div className="flex h-full flex-col bg-malam">
-      {/* --- Bar atas: status + aksi --- */}
-      <div className="flex items-center justify-between gap-3 border-b border-garis-malam px-4 py-2.5 sm:px-6">
-        <p className="meta flex items-center gap-2">
+      {/* --- Bar atas: status + aksi ---
+
+          Di layar 390px tiga kontrol ini tidak muat dan status pecah
+          jadi tiga baris. Status dipendekkan dan tombol "Mulai ulang"
+          menjadi ikon di bawah `sm`. */}
+      <div className="flex items-center justify-between gap-2 border-b border-garis-malam px-3 py-2.5 sm:gap-3 sm:px-6">
+        <p className="meta flex min-w-0 items-center gap-2">
           <span
             aria-hidden="true"
-            className={cn("h-1.5 w-1.5 rounded-full", sibuk ? "denyut bg-emas" : "bg-ok")}
+            className={cn("h-1.5 w-1.5 flex-none rounded-full", sibuk ? "denyut bg-emas" : "bg-ok")}
           />
-          {sibuk ? "Menyusun jawaban" : statusTerakhir}
+          <span className="truncate">{sibuk ? "Menyusun jawaban" : statusTerakhir}</span>
         </p>
 
-        <div className="flex items-center gap-2 sm:gap-3">
+        <div className="flex flex-none items-center gap-1.5 sm:gap-3">
           {rujukanTerakhir.length > 0 && (
             <button
               type="button"
               onClick={() => setPanel((v) => !v)}
               aria-expanded={panel}
-              className="meta flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-emas transition-colors hover:bg-emas/10 hover:text-emas-muda"
+              className="sentuh meta flex items-center gap-1.5 rounded-md px-2 py-1.5 text-emas transition-colors hover:bg-emas/10 hover:text-emas-muda sm:px-2.5"
             >
-              {rujukanTerakhir.length} rujukan
+              <span className="tabular">{rujukanTerakhir.length}</span>
+              <span className="hidden sm:inline">rujukan</span>
               <span aria-hidden="true" className={cn("transition-transform", panel && "rotate-180")}>
                 ⌄
               </span>
@@ -258,9 +264,15 @@ export function AsistenChat() {
                 setPanel(false);
                 kotak.current?.focus();
               }}
-              className="meta rounded-md px-2.5 py-1.5 text-terang-3 transition-colors hover:bg-terang/8 hover:text-terang"
+              aria-label="Mulai ulang percakapan"
+              title="Mulai ulang"
+              className="sentuh meta grid h-8 w-8 place-items-center rounded-md text-terang-3 transition-colors hover:bg-terang/8 hover:text-terang sm:h-auto sm:w-auto sm:px-2.5 sm:py-1.5"
             >
-              Mulai ulang
+              <svg viewBox="0 0 16 16" className="h-3.5 w-3.5 sm:hidden" fill="none" stroke="currentColor" strokeWidth="1.4">
+                <path d="M2.5 8a5.5 5.5 0 1 1 1.8 4.1" strokeLinecap="round" />
+                <path d="M2 4.5V8h3.5" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+              <span className="hidden sm:inline">Mulai ulang</span>
             </button>
           )}
           <button
@@ -342,7 +354,14 @@ export function AsistenChat() {
         className="gulir-tipis min-h-0 flex-1 overflow-y-auto"
       >
         {kosong ? (
-          <div className="mx-auto flex h-full w-full max-w-[46rem] flex-col justify-center px-1 pb-10">
+          /*
+           * Empty state rata atas, bukan justify-center. Di layar tinggi
+           * (desktop 1000px) justify-center mendorong sapaan ke tengah
+           * kotak dan menyisakan ~450px kosong di atas serta di bawah.
+           * Rata atas membuat mata langsung bertemu judul dan kolom
+           * input, sisa ruang di bawah dipakai chip saran.
+           */
+          <div className="mx-auto w-full max-w-[46rem] px-1 pb-10 pt-8">
             <div
               aria-hidden="true"
               className="pointer-events-none fixed inset-x-0 top-0 h-[420px] bg-[radial-gradient(ellipse_at_top,rgba(217,168,50,0.07),transparent_60%)]"
@@ -367,76 +386,95 @@ export function AsistenChat() {
               />
               <SaranPertanyaan onPick={kirim} />
             </div>
+
+            {ringkasArsip && <IsiArsip r={ringkasArsip} />}
           </div>
         ) : (
-          <>
-            <div className="mx-auto w-full max-w-[46rem] px-1 pb-4 pt-6">
-              <ol className="space-y-7">
-                {pesan.map((m) =>
-                  m.peran === "pengguna" ? (
-                    <li key={m.id} className="flex justify-end">
-                      <p className="max-w-[85%] rounded-lg bg-terang px-3.5 py-2.5 text-[0.875rem] leading-relaxed text-malam shadow-[inset_0_1px_0_rgba(255,255,255,0.5)]">
-                        {m.teks}
-                      </p>
-                    </li>
-                  ) : (
-                    <li key={m.id}>
-                      <div className="flex gap-3">
-                        <span
-                          aria-hidden="true"
-                          className="mt-0.5 grid h-6 w-6 flex-none place-items-center bg-emas/15 font-display text-[0.625rem] font-medium text-emas"
-                        >
-                          S
-                        </span>
-                        <div className="min-w-0 flex-1">
-                          <p className="whitespace-pre-wrap text-[0.9375rem] leading-[1.7] text-terang">
-                            {m.teks}
-                          </p>
-                          {m.sumber.length > 0 && (
-                            <ul className="mt-3 flex flex-wrap gap-1.5">
-                              {m.sumber.map((s) => (
-                                <li key={s.no}>
-                                  <Link
-                                    href={s.href}
-                                    className="group flex items-center gap-1.5 rounded-full border border-garis-malam bg-malam-2/60 px-2.5 py-1 font-mono text-[0.5625rem] uppercase tracking-[0.08em] text-terang-2 transition-colors hover:border-emas/60 hover:bg-emas/8 hover:text-emas"
-                                  >
-                                    <span className="tabular text-emas">[{s.no}]</span>
-                                    <span className="max-w-[22ch] truncate normal-case tracking-normal">
-                                      {s.judul}
-                                    </span>
-                                  </Link>
-                                </li>
-                              ))}
-                            </ul>
-                          )}
+          /*
+           * Percakapan aktif.
+           *
+           * Sebelumnya blok ini hanya `<>...</>`: daftar pesan setinggi
+           * isinya, lalu composer `sticky bottom-0` menempel di dasar
+           * daftar, bukan di dasar kotak. Akibatnya pada percakapan
+           * pendek (satu tanya satu jawab) composer mengambang di tengah
+           * dan menyisakan ~400px kosong di bawahnya.
+           *
+           * Sekarang dibungkus flex-col setinggi kotak: daftar pesan
+           * mengambil sisa ruang (flex-1) dan composer duduk di dasar.
+           */
+          <div className="flex h-full flex-col">
+            {/* Area pesan bisa digulir sendiri. Sebelumnya seluruh kotak
+                ikut memanjang, jadi jawaban panjang mendorong composer
+                keluar layar dan di ponsel teks tertutup composer. */}
+            <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
+              <div className="mx-auto w-full max-w-[46rem] px-3 pb-4 pt-6 sm:px-1">
+                <ol className="space-y-7">
+                  {pesan.map((m) =>
+                    m.peran === "pengguna" ? (
+                      <li key={m.id} className="flex justify-end">
+                        <p className="max-w-[85%] rounded-lg bg-terang px-3.5 py-2.5 text-[0.875rem] leading-relaxed text-malam shadow-[inset_0_1px_0_rgba(255,255,255,0.5)]">
+                          {m.teks}
+                        </p>
+                      </li>
+                    ) : (
+                      <li key={m.id}>
+                        <div className="flex gap-3">
+                          <span
+                            aria-hidden="true"
+                            className="mt-0.5 grid h-6 w-6 flex-none place-items-center bg-emas/15 font-display text-[0.625rem] font-medium text-emas"
+                          >
+                            S
+                          </span>
+                          <div className="min-w-0 flex-1">
+                            <p className="whitespace-pre-wrap text-[0.9375rem] leading-[1.7] text-terang">
+                              {m.teks}
+                            </p>
+                            {m.sumber.length > 0 && (
+                              <ul className="mt-3 flex flex-wrap gap-1.5">
+                                {m.sumber.map((s) => (
+                                  <li key={s.no}>
+                                    <Link
+                                      href={s.href}
+                                      className="group flex items-center gap-1.5 rounded-full border border-garis-malam bg-malam-2/60 px-2.5 py-1 font-mono text-[0.5625rem] uppercase tracking-[0.08em] text-terang-2 transition-colors hover:border-emas/60 hover:bg-emas/8 hover:text-emas"
+                                    >
+                                      <span className="tabular text-emas">[{s.no}]</span>
+                                      <span className="max-w-[22ch] truncate normal-case tracking-normal">
+                                        {s.judul}
+                                      </span>
+                                    </Link>
+                                  </li>
+                                ))}
+                              </ul>
+                            )}
+                          </div>
                         </div>
-                      </div>
+                      </li>
+                    ),
+                  )}
+
+                  {sibuk && (
+                    <li>
+                      <span className="flex gap-1" aria-label="Sedang menyusun jawaban">
+                        <span className="h-1.5 w-1.5 rounded-full bg-terang-3 denyut" />
+                        <span className="h-1.5 w-1.5 rounded-full bg-terang-3 denyut [animation-delay:200ms]" />
+                        <span className="h-1.5 w-1.5 rounded-full bg-terang-3 denyut [animation-delay:400ms]" />
+                      </span>
                     </li>
-                  ),
-                )}
+                  )}
+                </ol>
 
-                {sibuk && (
-                  <li>
-                    <span className="flex gap-1" aria-label="Sedang menyusun jawaban">
-                      <span className="h-1.5 w-1.5 rounded-full bg-terang-3 denyut" />
-                      <span className="h-1.5 w-1.5 rounded-full bg-terang-3 denyut [animation-delay:200ms]" />
-                      <span className="h-1.5 w-1.5 rounded-full bg-terang-3 denyut [animation-delay:400ms]" />
-                    </span>
-                  </li>
+                {galat && (
+                  <div className="mt-5 border border-bahaya/40 bg-bahaya/8 p-3">
+                    <p className="status text-bahaya">Sari sedang tidak bisa dihubungi</p>
+                    <p className="mt-1.5 text-[0.8125rem] leading-relaxed text-terang-2">{galat}</p>
+                  </div>
                 )}
-              </ol>
-
-              {galat && (
-                <div className="mt-5 border border-bahaya/40 bg-bahaya/8 p-3">
-                  <p className="status text-bahaya">Sari sedang tidak bisa dihubungi</p>
-                  <p className="mt-1.5 text-[0.8125rem] leading-relaxed text-terang-2">{galat}</p>
-                </div>
-              )}
-              <div ref={ujung} />
+                <div ref={ujung} />
+              </div>
             </div>
 
-            {/* Composer menempel di dasar viewport (bukan dasar isi). */}
-            <div className="sticky bottom-0 border-t border-garis-malam bg-malam/95 backdrop-blur">
+            {/* Composer di dasar kotak, bukan menempel isi percakapan. */}
+            <div className="border-t border-garis-malam bg-malam/95 backdrop-blur">
               <div className="mx-auto w-full max-w-[46rem] px-1 py-3">
                 <Composer
                   input={input}
@@ -448,7 +486,7 @@ export function AsistenChat() {
                 />
               </div>
             </div>
-          </>
+          </div>
         )}
       </div>
 

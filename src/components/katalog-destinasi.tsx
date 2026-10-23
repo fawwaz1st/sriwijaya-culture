@@ -7,7 +7,6 @@ import { Foto } from "@/components/foto";
 import { KeadaanKosong, Tombol } from "@/components/ui";
 import { warnaKategori } from "@/lib/warna";
 import { cn } from "@/lib/cn";
-import { potret } from "@/lib/foto";
 import type { Destinasi, KategoriDestinasi } from "@/lib/types";
 
 /**
@@ -60,7 +59,9 @@ export function KatalogDestinasi({
           onClick={() => pilih("")}
           aria-pressed={!aktif}
           className={cn(
-            "flex-none px-2.5 py-1 font-mono text-[0.625rem] uppercase tracking-[0.1em] transition-colors",
+            // py-2.5 + teks 10px memberi tinggi ~34px; area sentuh
+            // diperluas ke 44px lewat pseudo-elemen di lapisan CSS.
+            "sentuh flex-none px-3 py-2.5 font-mono text-[0.625rem] uppercase tracking-[0.1em] transition-colors",
             !aktif ? "bg-terang text-malam" : "text-terang-2 hover:text-terang",
           )}
         >
@@ -77,7 +78,7 @@ export function KatalogDestinasi({
               onClick={() => pilih(k)}
               aria-pressed={on}
               className={cn(
-                "flex flex-none items-center gap-1.5 px-2.5 py-1 font-mono text-[0.625rem] uppercase tracking-[0.1em] transition-colors",
+                "sentuh flex flex-none items-center gap-1.5 px-3 py-2.5 font-mono text-[0.625rem] uppercase tracking-[0.1em] transition-colors",
                 on ? "bg-terang text-malam" : "text-terang-2 hover:text-terang",
               )}
             >
@@ -121,11 +122,14 @@ export function KatalogDestinasi({
           />
         </div>
       ) : (
-        <ul className="mt-8 grid grid-cols-2 items-start gap-x-5 gap-y-10 sm:gap-x-6 lg:grid-cols-3">
+        <ul className="mt-8 grid grid-cols-2 items-stretch gap-x-5 gap-y-10 sm:gap-x-6 lg:grid-cols-3">
           {hasil.map((d, i) => {
-            const p = potret(d.gambar[0].src);
             return (
-              <li key={d.id} className="h-full">
+              <li
+                key={d.id}
+                className="kartu-masuk h-full"
+                style={{ animationDelay: `${Math.min(i, 5) * 60}ms` }}
+              >
                 <Link
                   href={`/destinasi/${d.id}`}
                   className="group kartu flex h-full flex-col p-2.5"
@@ -135,12 +139,17 @@ export function KatalogDestinasi({
                       src={d.gambar[0].src}
                       alt={d.gambar[0].caption}
                       prioritas={i === 0}
-                      // Bingkai mengikuti orientasi foto: potret 4:5,
-                      // lanskap 3:2. Memaksa lanskap sempit ke 4:5
-                      // memotong subjeknya sampai tidak terbaca.
-                      rasioPaksa={p ? "4 / 5" : "3 / 2"}
+                      // Satu bingkai untuk semua kartu. Sebelumnya rasio
+                      // mengikuti orientasi foto, jadi kartu potret 513px
+                      // dan kartu lanskap 273px duduk di baris yang sama:
+                      // judul dan ringkasan tidak pernah sejajar, dan grid
+                      // terbaca sebagai kolom yang berantakan. Bingkai
+                      // seragam membuat garis baca horizontal tetap utuh,
+                      // sementara rasio asli tetap dipakai di halaman detail.
+                      rasioPaksa="4 / 5"
+                      posisi="center"
                       sizes="(max-width: 640px) 50vw, 33vw"
-                      className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]"
+                      className="w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]"
                     />
                     <span
                       className="absolute left-0 top-0 px-2 py-1 font-mono text-[0.5rem] uppercase tracking-[0.1em] text-malam"
@@ -151,7 +160,7 @@ export function KatalogDestinasi({
                   </div>
                   <div className="flex flex-1 flex-col px-1.5 pb-1.5 pt-3">
                     <p className="meta">{d.kategori.join(" · ")}</p>
-                    <h2 className="mt-1 font-display text-lg leading-tight text-terang transition-colors group-hover:text-emas">
+                    <h2 className="mt-1 line-clamp-2 font-display text-lg leading-tight text-terang transition-colors group-hover:text-emas">
                       {d.nama}
                     </h2>
                     <p className="mt-1 line-clamp-2 text-[0.75rem] leading-relaxed text-terang-2">

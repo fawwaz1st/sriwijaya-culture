@@ -20,8 +20,11 @@ const nextConfig: NextConfig = {
      * Kebutuhan unik situs ini: iframe Google Maps (maps.google.com),
      * gambar optimasi dari diri sendiri, dan tidak ada skrip pihak
      * ketiga sama sekali. `unsafe-inline` untuk style diperlukan karena
-     * Next menyuntik gaya kritis inline; script-src ketat `self`.
+     * Next menyuntik gaya kritis inline. `unsafe-eval` hanya ditambahkan
+     * saat `next dev`, karena React memakainya untuk rekonstruksi stack
+     * trace; build produksi tetap `script-src 'self'`.
      */
+    const dev = process.env.NODE_ENV !== "production";
     return [
       {
         source: "/:path*",
@@ -30,7 +33,7 @@ const nextConfig: NextConfig = {
             key: "Content-Security-Policy",
             value: [
               "default-src 'self'",
-              "script-src 'self' 'unsafe-inline'",
+              `script-src 'self' 'unsafe-inline'${dev ? " 'unsafe-eval'" : ""}`,
               "style-src 'self' 'unsafe-inline'",
               "img-src 'self' data: blob:",
               "font-src 'self' data:",

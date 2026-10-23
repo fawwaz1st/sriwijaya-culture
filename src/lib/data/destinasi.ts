@@ -163,6 +163,10 @@ export const destinasi = [
       "Menyaksikan langsung prosesi Cap Go Meh yang biasanya disertai jembatan ponton."
     ],
     "alamat": "Kelurahan 1 Ilir, Kecamatan Ilir Timur II, Kota Palembang. Pulau berada di tengah Sungai Musi.",
+    "koordinat": {
+      "lat": -2.97982,
+      "lng": 104.82065
+    },
     "mapsQuery": "Pulau Kemaro Palembang",
     "tiket": {
       "verifikasi": "sedang",
@@ -215,7 +219,7 @@ export const destinasi = [
         "verifikasi": "sedang"
       }
     ],
-    "catatanVerifikasi": "Luas pulau dan tinggi pulau hanya muncul di Wikipedia bahasa Indonesia, belum dikonfirmasi sumber pemerintah. Angka luas 79 hektare juga tidak akurat sebagai luas geografis: Pulau Kemaro adalah delta kecil dan tidak seluas itu. Angka tarif transportasi air bervariasi antar sumber dan tidak berasal dari pengelola resmi. Kisah Tan Bun An dan Siti Fatimah wajib dibaca sebagai legenda. Koordinat tidak dicatat karena tidak ada titik utama yang dapat diverifikasi; tautan Google Maps tersedia.",
+    "catatanVerifikasi": "Luas pulau dan tinggi pulau hanya muncul di Wikipedia bahasa Indonesia, belum dikonfirmasi sumber pemerintah. Angka luas 79 hektare juga tidak akurat sebagai luas geografis: Pulau Kemaro adalah delta kecil dan tidak seluas itu. Angka tarif transportasi air bervariasi antar sumber dan tidak berasal dari pengelola resmi. Kisah Tan Bun An dan Siti Fatimah wajib dibaca sebagai legenda. Koordinat diambil dari titik pulau di OpenStreetMap (via Mapcarta) dan Wikidata Q12506795, bukan dari pengelola; titiknya menandai pusat pulau, bukan dermaga.",
     "artikelTerkait": [
       "sejarah-pulau-kemaro"
     ],

@@ -323,6 +323,26 @@
     height: auto;
     object-fit: cover;
   }
+
+  /* Area sentuh minimum 44px untuk kontrol kecil.
+
+     Chip filter dan tautan teks sering hanya 25-30px tinggi. Menambah
+     padding akan merusak tampilan, jadi area sentuh diperluas dengan
+     pseudo-elemen transparan yang tidak memengaruhi layout. Ini standar
+     yang sama dipakai Apple HIG dan Material. */
+  .sentuh {
+    position: relative;
+  }
+
+  .sentuh::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    height: max(100%, 44px);
+    transform: translateY(-50%);
+  }
 }
 
 /* Status verifikasi di atas kertas butuh tinta, bukan warna layar.
@@ -503,6 +523,122 @@
   animation: denyut 1.6s ease-in-out infinite;
 }
 
+/* ---------------------------------------------------------------------------
+   Lapisan gerak tambahan.
+
+   Aturan yang dipegang: setiap gerakan harus mewakili sesuatu yang nyata.
+   Tidak ada fade-in seragam di semua elemen, karena itu yang membuat
+   halaman terasa seperti template.
+
+   PENTING soal keandalan. Versi pertama lapisan ini memakai
+   `animation-timeline: view()` dengan `animation-range: entry ...` dan
+   `animation-fill-mode: both`. Hasil pengukuran di peramban: kartu yang
+   berada di bawah lipatan saat halaman dibuka berakhir dengan
+   `opacity: 0` dan TIDAK PERNAH muncul, karena elemen itu sudah melewati
+   fase entry sebelum animasi sempat terpasang. Konten yang tidak terlihat
+   adalah bug terburuk yang bisa dikirim, jadi pendekatannya diganti.
+
+   Aturan sekarang:
+   - Elemen di atas lipatan memakai animasi berbasis waktu (selalu jalan).
+   - Elemen lain TIDAK dianimasikan dari opacity 0. Yang dianimasikan hanya
+     properti yang tidak menyembunyikan konten: filter, skala halus, dan
+     garis. Kalau animasi gagal, konten tetap terbaca.
+   ------------------------------------------------------------------------- */
+
+/* Kartu masuk berurutan. Hanya transform dan filter; opacity tetap 1
+   supaya kartu tidak pernah hilang kalau animasi tidak jalan. */
+@keyframes kartu-masuk {
+  from {
+    transform: translateY(18px) scale(0.99);
+    filter: brightness(0.82);
+  }
+  to {
+    transform: translateY(0) scale(1);
+    filter: brightness(1);
+  }
+}
+
+.kartu-masuk {
+  animation: kartu-masuk 640ms var(--ease-keluar) both;
+  animation-timeline: view();
+  animation-range: entry 0% cover 20%;
+}
+
+/* Foto menyala dari hitam. Ini meniru lampu galeri yang dinyalakan,
+   bukan sekadar fade. Hanya untuk foto, tidak untuk teks. */
+@keyframes foto-nyala {
+  from {
+    filter: brightness(0.6) saturate(0.75);
+    transform: scale(1.03);
+  }
+  to {
+    filter: brightness(1) saturate(1);
+    transform: scale(1);
+  }
+}
+
+.foto-nyala {
+  animation: foto-nyala 900ms var(--ease-keluar) both;
+  animation-timeline: view();
+  animation-range: entry 0% cover 26%;
+}
+
+/* Label meta tumbuh dari kiri, seperti garis indeks di katalog cetak. */
+@keyframes label-masuk {
+  from {
+    transform: translateX(-8px);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+.label-masuk {
+  animation: label-masuk 520ms var(--ease-keluar) both;
+  animation-timeline: view();
+  animation-range: entry 0% cover 16%;
+}
+
+/* Angka statistik di hero. Ini animasi berbasis waktu, bukan scroll,
+   karena hero sudah terlihat saat halaman dibuka: `view()` pada elemen
+   yang sudah melewati fase entry tidak akan pernah berjalan. Opacity
+   tetap 1 dari awal sampai akhir, jadi angka tidak pernah hilang. */
+@keyframes angka-naik {
+  from {
+    transform: translateY(0.35em);
+    filter: blur(2px);
+  }
+  to {
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+.angka-naik {
+  animation: angka-naik 620ms var(--ease-keluar) both;
+}
+
+/* Garis waktu: garis vertikal tumbuh mengikuti gulir. Progresnya
+   benar-benar mengikuti posisi baca, jadi pengunjung melihat sejauh
+   mana ia sudah masuk ke abad-abad itu. */
+@keyframes garis-gulir {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+
+.garis-gulir {
+  transform-origin: top;
+  animation: garis-gulir linear both;
+  animation-timeline: scroll(root block);
+  animation-range: 0% 100%;
+}
+
+/* Hormati preferensi sistem. Semua di atas dimatikan, dan elemen
+   dikembalikan ke keadaan akhir supaya tidak ada yang tak terlihat. */
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
@@ -518,19 +654,38 @@
 
   .muncul,
   .buka-tirai,
-  .garis-tumbuh {
+  .garis-tumbuh,
+  .kartu-masuk,
+  .foto-nyala,
+  .label-masuk,
+  .garis-gulir,
+  .angka-naik {
     animation: none;
     opacity: 1;
     transform: none;
     clip-path: none;
+    filter: none;
   }
 }
 
+/* Peramban tanpa scroll-driven animation: tampilkan semuanya, jangan
+   sembunyikan konten hanya karena animasi tidak didukung. */
 @supports not (animation-timeline: view()) {
-  .muncul {
+  .muncul,
+  .kartu-masuk,
+  .foto-nyala,
+  .label-masuk {
     animation: none;
     opacity: 1;
     transform: none;
+    filter: none;
+  }
+}
+
+@supports not (animation-timeline: scroll()) {
+  .garis-gulir {
+    animation: none;
+    transform: scaleY(1);
   }
 }
 
@@ -565,6 +720,6 @@ body:has(.asisten-halaman) [data-chrome="true"] {
 }
 
 body:has(.asisten-halaman) #konten {
-  height: calc(100svh - var(--tinggi-header, 4rem));
+  height: 100svh;
   overflow: hidden;
 }

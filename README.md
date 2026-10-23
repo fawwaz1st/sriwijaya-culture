@@ -10,9 +10,10 @@ Dibuat oleh tim **Koding Seadanya** untuk ITFEST 2026, tema
 
 ## Apa yang situs ini lakukan
 
-Sepuluh destinasi, tujuh usaha lokal, delapan catatan sejarah, dan
-sembilan belas tonggak waktu. Setiap klaim menunjuk sumber, dan klaim
-yang belum pasti ditandai, bukan ditulis sebagai fakta.
+Sepuluh destinasi, tiga usaha lokal terverifikasi, delapan catatan
+sejarah, dan sembilan belas tonggak waktu. Setiap klaim menunjuk
+sumber, dan klaim yang belum pasti ditandai, bukan ditulis sebagai
+fakta.
 
 Tiga hal yang membedakannya dari direktori wisata biasa:
 
@@ -143,8 +144,13 @@ Enam aturan yang dipegang seluruh isi arsip:
 
 Konsekuensi yang terlihat di produk:
 
-- Pulau Kemaro tidak muncul di peta karena koordinatnya belum diverifikasi.
+- Pulau Kemaro baru masuk peta setelah koordinatnya diverifikasi dari
+  OpenStreetMap dan Wikidata; titiknya menandai pusat pulau, bukan dermaga.
 - Kontak UMKM sebagian kosong, dengan penjelasan kenapa.
+- Empat dari tujuh entri UMKM berstatus `demonstrasi` dan **tidak**
+  ditampilkan di direktori publik. Halaman `/umkm` hanya memuat rekaman
+  berstatus `rujukan-umum`, dan menjelaskan berapa entri yang ditahan.
+  Rute detailnya tetap hidup supaya tautan lama tidak menjadi 404.
 - Tidak ada bintang rating di mana pun.
 
 ---
@@ -155,9 +161,51 @@ Konsekuensi yang terlihat di produk:
   sekunder 6.6:1, tipe terkecil 4.6:1 terhadap latar.
 - Seluruh kontrol bisa dicapai papan tombol. Peta bisa dioperasikan
   dengan Tab dan Enter.
+- Area sentuh kontrol kecil diperluas ke 44px lewat utilitas `.sentuh`,
+  tanpa mengubah tinggi visualnya.
 - `prefers-reduced-motion` mematikan seluruh animasi.
 - Setiap halaman punya satu `h1`, struktur heading berurutan.
 - Gambar punya `alt` deskriptif, bukan nama berkas.
+
+---
+
+## Gerak
+
+Animasi memakai `animation-timeline` bawaan CSS, tanpa JavaScript dan
+tanpa IntersectionObserver. Tiga aturan yang dipegang:
+
+1. **Tidak ada konten yang disembunyikan demi animasi.** Versi awal
+   memakai `opacity: 0` sebagai titik awal dengan `animation-timeline:
+   view()`. Hasil pengukuran: kartu di bawah lipatan berakhir
+   `opacity: 0` dan tidak pernah muncul, karena elemen itu sudah
+   melewati fase `entry` sebelum animasi terpasang. Sekarang yang
+   dianimasikan hanya `transform`, `filter`, dan `clip-path`. Kalau
+   animasi gagal, konten tetap terbaca.
+2. **Setiap gerakan mewakili sesuatu.** Foto menyala seperti lampu
+   galeri, angka statistik naik seperti penghitung, label meta tumbuh
+   seperti garis indeks katalog cetak.
+3. **Selalu ada jalan keluar.** `prefers-reduced-motion` dan peramban
+   tanpa `animation-timeline` mendapat keadaan akhir secara langsung
+   lewat `@supports not`.
+
+Kelas yang tersedia: `.muncul`, `.kartu-masuk`, `.foto-nyala`,
+`.label-masuk`, `.angka-naik`, `.buka-tirai`, `.garis-tumbuh`,
+`.garis-gulir`, `.denyut`.
+
+---
+
+## Catatan perbaikan tata letak
+
+Beberapa bug yang ditemukan lewat pengukuran, bukan perkiraan:
+
+| Gejala | Sebab | Perbaikan |
+|---|---|---|
+| Lubang ~340px di bawah kartu Benteng Kuto Besak | Foto 4:3 di kolom yang tingginya ditentukan potret 4:5 di sebelahnya | Kartu jadi `flex-col`, foto `flex-1`, teks menempel dasar |
+| Kolom tengah "paling dikenal" kosong ~320px | Tidak ada isi setelah daftar 3 destinasi | Tabel fakta dari field `fakta` Ampera |
+| Komposer asisten mengambang di tengah | `sticky bottom-0` menempel dasar isi, bukan dasar kotak | Pembungkus `flex h-full flex-col`, daftar `flex-1`, komposer di dasar |
+| Header asisten pecah 3 baris di 390px | Tiga kontrol berdesakan | Status dipendekkan, tombol reset jadi ikon di bawah `sm` |
+| Foto unggulan artikel terpotong 4:1 | Foto potret dipaksa jadi pita 1344x480 | Layout dua kolom, foto 4:5, teks di kolom kanan |
+| Kartu UMKM tidak sejajar kakinya | `block` tanpa `flex-col` | `flex h-full flex-col` + `mt-auto` pada baris meta |
 
 ---
 

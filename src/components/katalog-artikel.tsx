@@ -122,40 +122,67 @@ export function KatalogArtikel({
         </div>
       ) : (
         <>
-          {/* Utama: foto besar, judul menimpa di dasar foto. */}
+          {/* Utama: dua kolom, foto dan teks berdampingan.
+
+              Sebelumnya ini pita sinematik 1344x480 dengan foto
+              object-cover. Foto utamanya potret (1119x1991), jadi rasio
+              4:1 memotong 80% gambar dan subjeknya hilang. Sekarang foto
+              memakai rasio 4:5 di kolom kiri dan teks berdiri sendiri di
+              kolom kanan: tidak ada subjek yang dikorbankan, dan judul
+              tidak perlu duduk di atas gambar yang gelap. */}
           {utama && (
-            <Link href={`/artikel/${utama.id}`} className="group relative mt-6 block overflow-hidden">
-              <Foto
-                src={utama.gambar}
-                alt={utama.gambarCaption}
-                prioritas
-                sizes="100vw"
-                className="w-full transition-[filter] duration-700 group-hover:brightness-110"
-              />
-              <div className="absolute inset-x-0 bottom-0 gradasi-bawah px-4 pb-5 pt-24 sm:px-8 sm:pb-8">
+            <Link
+              href={`/artikel/${utama.id}`}
+              className="group mt-6 grid gap-6 border-y border-garis-malam py-6 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-10"
+            >
+              <div className="overflow-hidden">
+                <Foto
+                  src={utama.gambar}
+                  alt={utama.gambarCaption}
+                  prioritas
+                  rasioPaksa="4 / 5"
+                  posisi="top"
+                  sizes="(max-width: 1024px) 100vw, 40vw"
+                  className="w-full object-cover transition-[filter,transform] duration-700 group-hover:scale-[1.02] group-hover:brightness-110"
+                />
+              </div>
+              {/* Teks disebar setinggi foto: meta di atas, tautan baca di
+                  dasar. Sebelumnya seluruh teks mengumpul di tengah dan
+                  menyisakan ~150px kosong di bawah kolom kanan. */}
+              <div className="flex flex-col lg:py-1">
                 <p className="meta-emas">
-                  {utama.kategori} · {tanggalPendek(utama.tanggal)} · {utama.sumber.length} sumber
+                  Utama · {utama.kategori} · {tanggalPendek(utama.tanggal)} · {utama.sumber.length} sumber
                 </p>
-                <h2 className="display mt-2 max-w-[26ch] text-[clamp(1.75rem,4.5vw,3.25rem)] text-terang group-hover:text-emas">
+                <h2 className="display mt-3 max-w-[24ch] text-[clamp(1.75rem,4.2vw,3.25rem)] text-terang group-hover:text-emas">
                   {utama.judul}
                 </h2>
-                <p className="mt-2 max-w-[52ch] text-[0.8125rem] leading-relaxed text-terang-2">
+                <p className="mt-4 max-w-[52ch] text-[0.875rem] leading-relaxed text-terang-2">
                   {utama.ringkas}
                 </p>
+                <span className="meta mt-6 inline-flex w-fit items-center gap-2 border-b border-terang-3 pb-1 text-terang-2 transition-colors group-hover:border-emas group-hover:text-emas lg:mt-auto">
+                  Baca catatan
+                  <span aria-hidden="true" className="transition-transform group-hover:translate-x-1">→</span>
+                </span>
               </div>
             </Link>
           )}
 
-          {/* Dua berikutnya: gambar sedang, bersebelahan. */}
-          <div className="mt-10 grid gap-6 sm:grid-cols-2">
-            {[kedua, ketiga].filter(Boolean).map((a) => (
-              <Link key={a.id} href={`/artikel/${a.id}`} className="group block">
+          {/* Dua berikutnya: bingkai 3:2 seragam supaya sepasang. */}
+          <div className="mt-8 grid items-start gap-6 sm:grid-cols-2">
+            {[kedua, ketiga].filter(Boolean).map((a, i) => (
+              <Link
+                key={a.id}
+                href={`/artikel/${a.id}`}
+                className="kartu-masuk group block"
+                style={{ animationDelay: `${i * 80}ms` }}
+              >
                 <div className="overflow-hidden">
                   <Foto
                     src={a.gambar}
                     alt={a.gambarCaption}
+                    rasioPaksa="3 / 2"
                     sizes="(max-width: 640px) 100vw, 50vw"
-                    className="w-full transition-[filter] duration-700 group-hover:brightness-110"
+                    className="foto-nyala w-full object-cover transition-[filter,transform] duration-700 group-hover:scale-[1.02] group-hover:brightness-110"
                   />
                 </div>
                 <p className="meta mt-3">
