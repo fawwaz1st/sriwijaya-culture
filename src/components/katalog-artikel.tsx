@@ -159,6 +159,36 @@ export function KatalogArtikel({
                 <p className="mt-4 max-w-[52ch] text-[0.875rem] leading-relaxed text-terang-2">
                   {utama.ringkas}
                 </p>
+
+                {/*
+                  Daftar isi artikel unggulan.
+
+                  Kolom kanan setinggi foto 4:5 (679 px), sedangkan tiga
+                  blok teks di atasnya hanya memakai sekitar separuhnya.
+                  Sebelumnya sisa ruang itu kosong dan "Baca catatan"
+                  didorong `mt-auto` ke dasar, sehingga terbaca sebagai
+                  halaman yang gagal memuat. Sekarang sisa ruang diisi
+                  daftar subjudul: informasi nyata dari artikel, sekaligus
+                  memberi alasan untuk membuka halaman detail.
+                */}
+                {utama.bagian.length > 0 && (
+                  <ol className="mt-6 max-w-[52ch] border-t border-garis-malam pt-4">
+                    {utama.bagian.slice(0, 4).map((b, i) => (
+                      <li
+                        key={b.subjudul}
+                        className="flex items-baseline gap-3 border-b border-garis-malam/60 py-2 last:border-b-0"
+                      >
+                        <span className="tabular shrink-0 font-mono text-[0.75rem] text-emas">
+                          {String(i + 1).padStart(2, "0")}
+                        </span>
+                        <span className="min-w-0 text-[0.8125rem] leading-snug text-terang-2">
+                          {b.subjudul}
+                        </span>
+                      </li>
+                    ))}
+                  </ol>
+                )}
+
                 <span className="meta mt-6 inline-flex w-fit items-center gap-2 border-b border-terang-3 pb-1 text-terang-2 transition-colors group-hover:border-emas group-hover:text-emas lg:mt-auto">
                   Baca catatan
                   <span aria-hidden="true" className="transition-transform group-hover:translate-x-1">→</span>
