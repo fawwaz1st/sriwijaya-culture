@@ -88,6 +88,23 @@ ditunda dengan alasan.
 - [x] `aria-live` pada log percakapan
 - [x] Alt deskriptif pada seluruh gambar
 
+### Bug percakapan (ditemukan lewat pengujian, bukan pembacaan kode)
+
+- [x] Pertanyaan kedua hilang tanpa jejak saat dikirim sebelum jawaban pertama selesai
+- [x] Pertanyaan antrean muncul dua kali (duplikasi pesan)
+- [x] Riwayat basi karena closure pesan (diganti pesanRef lewat effect)
+- [x] Server memilih pertanyaan yang salah saat ada pesan antrean
+- [x] Jawaban penolakan tetap menampilkan chip rujukan (kontradiksi)
+- [x] Panel rujukan dihitung ulang dari pertanyaan, bukan dari jawaban
+
+### Produksi
+
+- [x] Lima variabel lingkungan terpasang di Vercel (terenkripsi)
+- [x] Asisten produksi berjalan dengan model Groq (mode=groq)
+- [x] Injeksi peran system diabaikan di produksi
+- [x] Peta produksi hidup (iframe 1,45 MB, frame Google aktif)
+- [x] Dua pertanyaan berdekatan dijawab keduanya di produksi
+
 ### Kualitas kode
 
 - [x] `tsc --noEmit` bersih

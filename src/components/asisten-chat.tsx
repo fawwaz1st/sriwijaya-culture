@@ -60,6 +60,26 @@ export function AsistenChat({ ringkasArsip }: { ringkasArsip?: RingkasArsip }) {
   const kendali = useRef<AbortController | null>(null);
   const sibukRef = useRef(false);
 
+  /**
+   * Salinan `pesan` yang selalu mutakhir.
+   *
+   * Dibutuhkan karena `kirim` dipanggil dari event handler yang
+   * menangkap nilai `pesan` pada render saat itu. Kalau pengguna
+   * mengirim dua pertanyaan berdekatan, kiriman kedua akan memakai
+   * riwayat yang belum memuat pertanyaan pertama.
+   *
+   * Disinkronkan lewat effect, bukan langsung di badan render: menulis
+   * ke ref saat render dilarang React karena render harus murni dan
+   * bisa dijalankan lebih dari sekali.
+   */
+  const pesanRef = useRef(pesan);
+  useEffect(() => {
+    pesanRef.current = pesan;
+  }, [pesan]);
+
+  /** Pertanyaan yang masuk saat giliran sebelumnya belum selesai. */
+  const antrean = useRef<string[]>([]);
+
   const kosong = pesan.length === 0;
 
   /**
@@ -128,13 +148,81 @@ export function AsistenChat({ ringkasArsip }: { ringkasArsip?: RingkasArsip }) {
 
   async function kirim(teks: string) {
     const bersih = teks.trim().slice(0, 600);
-    if (!bersih || sibukRef.current) return;
+    if (!bersih) return;
+
+    /*
+     * Kalau masih ada jawaban yang sedang disusun, pertanyaan baru
+     * DIANTREKAN, bukan dibuang dan bukan membatalkan yang sedang jalan.
+     *
+     * Riwayat bug:
+     *
+     * Versi pertama: `if (!bersih || sibukRef.current) return;`. Kalau
+     * pengunjung menekan Enter 120 ms setelah pertanyaan pertama,
+     * pertanyaan kedua hilang tanpa jejak: teks tetap di kotak, tidak
+     * ada balon, tidak ada galat.
+     *
+     * Versi kedua: membatalkan permintaan yang sedang jalan. Hasil
+     * pengukuran: pertanyaan kedua masuk, tetapi jawaban pertama
+     * terbuang, sehingga pengunjung kehilangan jawaban yang sebenarnya
+     * sudah dalam perjalanan.
+     *
+     * Versi sekarang: pesan langsung ditampilkan di percakapan, lalu
+     * diproses setelah giliran sebelumnya selesai. Tidak ada yang
+     * hilang, dan urutan percakapan tetap masuk akal.
+     */
+    if (sibukRef.current) {
+      antrean.current.push(bersih);
+      setPesan((p) => [
+        ...p,
+        { id: `u-${crypto.randomUUID()}`, peran: "pengguna", teks: bersih, sumber: [] },
+      ]);
+      setInput("");
+      return;
+    }
+
+    /*
+     * Penanda apakah pesan pengguna sudah ditampilkan.
+     *
+     * Pesan yang datang lewat antrean SUDAH ditampilkan saat
+     * diantrekan. Kalau baris di bawah menambahkannya lagi, pertanyaan
+     * yang sama muncul dua kali di percakapan.
+     */
+    const sudahTampil = pesanRef.current.some(
+      (p) => p.peran === "pengguna" && p.teks === bersih,
+    );
 
     const idPengguna = `u-${crypto.randomUUID()}`;
     const idSari = `s-${crypto.randomUUID()}`;
-    const riwayat = pesan;
 
-    setPesan((p) => [...p, { id: idPengguna, peran: "pengguna", teks: bersih, sumber: [] }]);
+    /*
+     * Riwayat diambil dari ref, bukan dari variabel `pesan` yang
+     * tertangkap closure.
+     *
+     * `pesan` adalah nilai pada render saat fungsi ini dibuat. Kalau
+     * pengguna mengirim dua pertanyaan berdekatan, kiriman kedua akan
+     * memakai riwayat yang belum memuat pertanyaan pertama, sehingga
+     * model kehilangan konteks percakapan. `pesanRef` selalu menunjuk
+     * keadaan terbaru.
+     */
+    const riwayat = pesanRef.current;
+
+    /*
+     * Pastikan ref memuat pesan terbaru termasuk yang baru saja
+     * diantrekan. Effect penyinkron berjalan setelah commit, jadi pada
+     * pemanggilan yang datang dari antrean (satu tick setelahnya),
+     * nilainya sudah benar; baris ini hanya jaring pengaman untuk
+     * pemanggilan yang sangat berdekatan.
+     */
+    if (!riwayat.some((p) => p.peran === "pengguna" && p.teks === bersih)) {
+      pesanRef.current = [
+        ...riwayat,
+        { id: idPengguna, peran: "pengguna", teks: bersih, sumber: [] },
+      ];
+    }
+
+    if (!sudahTampil) {
+      setPesan((p) => [...p, { id: idPengguna, peran: "pengguna", teks: bersih, sumber: [] }]);
+    }
     setInput("");
     setSibuk(true);
     sibukRef.current = true;
@@ -155,11 +243,27 @@ export function AsistenChat({ ringkasArsip }: { ringkasArsip?: RingkasArsip }) {
         signal: kendaliBaru.signal,
         body: JSON.stringify({
           messages: [
-            ...riwayat.map((p) => ({
-              id: p.id,
-              role: p.peran === "pengguna" ? "user" : "assistant",
-              parts: [{ type: "text", text: p.teks }],
-            })),
+            /*
+             * Riwayat dikirim TANPA pesan yang sedang diproses ini.
+             *
+             * Pesan yang diantrekan sudah masuk ke state `pesan` lebih
+             * dulu (supaya pengunjung langsung melihat pertanyaannya),
+             * sehingga posisinya bisa berada SEBELUM jawaban giliran
+             * sebelumnya selesai. Kalau seluruh riwayat dikirim apa
+             * adanya lalu ditambah pertanyaan ini di belakang, server
+             * memilih giliran pengguna TERAKHIR, yang bisa jadi pesan
+             * antrean lain, bukan pertanyaan yang sedang diproses.
+             *
+             * Jadi: buang semua pesan pengguna yang teksnya sama dengan
+             * pertanyaan ini, lalu tambahkan tepat satu di akhir.
+             */
+            ...riwayat
+              .filter((p) => !(p.peran === "pengguna" && p.teks === bersih))
+              .map((p) => ({
+                id: p.id,
+                role: p.peran === "pengguna" ? "user" : "assistant",
+                parts: [{ type: "text", text: p.teks }],
+              })),
             { id: idPengguna, role: "user", parts: [{ type: "text", text: bersih }] },
           ],
         }),
@@ -168,17 +272,36 @@ export function AsistenChat({ ringkasArsip }: { ringkasArsip?: RingkasArsip }) {
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
       const tipe = res.headers.get("Content-Type") || "";
-      const sumber = rujukanUntuk(bersih);
+
+      /**
+       * Sumber untuk chip rujukan.
+       *
+       * Klien menghitungnya dari arsip lokal, tetapi hasilnya HARUS
+       * konsisten dengan jawaban yang benar-benar dikirim server.
+       *
+       * Bug yang diperbaiki di sini: untuk jawaban penolakan ("Belum ada
+       * di arsip kami"), klien tetap memasang empat chip sumber karena
+       * retrieval lokal menemukan dokumen yang mirip secara kata kunci.
+       * Akibatnya jawaban berbunyi "tidak ada di arsip" sambil
+       * menampilkan empat rujukan, yang terbaca sebagai kontradiksi dan
+       * merusak seluruh klaim kejujuran arsip ini.
+       *
+       * Sekarang: kalau jawaban menyatakan penolakan, chip dikosongkan.
+       * Kalau jawaban mengutip `[n]`, chip dipertahankan.
+       */
+      const sumberMentah = rujukanUntuk(bersih);
+      const sumber = (teksJawaban: string) =>
+        /belum ada di arsip/i.test(teksJawaban) ? [] : sumberMentah;
 
       if (tipe.includes("text/plain")) {
         const jawab = await res.text();
-        setPesan((p) => [...p, { id: idSari, peran: "sari", teks: jawab, sumber }]);
+        setPesan((p) => [...p, { id: idSari, peran: "sari", teks: jawab, sumber: sumber(jawab) }]);
       } else {
         const akhir = await bacaStreamUI(res, (sebagian) => {
           setPesan((p) => {
             const ada = p.find((x) => x.id === idSari);
             if (ada) return p.map((x) => (x.id === idSari ? { ...x, teks: sebagian } : x));
-            return [...p, { id: idSari, peran: "sari", teks: sebagian, sumber }];
+            return [...p, { id: idSari, peran: "sari", teks: sebagian, sumber: sumberMentah }];
           });
         });
 
@@ -192,8 +315,12 @@ export function AsistenChat({ ringkasArsip }: { ringkasArsip?: RingkasArsip }) {
                 : x,
             );
           }
-          if (ada) return p.map((x) => (x.id === idSari ? { ...x, teks: teksAkhir } : x));
-          return [...p, { id: idSari, peran: "sari", teks: teksAkhir, sumber }];
+          // Sumber ditentukan dari teks akhir, bukan dari teks parsial:
+          // penolakan baru terbaca utuh setelah stream selesai.
+          const sumberFinal = sumber(teksAkhir);
+          if (ada)
+            return p.map((x) => (x.id === idSari ? { ...x, teks: teksAkhir, sumber: sumberFinal } : x));
+          return [...p, { id: idSari, peran: "sari", teks: teksAkhir, sumber: sumberFinal }];
         });
       }
     } catch (e) {
@@ -204,6 +331,17 @@ export function AsistenChat({ ringkasArsip }: { ringkasArsip?: RingkasArsip }) {
       setSibuk(false);
       sibukRef.current = false;
       kendali.current = null;
+
+      /*
+       * Proses pertanyaan yang sempat diantrekan. Dijalankan setelah
+       * giliran ini benar-benar selesai supaya urutan percakapan tetap
+       * masuk akal dan tidak ada dua permintaan berjalan bersamaan.
+       */
+      const berikut = antrean.current.shift();
+      if (berikut) {
+        // Beri jeda satu tick agar state `sibuk` sempat turun lebih dulu.
+        setTimeout(() => void kirim(berikut), 0);
+      }
     }
   }
 
@@ -213,10 +351,20 @@ export function AsistenChat({ ringkasArsip }: { ringkasArsip?: RingkasArsip }) {
     sibukRef.current = false;
   }
 
-  const kueriTerakhir = [...pesan].reverse().find((p) => p.peran === "pengguna")?.teks ?? "";
-  const rujukan = kueriTerakhir ? rujukanUntuk(kueriTerakhir) : [];
   const jawabanTerakhir = [...pesan].reverse().find((p) => p.peran === "sari");
   const rujukanTerakhir = jawabanTerakhir?.sumber ?? [];
+
+  /*
+   * Panel rujukan memakai sumber yang BENAR-BENAR menyertai jawaban,
+   * bukan hasil pencarian ulang dari pertanyaan terakhir.
+   *
+   * Sebelumnya baris ini `rujukanUntuk(kueriTerakhir)`. Untuk jawaban
+   * penolakan, pencarian ulang tetap menemukan dokumen yang mirip
+   * secara kata kunci, sehingga panel menampilkan rujukan padahal
+   * jawabannya berbunyi "belum ada di arsip". Sekarang panel kosong
+   * bila jawaban tidak mengutip apa pun.
+   */
+  const rujukan = rujukanTerakhir;
 
   const statusTerakhir = !jawabanTerakhir
     ? "Siap menjawab"

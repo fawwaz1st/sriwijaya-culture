@@ -477,3 +477,99 @@ $ node scripts/uji-keamanan.mjs     → 8/8 skenario berperilaku benar
 $ node scripts/uji-asisten.mjs      → 3/3 jawaban benar, sitasi sah
 $ node scripts/audit-tipografi.mjs  → 11/11 lebar bersih
 ```
+
+
+---
+
+## 9. Sesi penutup: bug percakapan, kunci produksi, dan verifikasi silang
+
+Sesi ini menguji alur percakapan sebagai pengguna sungguhan, bukan
+sebagai pengembang. Hasilnya satu bug fungsional yang tidak terlihat
+dari pemeriksaan tampilan.
+
+### 9.1 Bug: pertanyaan kedua hilang tanpa jejak
+
+**Cara ditemukan.** Skrip QA mengirim tiga pertanyaan berurutan lewat
+peramban. Pertanyaan pertama dijawab normal dalam 1 detik. Pertanyaan
+kedua tidak menghasilkan apa pun: tidak ada balon jawaban, tidak ada
+pesan galat, dan teks tetap berada di kotak input.
+
+**Penyebab.** Fungsi `kirim` diawali `if (!bersih || sibukRef.current) return;`.
+Ketika pengunjung menekan Enter sebelum jawaban sebelumnya selesai,
+fungsi langsung keluar tanpa memberi tahu apa pun. Ini bukan kasus
+langka: jawaban model butuh 1,3 sampai 2,2 detik, dan pengunjung yang
+mengetik cepat hampir pasti menekan Enter di dalam jendela itu.
+
+**Dua percobaan perbaikan, satu di antaranya salah.**
+
+| Percobaan | Perilaku terukur | Penilaian |
+|---|---|---|
+| Batalkan permintaan yang sedang jalan | 3 balon: dua pertanyaan masuk, tetapi jawaban pertama terbuang | Ditolak, pengunjung kehilangan jawaban yang sudah dalam perjalanan |
+| Antrekan pertanyaan baru | 5 balon: kedua pertanyaan dijawab, tetapi pertanyaan kedua muncul dua kali | Duplikasi, ditolak |
+| Antrekan + kirim riwayat tanpa duplikat | 4 balon: dua pertanyaan, dua jawaban, tanpa pengulangan | Dipakai |
+
+**Dua bug susulan yang ikut diperbaiki.**
+
+1. *Riwayat basi.* `kirim` memakai variabel `pesan` yang tertangkap
+   closure render saat itu. Kiriman kedua karena itu tidak melihat
+   pertanyaan pertama. Diganti `pesanRef` yang disinkronkan lewat
+   effect. Menulis ref di badan render sempat dicoba dan ditolak ESLint
+   (`Cannot access refs during render`), yang benar: render harus murni.
+2. *Server memilih pertanyaan yang salah.* Pesan antrean sudah masuk
+   state sebelum giliran sebelumnya selesai, jadi urutannya bisa
+   mendahului. Server memilih giliran pengguna terakhir, yang bisa jadi
+   pesan antrean lain. Sekarang klien membuang duplikat lalu menaruh
+   pertanyaan yang sedang diproses tepat di akhir payload.
+
+### 9.2 Kunci model untuk produksi
+
+Asisten di Vercel sebelumnya berjalan dalam mode arsip langsung karena
+tidak ada satu pun variabel lingkungan yang terpasang. Setelah diperiksa
+dengan `vercel env ls production`, daftarnya memang kosong.
+
+Sekarang terpasang lima variabel, semuanya terenkripsi di sisi Vercel:
+`GROQ_API_KEY`, `GROQ_MODEL`, `GROQ_MODEL_CADANGAN`,
+`GROQ_MODEL_CEPAT`, dan `NEXT_PUBLIC_SITE_URL`.
+
+Kunci tidak pernah masuk repositori. Berkas `.env.local` di-ignore
+(`.env*.local`), dan `scripts/scan-secrets.mjs` memastikan tidak ada
+kunci di berkas kerja maupun di riwayat commit. Untuk penilai: proyek
+ini membutuhkan kunci penyedia model agar asisten menjawab dengan model
+bahasa; tanpa kunci, asisten tetap menjawab dari arsip dan tidak pernah
+menampilkan jawaban kosong.
+
+### 9.3 Verifikasi silang di produksi
+
+Semua pengujian di bawah dijalankan terhadap
+`https://sriwijaya-culture.vercel.app`, bukan hanya di mesin lokal.
+
+| Pemeriksaan | Hasil |
+|---|---|
+| Jawaban model di produksi | `mode=groq`, 2 sumber, jawaban akurat dengan sitasi |
+| Injeksi peran `system` | Diabaikan; jawaban tetap Bahasa Indonesia dari arsip |
+| Pertanyaan di luar topik | Ditolak dalam 12–26 ms tanpa memanggil model |
+| Peta di produksi | iframe hidup, tangkapan elemen 1,45 MB, frame Google aktif |
+| Overflow horizontal | 0 pada 1440 px dan 390 px di lima halaman utama |
+| Rute | 11 halaman `200`, dua rute tidak ada `404` |
+
+### 9.4 Catatan tentang peta yang "terlihat hitam"
+
+Screenshot `fullPage` menampilkan peta sebagai kotak hitam. Ini artefak
+alat tangkap layar, bukan kerusakan: Chromium tidak merender isi iframe
+lintas-origin saat mengambil tangkapan halaman penuh. Diukur dengan
+tangkapan elemen iframe itu sendiri, hasilnya 1,45 MB dengan frame
+Google aktif. Kesimpulan yang sama sudah pernah dicapai di sesi
+sebelumnya, dan kali ini diverifikasi ulang di produksi agar tidak ada
+keraguan.
+
+### 9.5 Bukti akhir sesi
+
+```
+$ npx tsc --noEmit                  → 0 galat
+$ npx eslint src --max-warnings=0   → 0 error, 0 warning
+$ npm run build                     → sukses
+$ node scripts/audit-final.mjs      → 0 masalah dari 50 pemeriksaan
+$ node scripts/uji-keamanan.mjs     → 8/8 skenario berperilaku benar
+$ node scripts/uji-asisten.mjs      → 3/3 jawaban benar, sitasi sah
+$ node scripts/qa-akhir.mjs         → laporan lengkap di _shot/qa/laporan.json
+```
