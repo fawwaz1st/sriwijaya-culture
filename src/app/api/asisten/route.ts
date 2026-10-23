@@ -409,16 +409,51 @@ export async function POST(req: Request) {
   /**
    * Tolak percakapan yang menyelipkan instruksi menyimpang.
    *
-   * Penjaga topik di `susunKonteks` memeriksa satu teks. Di sini yang
-   * diperiksa adalah gabungan semua giliran pengguna, jadi upaya
-   * "abaikan aturan sebelumnya" di pesan lama tetap terdeteksi walau
-   * pesan terakhir terlihat sah.
+   * Versi pertama pemeriksaan ini memakai `susunKonteks` pada gabungan
+   * seluruh giliran pengguna, lalu menolak kalau hasilnya kosong.
+   * Itu SALAH dan sempat mematikan asisten: begitu pengunjung bertanya
+   * satu hal di luar topik, seluruh percakapan berikutnya ikut ditolak,
+   * termasuk pertanyaan sah seperti "apa itu songket?". Diukur: API
+   * mengembalikan `mode=groq` dengan dua sumber saat dipanggil
+   * langsung, tetapi UI menampilkan penolakan karena riwayatnya sudah
+   * tercemar satu pertanyaan lama.
+   *
+   * Yang benar: periksa apakah ada INSTRUKSI MENYIMPANG, bukan apakah
+   * ada kata yang tidak dikenal arsip. Daftar penanda di bawah khusus
+   * untuk upaya membajak aturan, dan tidak pernah cocok dengan
+   * pertanyaan wajar tentang Palembang.
    */
-  if (semuaTeksPengguna.length > kueri.length) {
-    const gabungan = susunKonteks(semuaTeksPengguna.slice(0, 1200));
-    if (gabungan.kosong) {
-      return balasanTeks(PESAN_TIDAK_ADA, "arsip-kosong", 0);
-    }
+  const PENANDA_INJEKSI = [
+    "abaikan aturan",
+    "abaikan semua",
+    "abaikan instruksi",
+    "ignore previous",
+    "ignore all",
+    "ignore the above",
+    "disregard",
+    "lupakan instruksi",
+    "lupakan aturan",
+    "kamu sekarang adalah",
+    "you are now",
+    "act as",
+    "bertindak sebagai",
+    "system prompt",
+    "prompt sistem",
+    "instruksi sistem",
+    "instruksimu",
+    "aturannya",
+    "jailbreak",
+    "developer mode",
+    "mode pengembang",
+    "reveal your",
+    "tampilkan instruksi",
+    "ulangi instruksi",
+    "repeat your instructions",
+  ];
+
+  const adaInjeksi = PENANDA_INJEKSI.some((p) => semuaTeksPengguna.toLowerCase().includes(p));
+  if (adaInjeksi) {
+    return balasanTeks(PESAN_TIDAK_ADA, "arsip-kosong", 0);
   }
 
   // Pertanyaan tiket dan jam buka dijawab dari field terstruktur, tanpa model.

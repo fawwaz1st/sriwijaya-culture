@@ -54,7 +54,7 @@ ditunda dengan alasan.
 ### Keamanan AI
 
 - [x] **C1** Peran `system` dari klien ditolak; hanya `user` dan `assistant` diterima
-- [x] **C2** Penjaga topik memeriksa **seluruh** giliran pengguna, bukan hanya yang terakhir
+- [x] **C2** Penjaga injeksi memeriksa seluruh giliran pengguna dengan daftar penanda eksplisit
 - [x] **C3** Validasi sitasi: jawaban tanpa `[n]` sah ditolak dan diganti jawaban arsip
 - [x] **H1** Urutan kepercayaan header IP: `x-vercel-forwarded-for` → `x-real-ip` → hop terakhir
 - [x] **H1** `LAJU.clear()` dihapus; hanya entri kedaluwarsa dibuang, peta penuh = tolak
@@ -62,6 +62,23 @@ ditunda dengan alasan.
 - [x] **M1** Batas badan dibaca dari stream (bukan `content-length` yang bisa dipalsukan)
 - [x] **M2** Validasi bentuk pesan dan `parts`; badan rusak menghasilkan 400, bukan 500
 - [x] **M4** Log galat tidak lagi mencatat objek mentah yang memuat prompt
+
+### Bug percakapan yang ditemukan lewat pengujian end-to-end
+
+- [x] **Pertanyaan kedua hilang** saat dikirim sebelum jawaban pertama selesai (dibuang tanpa pesan). Sekarang diantrekan.
+- [x] **Duplikasi pesan** pada antrean: pertanyaan yang sama muncul dua kali. Riwayat kini dikirim tanpa duplikat.
+- [x] **Riwayat basi**: `kirim` memakai `pesan` dari closure, bukan keadaan terbaru. Diganti `pesanRef` lewat effect.
+- [x] **Server memilih pertanyaan salah**: pesan antrean bisa mendahului, sehingga `at(-1)` menunjuk pesan yang salah. Kini pertanyaan yang diproses selalu ditaruh di akhir payload.
+- [x] **Sumber palsu pada penolakan**: pesan "belum ada di arsip" tetap menampilkan 4 chip. Sumber kini berasal dari jawaban server, bukan dari kata kunci pertanyaan.
+- [x] **Penolakan meracuni percakapan**: satu pertanyaan di luar topik mematikan semua pertanyaan berikutnya. Pemeriksaan diganti dari "retrieval kosong" menjadi "ada instruksi menyimpang".
+
+### Kunci model untuk produksi
+
+- [x] Lima variabel lingkungan terpasang di Vercel (`GROQ_API_KEY`, tiga model, site URL)
+- [x] Terverifikasi di produksi: `mode=groq`, jawaban 1,3–2,2 detik dengan sitasi
+- [x] Injeksi `system` di produksi diabaikan; pertanyaan luar topik ditolak 12–26 ms
+- [x] `scan-secrets.mjs` bersih: tidak ada kunci di berkas kerja maupun riwayat commit
+
 
 ### Gerak
 

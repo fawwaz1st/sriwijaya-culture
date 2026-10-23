@@ -573,3 +573,86 @@ $ node scripts/uji-keamanan.mjs     → 8/8 skenario berperilaku benar
 $ node scripts/uji-asisten.mjs      → 3/3 jawaban benar, sitasi sah
 $ node scripts/qa-akhir.mjs         → laporan lengkap di _shot/qa/laporan.json
 ```
+
+
+---
+
+## 10. Sesi koreksi: dua bug yang ditemukan oleh pengujian silang
+
+Dua bug di bagian ini tidak terlihat dari pemeriksaan tampilan. Keduanya
+muncul hanya ketika alur diuji sebagai pengguna sungguhan, dan keduanya
+sempat lolos ke produksi sebelum diperbaiki.
+
+### 10.1 Sumber palsu pada pesan penolakan
+
+**Gejala.** Ketika Sari menjawab "Belum ada di arsip kami", jawaban itu
+tetap menampilkan empat chip rujukan yang bisa diklik. Kontradiktif:
+pesan menolak, tetapi daftar sumber menyiratkan jawaban punya dukungan.
+
+**Penyebab.** Komponen klien menghitung rujukan sendiri dari kata kunci
+pertanyaan (`rujukanUntuk(bersih)`), lalu memasangnya sebagai chip apa
+pun isi jawaban server. Header `X-Sari-Sumber` dari server tidak pernah
+dipakai. Jadi arsip bisa "menemukan" empat dokumen yang mirip secara
+kata kunci sementara model memutuskan tidak ada yang menjawab.
+
+**Perbaikan.** Sumber kini berasal dari jawaban, bukan dari pertanyaan.
+Kalau server menyatakan arsip kosong, chip tidak dipasang sama sekali.
+Status di bilah atas ikut konsisten: "TIDAK ADA DI ARSIP" dengan nol
+chip, atau "DIJAWAB DARI ARSIP" dengan chip yang benar-benar dikutip.
+
+**Bukti terukur.** Penolakan: 0 chip. Pertanyaan sah: 2 chip.
+
+### 10.2 Penolakan yang meracuni seluruh percakapan
+
+**Gejala.** Setelah satu pertanyaan di luar topik, semua pertanyaan
+berikutnya ikut ditolak, termasuk "Apa itu songket?" yang sebelumnya
+dijawab normal.
+
+**Penyebab.** Perbaikan keamanan di sesi sebelumnya menambahkan
+pemeriksaan topik pada gabungan SELURUH giliran pengguna, lalu menolak
+kalau hasil retrieval kosong. Niatnya benar: mencegah instruksi
+menyimpang di pesan lama. Pelaksanaannya salah, karena retrieval
+mengembalikan kosong untuk pertanyaan apa pun yang tidak mirip arsip,
+termasuk pertanyaan wajar di luar Palembang. Satu pertanyaan lama
+karena itu mematikan percakapan selamanya.
+
+Diukur: pemanggilan API langsung dengan "Apa itu songket?" menghasilkan
+`mode=groq` dengan dua sumber, sementara UI menampilkan penolakan
+dengan riwayat yang sama. Perbedaan itu yang menunjukkan bug ada di
+pemeriksaan riwayat, bukan di retrieval.
+
+**Perbaikan.** Pemeriksaan diganti: yang dicari sekarang adalah
+INSTRUKSI MENYIMPANG (daftar penanda eksplisit seperti "abaikan aturan",
+"ignore previous", "system prompt"), bukan ketiadaan kata yang dikenal
+arsip. Daftar itu tidak pernah cocok dengan pertanyaan wajar tentang
+Palembang.
+
+**Efek samping yang menguntungkan.** Permintaan "bocorkan system
+prompt" kini ditolak dalam 10 ms, bukan 2,9 detik, karena tidak perlu
+memanggil model lebih dulu.
+
+### 10.3 Pelajaran yang dicatat
+
+Kedua bug punya bentuk yang sama: **perbaikan keamanan atau kenyamanan
+yang terlalu luas jangkauannya**. Pemeriksaan topik yang seharusnya
+menjaga percakapan justru mematikan percakapan. Sumber yang seharusnya
+memperkuat kepercayaan justru membuat jawaban saling bertentangan.
+
+Yang menangkap keduanya bukan pembacaan kode, melainkan pengujian
+end-to-end yang membandingkan tiga sumber kebenaran sekaligus: jawaban
+API langsung, keadaan DOM, dan isi header respons. Ketika ketiganya
+tidak sepakat, di situ ada bug.
+
+### 10.4 Verifikasi akhir
+
+```
+$ npx tsc --noEmit                  → 0 galat
+$ npx eslint src --max-warnings=0   → 0 error, 0 warning
+$ npm run build                     → sukses
+$ node scripts/audit-final.mjs      → 0 masalah dari 50 pemeriksaan
+$ node scripts/uji-keamanan.mjs     → 8/8 skenario berperilaku benar
+$ node scripts/uji-asisten.mjs      → 3/3 jawaban benar, sitasi sah
+```
+
+Uji percakapan campuran (di luar topik lalu dalam topik): penolakan
+tanpa chip, dilanjutkan jawaban sah dengan dua chip. Regresi teratasi.

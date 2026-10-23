@@ -204,8 +204,14 @@ const dokumen = `<!doctype html><html lang="id"><head><meta charset="utf-8">
   a { color: #8a6508; text-decoration: none; }
 </style></head><body>${html.join("\n")}</body></html>`;
 
-writeFileSync("docs/_log-temp.html", dokumen);
-
+/*
+ * HTML perantara TIDAK ditulis ke repositori.
+ *
+ * Versi sebelumnya menulis `docs/_log-temp.html` lalu membiarkannya.
+ * Akibatnya setiap ekspor meninggalkan berkas sampah di folder
+ * dokumentasi yang ikut terlihat di `git status`. Isinya hanya
+ * perantara untuk Chromium, jadi cukup dikirim lewat `setContent`.
+ */
 const browser = await chromium.launch();
 const page = await browser.newPage();
 await page.setContent(dokumen, { waitUntil: "load" });
