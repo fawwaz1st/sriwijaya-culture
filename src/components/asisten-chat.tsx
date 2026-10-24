@@ -509,10 +509,14 @@ export function AsistenChat({ ringkasArsip }: { ringkasArsip?: RingkasArsip }) {
            * Rata atas membuat mata langsung bertemu judul dan kolom
            * input, sisa ruang di bawah dipakai chip saran.
            */
-          <div className="mx-auto w-full max-w-[46rem] px-1 pb-10 pt-8">
+          <div className="relative mx-auto w-full max-w-[46rem] px-1 pb-10 pt-8">
+            {/* relative, bukan fixed: elemen fixed di dalam wadah bergulir
+                menempel ke viewport, bukan ke kotak percakapan, sehingga
+                lapisan emas bocor ke header dan composer. absolute
+                membatasinya pada kotak. */}
             <div
               aria-hidden="true"
-              className="pointer-events-none fixed inset-x-0 top-0 h-[420px] bg-[radial-gradient(ellipse_at_top,rgba(217,168,50,0.07),transparent_60%)]"
+              className="pointer-events-none absolute inset-x-0 top-0 h-[420px] bg-[radial-gradient(ellipse_at_top,rgba(217,168,50,0.07),transparent_60%)]"
             />
             <p className="meta-emas relative">Asisten arsip · Palembang</p>
             <h1 className="display relative mt-3 text-[clamp(2rem,5.2vw,3.5rem)] text-terang">

@@ -12,11 +12,12 @@
  * Aturan sekarang: penggantian HANYA menyentuh karakter dash dan spasi
  * yang mengapitnya. Baris yang tidak memuat dash tidak pernah disentuh.
  *
- * Pemetaan:
- *   "kata — kata"   ->  "kata, kata"     (klausa lanjutan)
- *   "2020 – 2024"   ->  "2020-2024"      (rentang)
- *   "kata—kata"     ->  "kata-kata"      (tanpa spasi)
- *   "kata – kata"   ->  "kata, kata"
+ * Pemetaan (ditulis dengan escape \u2014 dan \u2013 supaya berkas ini
+ * sendiri tidak memuat karakter dash):
+ *   "kata \u2014 kata"   ->  "kata, kata"     (klausa lanjutan)
+ *   "2020 \u2013 2024"   ->  "2020-2024"      (rentang)
+ *   "kata\u2014kata"     ->  "kata-kata"      (tanpa spasi)
+ *   "kata \u2013 kata"   ->  "kata, kata"
  *
  * Jalankan: node scripts/hapus-dash.mjs [--kering]
  */
@@ -49,7 +50,7 @@ function prosesBaris(baris) {
   const indentasi = baris.match(/^[ \t]*/)[0];
   let isi = baris.slice(indentasi.length);
 
-  // Rentang angka: "2020 – 2024" atau "2020–2024" -> "2020-2024"
+  // Rentang angka: "2020 \u2013 2024" atau "2020\u20132024" -> "2020-2024"
   isi = isi.replace(/(\d)\s*\u2013\s*(\d)/g, "$1-$2");
   isi = isi.replace(/(\d)\s*\u2014\s*(\d)/g, "$1-$2");
 

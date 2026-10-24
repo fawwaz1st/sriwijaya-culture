@@ -104,7 +104,7 @@ export default async function DetailArtikel({ params }: { params: Promise<{ id: 
 
       <div className="kertas">
         <div className="mx-auto max-w-[1100px] px-5 py-12 sm:px-8 lg:py-16">
-          <p className="baca max-w-[58ch] text-[1.125rem] leading-relaxed text-gelap">{a.ringkas}</p>
+          <p className="baca text-[1.125rem] leading-relaxed text-gelap">{a.ringkas}</p>
 
           <div className="mt-6 flex flex-wrap items-center gap-x-4 gap-y-2 border-y border-garis-kertas py-3">
             <p className="meta">{a.penulis}</p>
@@ -229,22 +229,36 @@ export default async function DetailArtikel({ params }: { params: Promise<{ id: 
         <section className="border-t border-garis-malam py-14">
           <div className="mx-auto max-w-[1760px] px-5 sm:px-8 lg:px-12">
             <p className="meta-emas">Bacaan lain</p>
-            <ul className="mt-5 grid gap-6 md:grid-cols-3">
+            {/* Jumlah artikel terkait bervariasi (2 atau 3). Grid tiga
+                kolom menyisakan sel kosong saat jumlahnya dua, dan
+                thumbnail lanskap membuat tinggi kartu tidak sama. Daftar
+                satu kolom dengan pemisah baris mengisi lebar penuh
+                berapa pun jumlahnya. */}
+            <ul className="mt-5 border-t border-garis-malam">
               {terkait.map((t) => (
-                <li key={t.id}>
-                  <Link href={`/artikel/${t.id}`} className="group block">
-                    <div className="overflow-hidden">
+                <li key={t.id} className="border-b border-garis-malam">
+                  <Link href={`/artikel/${t.id}`} className="group flex items-center gap-5 py-4">
+                    <div className="w-20 shrink-0 overflow-hidden sm:w-28">
                       <Foto
                         src={t.gambar}
                         alt={t.gambarCaption}
-                        sizes="(max-width: 768px) 100vw, 33vw"
-                        className="w-full transition-[filter] duration-700 group-hover:brightness-110"
+                        sizes="112px"
+                        rasioPaksa="1 / 1"
+                        className="w-full"
                       />
                     </div>
-                    <p className="meta mt-2">{t.kategori}</p>
-                    <p className="mt-1 font-display text-lg leading-snug text-terang group-hover:text-emas">
-                      {t.judul}
-                    </p>
+                    <div className="min-w-0 flex-1">
+                      <p className="meta">{t.kategori}</p>
+                      <p className="mt-1 max-w-[40rem] font-display text-lg leading-snug text-terang group-hover:text-emas sm:text-xl">
+                        {t.judul}
+                      </p>
+                    </div>
+                    <span
+                      aria-hidden="true"
+                      className="hidden shrink-0 text-terang-3 transition-transform group-hover:translate-x-1 group-hover:text-emas sm:block"
+                    >
+                      →
+                    </span>
                   </Link>
                 </li>
               ))}

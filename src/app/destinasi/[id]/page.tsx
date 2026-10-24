@@ -326,19 +326,38 @@ export default async function DetailDestinasi({ params }: { params: Promise<{ id
         <section className="border-t border-garis-malam bg-malam-2 py-14">
           <div className="mx-auto max-w-[1760px] px-5 sm:px-8 lg:px-12">
             <p className="meta-emas">Bacaan terkait</p>
-            <ul className="mt-5 grid gap-6 sm:grid-cols-2">
+            {/*
+              Jumlah artikel per destinasi bervariasi: ada yang satu, dua,
+              tiga. Grid dua kolom tetap menyisakan lubang besar di kanan
+              bawah setiap kali jumlahnya ganjil. Daftar satu kolom dengan
+              pemisah baris mengisi lebar penuh berapa pun jumlahnya, dan
+              judul panjang tidak lagi terhimpit thumbnail 128px.
+            */}
+            <ul className="mt-5 border-t border-garis-malam">
               {artikel.map((a) => (
-                <li key={a.id}>
-                  <Link href={`/artikel/${a.id}`} className="group flex gap-4">
-                    <div className="w-24 shrink-0 overflow-hidden sm:w-32">
-                      <Foto src={a.gambar} alt={a.gambarCaption} sizes="128px" className="w-full" />
+                <li key={a.id} className="border-b border-garis-malam">
+                  <Link href={`/artikel/${a.id}`} className="group flex items-center gap-5 py-4">
+                    <div className="w-20 shrink-0 overflow-hidden sm:w-28">
+                      <Foto
+                        src={a.gambar}
+                        alt={a.gambarCaption}
+                        sizes="112px"
+                        rasioPaksa="1 / 1"
+                        className="w-full"
+                      />
                     </div>
-                    <div className="min-w-0">
+                    <div className="min-w-0 flex-1">
                       <p className="meta">{a.kategori}</p>
-                      <p className="mt-1 font-display text-lg leading-snug text-terang group-hover:text-emas">
+                      <p className="mt-1 max-w-[40rem] font-display text-lg leading-snug text-terang group-hover:text-emas sm:text-xl">
                         {a.judul}
                       </p>
                     </div>
+                    <span
+                      aria-hidden="true"
+                      className="hidden shrink-0 text-terang-3 transition-transform group-hover:translate-x-1 group-hover:text-emas sm:block"
+                    >
+                      →
+                    </span>
                   </Link>
                 </li>
               ))}
@@ -355,11 +374,15 @@ export default async function DetailDestinasi({ params }: { params: Promise<{ id
               {terkait.map((t) => (
                 <li key={t.id}>
                   <Link href={`/destinasi/${t.id}`} className="group block">
+                    {/* Empat kartu dalam satu baris harus punya tinggi
+                        gambar identik, kalau tidak label kategori dan nama
+                        di bawahnya turun-naik. */}
                     <div className="overflow-hidden">
                       <Foto
                         src={t.gambar[0].src}
                         alt={t.gambar[0].caption}
                         sizes="(max-width: 640px) 50vw, 25vw"
+                        rasioPaksa="3 / 2"
                         className="w-full transition-[filter] duration-700 group-hover:brightness-110"
                       />
                     </div>

@@ -155,6 +155,13 @@
 
   p {
     margin: 0;
+    /*
+     * Widow control. `balance` hanya cocok untuk judul pendek; pada
+     * paragraf ia membuat semua baris sama panjang dan merusak ritme
+     * baca. `pretty` hanya menahan agar baris terakhir tidak menyisakan
+     * satu kata sendirian, sisanya dibiarkan mengalir normal.
+     */
+    text-wrap: pretty;
   }
 
   a {
@@ -259,9 +266,17 @@
     letter-spacing: -0.014em;
   }
 
-  /* Paragraf baca. 66 karakter, bukan selebar layar. */
+  /* Paragraf baca.
+   *
+   * Batas diukur dalam rem, bukan `ch`. Satuan `ch` bergantung pada
+   * ukuran font elemen itu sendiri: `max-w-[58ch]` pada teks 18px
+   * menghasilkan 747px, lebih lebar daripada `.baca` 66ch pada 17px
+   * (659px). Akibatnya menambahkan `max-w-[58ch]` justru melebarkan
+   * baris, kebalikan dari yang dimaksud. 38rem setara 66 karakter pada
+   * ukuran baca dan tidak berubah saat ukuran font naik.
+   */
   .baca {
-    max-width: 66ch;
+    max-width: 38rem;
     font-size: var(--text-base);
     line-height: 1.72;
     color: var(--color-gelap-2);

@@ -835,3 +835,119 @@ Satu regresi ditemukan dan diperbaiki selama sesi ini: empat komponen
 baru memakai ukuran teks 11 px, yang melanggar standar 12 px minimum
 yang sudah ditetapkan di sesi sebelumnya. Audit menangkapnya sebagai 13
 kegagalan `minFs=11`; setelah diperbaiki, kembali 0.
+
+---
+
+## 12. Sesi QA visual: setiap halaman, setiap bagian
+
+Sesi ini tidak menambah fitur. Isinya memeriksa tampilan yang sudah ada
+sampai ke tingkat bagian, lalu memperbaiki apa yang memang rusak.
+Aturannya dipegang ketat: **tidak ada perbaikan tanpa cacat yang bisa
+direproduksi lebih dulu.** Tiga kecurigaan awal gugur justru karena
+diukur.
+
+### 12.1 Tiga kecurigaan yang gugur
+
+Diukur sebelum diperbaiki, dan ternyata bukan cacat:
+
+| Kecurigaan | Hasil pengukuran |
+|---|---|
+| Grid penjelas `/jelajah` kempis di tablet | 3 kolom sama lebar: 432 px di 1440, 219 px di 768, 350 px di 390. Tinggi isi 3/3/3 baris. |
+| Panel `/asisten` punya scroller bersarang | 0 scroller bersarang. Hanya `role=log` yang menggulir, 638/797 px di desktop. |
+| Paragraf `/metodologi` kelebaran | Nilai `ch` tinggi berasal dari lebar wadah label 12 px, bukan lebar teks. Teksnya pendek. |
+
+Pelajaran yang sama seperti sesi sebelumnya: kecurigaan dari melihat
+gambar bukan bukti. Yang membuktikan adalah angka.
+
+### 12.2 Cacat yang nyata dan diperbaiki
+
+**Gradien `fixed` di dalam wadah bergulir (`/asisten`).** Elemen
+dekoratif memakai `position: fixed` di dalam `role=log` yang
+`overflow-y-auto`. Elemen `fixed` tidak terikat wadah bergulir, jadi
+lapisan emas menempel ke viewport dan bocor ke header serta composer.
+Diukur: `fixedDalamScroller` berisi satu elemen di kedua viewport.
+Diperbaiki menjadi `absolute`, dan pengukuran yang sama kini
+mengembalikan daftar kosong.
+
+**Widow di seluruh situs.** Baris terakhir paragraf yang hanya memuat
+satu kata pendek. Dideteksi dengan mengelompokkan `Range.getClientRects`
+menurut koordinat atas, bukan menebak dari jumlah kata. Ditemukan 9
+titik di 7 rute dan 3 lebar layar. Diperbaiki di lapisan dasar:
+`text-wrap: pretty` untuk seluruh `p` di `globals.css`. Setelah itu
+tinggal 4 laporan, dan keempatnya positif palsu: semuanya `line-clamp-2`,
+di mana `getClientRects` mengukur teks penuh walaupun yang tampil hanya
+dua baris. Detektornya sekarang mengecualikan `line-clamp`.
+
+**Thumbnail tidak seragam di daftar terkait.** Di halaman detail,
+thumbnail memakai rasio asli foto. Satu kartu berisi potret tegak,
+kartu sebelahnya lanskap pendek, sehingga judul tidak pernah sejajar.
+Diukur: tinggi gambar 128 px versus 96 px dalam satu baris. Diperbaiki
+dengan `rasioPaksa`, dan pengukuran sekarang menunjukkan selisih
+**0 px** di semua grid.
+
+**Daftar terkait menyisakan lubang.** Jumlah entri terkait bervariasi:
+"Bacaan terkait" 1 sampai 3, "Usaha terkait" 3, "Bacaan lain" 2 atau 3.
+Grid 2, 3, atau 4 kolom selalu menyisakan sel kosong saat jumlahnya
+bukan kelipatan. Ketiganya diubah menjadi daftar satu kolom dengan
+pemisah baris, yang mengisi lebar penuh berapa pun jumlahnya.
+
+**Kontras judul rusak di "Bacaan lain".** Saat daftar diubah, judul
+memakai `text-gelap` (hampir hitam) di atas latar gelap. Terukur
+`rgb(20, 23, 15)` di atas `rgb(11, 13, 12)`, kontras sekitar 1,05:1,
+praktis tidak terbaca. Dikembalikan ke `text-terang`.
+
+**Ukuran baris terlalu panjang.** Dua masalah terpisah:
+- `.baca` dibatasi `66ch`, tetapi `ch` bergantung pada ukuran font
+  elemen itu sendiri. `max-w-[58ch]` pada teks 18 px menghasilkan
+  747 px, lebih lebar daripada 66ch pada 17 px (659 px). Menambahkan
+  batas justru melebarkan baris. Batas diubah ke `38rem`, satuan yang
+  tidak berubah saat ukuran font naik. Baris isi turun dari 88 ke 81
+  karakter, ringkasan dari 77 ke 68.
+- Judul di daftar terkait membentang 1177 px. Diberi `max-w-[40rem]`.
+
+**Foto yang teksnya terpotong.** Foto utama Benteng Kuto Besak adalah
+papan nama selebar dinding. Bingkai katalog 4:5 memotong 47% lebarnya,
+sehingga tulisan "BENTENG KUTO BESAK" terbelah dan terbaca "TENG KUTO".
+Diukur dari 11 foto destinasi: 8 lanskap, dipotong 40 sampai 55% oleh
+bingkai potret. Solusinya di data, bukan layout: urutan foto ditukar
+sehingga katalog memakai foto gerbang yang subjeknya terpusat, dan
+papan nama tetap utuh di halaman detail. Caption diperbarui agar jujur
+menyebut foto itu arsip masa kolonial.
+
+**Bukti visual yang hilang tanpa ketahuan.** `qa-section.mjs` mengukur
+`<main>` sebagai satu bagian bila halaman tidak punya `<section>`, tetapi
+loop fotonya hanya mencari `main section`. Akibatnya `/destinasi` dan
+`/umkm` dilaporkan "bersih" tanpa satu pun gambar dihasilkan, dan
+kegagalannya ditelan `catch` kosong. Keduanya diperbaiki: selektor foto
+mengikuti cara pengukuran, dan kegagalan foto sekarang dicetak. Jumlah
+bukti naik dari 80 menjadi 86 gambar.
+
+### 12.3 Yang tidak diubah meski terlihat mencurigakan
+
+- **Strip metodologi seolah terpotong di tepi.** Diukur
+  `document.scrollWidth - innerWidth = 0` dan tidak ada elemen yang
+  melewati batas. Strip itu memang dirancang penuh-bleed.
+- **Teks artikel seolah menempel ke tepi gambar.** Itu artefak
+  `element.screenshot`: padding ada di induk, di luar kotak section yang
+  difoto. Diukur ulang di viewport: teks mulai di x=430 dari 1440.
+- **Peta dan gambar malas tidak muncul di tangkapan `fullPage`.** Sudah
+  dicatat di sesi sebelumnya sebagai artefak Chromium, bukan bug. Bukti
+  alternatifnya tangkapan elemen: iframe peta 1,45 MB, gambar artikel
+  413 KB, `img.complete: true`.
+
+### 12.4 Verifikasi akhir sesi
+
+```
+$ node scripts/audit-final.mjs       → 0 masalah dari 50 pemeriksaan
+$ node scripts/qa-section.mjs        → 129 bagian, 0 temuan (39 halaman)
+$ node scripts/qa-viewport.mjs       → 22 tangkapan untuk rute tanpa section
+$ node scripts/audit-tipografi.mjs   → 22 bersih, 0 widow (11 lebar layar)
+$ node scripts/verify-fitur.mjs      → 14/14 fitur lulus
+$ node scripts/uji-keamanan.mjs      → 8/8 skenario berperilaku benar
+$ node_modules/typescript/bin/tsc    → 0 galat
+$ eslint src                         → 0 keluaran
+```
+
+Deteksi widow dijadikan bagian permanen `audit-tipografi.mjs`, bukan
+skrip sekali pakai, karena masalahnya sistemik dan akan kembali setiap
+kali ada paragraf baru.

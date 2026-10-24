@@ -247,22 +247,35 @@ export default async function DetailUMKM({ params }: { params: Promise<{ id: str
         <section className="border-t border-garis-malam py-14">
           <div className="mx-auto max-w-[1760px] px-5 sm:px-8 lg:px-12">
             <p className="meta-emas">Usaha terkait</p>
-            <ul className="mt-5 grid grid-cols-2 gap-4 lg:grid-cols-4">
+            {/* Jumlah usaha terkait bervariasi (1 sampai 4). Grid empat
+                kolom menyisakan satu sel kosong setiap kali jumlahnya
+                bukan kelipatan empat. Daftar satu kolom dengan pemisah
+                baris mengisi lebar penuh berapa pun jumlahnya. */}
+            <ul className="mt-5 border-t border-garis-malam">
               {terkait.map((t) => (
-                <li key={t.id}>
-                  <Link href={`/umkm/${t.id}`} className="group block">
-                    <div className="overflow-hidden">
+                <li key={t.id} className="border-b border-garis-malam">
+                  <Link href={`/umkm/${t.id}`} className="group flex items-center gap-5 py-4">
+                    <div className="w-20 shrink-0 overflow-hidden sm:w-28">
                       <Foto
                         src={t.gambar[0].src}
                         alt={t.gambar[0].caption}
-                        sizes="(max-width: 640px) 50vw, 25vw"
-                        className="w-full transition-[filter] duration-700 group-hover:brightness-110"
+                        sizes="112px"
+                        rasioPaksa="1 / 1"
+                        className="w-full"
                       />
                     </div>
-                    <p className="meta mt-2">{t.kategori}</p>
-                    <p className="mt-0.5 font-display text-base leading-tight text-terang group-hover:text-emas">
-                      {t.nama}
-                    </p>
+                    <div className="min-w-0 flex-1">
+                      <p className="meta">{t.kategori}</p>
+                      <p className="mt-1 max-w-[40rem] font-display text-lg leading-snug text-terang group-hover:text-emas sm:text-xl">
+                        {t.nama}
+                      </p>
+                    </div>
+                    <span
+                      aria-hidden="true"
+                      className="hidden shrink-0 text-terang-3 transition-transform group-hover:translate-x-1 group-hover:text-emas sm:block"
+                    >
+                      →
+                    </span>
                   </Link>
                 </li>
               ))}

@@ -164,6 +164,20 @@ ditunda dengan alasan.
 - [x] `uji-keamanan.mjs` → 8/8 skenario berperilaku benar
 - [x] `uji-asisten.mjs` → jawaban model 1,3 detik dengan sitasi sah
 
+### QA visual per bagian
+
+- [x] `qa-section.mjs` → 129 bagian di 39 halaman, 0 temuan
+- [x] `qa-viewport.mjs` → 22 tangkapan untuk rute yang tidak punya `<section>`
+- [x] `audit-tipografi.mjs` → 22 bersih di 11 lebar layar, termasuk deteksi widow
+- [x] 86 tangkapan bagian di `_shot/section`, 22 di `_shot/viewport`
+- [x] Gradien `fixed` di dalam wadah bergulir `/asisten` diperbaiki
+- [x] Widow dihapus lewat `text-wrap: pretty` pada seluruh paragraf
+- [x] Thumbnail daftar terkait diseragamkan (selisih tinggi 0 px)
+- [x] Daftar terkait diubah ke satu kolom agar tidak menyisakan sel kosong
+- [x] Kontras judul "Bacaan lain" dipulihkan dari 1,05:1
+- [x] Ukuran baris `.baca` dipatok `38rem`, tidak lagi bergantung `ch`
+- [x] Foto Benteng Kuto Besak diganti ke foto gerbang agar papan nama tidak terpotong
+
 ---
 
 ## Sengaja tidak dikerjakan

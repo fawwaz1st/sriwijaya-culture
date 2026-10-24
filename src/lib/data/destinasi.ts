@@ -317,14 +317,14 @@ export const destinasi = [
     "ringkas": "Keraton berbenteng dari abad ke-18 di tepi Sungai Musi, pusat Kesultanan Palembang Darussalam. Kini kawasan dalam benteng merupakan markas Kodam II/Sriwijaya.",
     "gambar": [
       {
-        "src": "/images/bkb-1.jpg",
-        "caption": "Tembok bata Benteng Kuto Besak.",
-        "kredit": "Wikimedia Commons, CC BY 2.0"
+        "src": "/images/bkb-2.jpg",
+        "caption": "Gerbang Benteng Kuto Besak dalam foto arsip masa kolonial.",
+        "kredit": "Wikimedia Commons, CC BY-SA 4.0"
       },
       {
-        "src": "/images/bkb-2.jpg",
-        "caption": "Sudut benteng dan bastion.",
-        "kredit": "Wikimedia Commons, CC BY-SA 4.0"
+        "src": "/images/bkb-1.jpg",
+        "caption": "Tembok bata Benteng Kuto Besak dengan papan nama di atasnya.",
+        "kredit": "Wikimedia Commons, CC BY 2.0"
       }
     ],
     "deskripsi": "Benteng Kuto Besak adalah keraton berbenteng yang menjadi pusat Kesultanan Palembang Darussalam sebelum kesultanan itu diakhiri oleh pemerintah kolonial Belanda. Dalam bahasa Palembang, Kuto Besak berarti keraton besar. Bangunan ini berdiri tepat di tepi Sungai Musi sehingga pada masanya menguasai jalur pelayaran. Saat ini kawasan di dalam benteng digunakan sebagai markas Komando Daerah Militer II/Sriwijaya, sedangkan pelataran di depannya menjadi ruang terbuka publik yang dikenal sebagai Plaza Benteng Kuto Besak.",

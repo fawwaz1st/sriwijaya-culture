@@ -221,7 +221,10 @@ export function Peta({
           </ul>
 
           {tanpa.length > 0 && (
-            <p className="border-t border-garis-malam px-3 py-2 text-[0.75rem] leading-snug text-terang-3">
+            /* text-pretty: kolom samping hanya 240px, sehingga satu nama
+               panjang menyisakan satu glyph sendirian di baris kedua.
+               text-wrap: pretty menahan widow itu tanpa memotong teks. */
+            <p className="border-t border-garis-malam px-3 py-2 text-[0.75rem] leading-snug text-pretty text-terang-3">
               Tanpa koordinat: {tanpa.map((d) => d.nama).join(", ")}.
             </p>
           )}
