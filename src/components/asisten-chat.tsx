@@ -8,7 +8,7 @@ import { cn } from "@/lib/cn";
 import { IsiArsip, type RingkasArsip } from "@/components/isi-arsip";
 
 /**
- * Asisten Sari — shell aplikasi layar penuh.
+ * Asisten Sari, shell aplikasi layar penuh.
  *
  * Pola 2026 (Claude.ai / ChatGPT / Perplexity): header tipis, area
  * percakapan sebagai satu-satunya yang menggulir, composer menempel di
@@ -457,7 +457,7 @@ export function AsistenChat({ ringkasArsip }: { ringkasArsip?: RingkasArsip }) {
               Punya kunci OpenRouter atau Groq? Tempel di sini untuk jawaban
               yang lebih cepat. Kunci disimpan di peramban ini saja dan tidak
               pernah keluar selain ke server kami. Tanpa kunci pun Sari
-              tetap menjawab — hanya lebih lambat.
+              tetap menjawab, hanya lebih lambat.
             </p>
             <div className="mt-2.5 flex gap-2">
               <input
@@ -582,7 +582,7 @@ export function AsistenChat({ ringkasArsip }: { ringkasArsip?: RingkasArsip }) {
                               mengembalikan baris baru tunggal antar
                               paragraf, sehingga kalimat-kalimat berbeda
                               topik menempel jadi satu blok abu-abu tanpa
-                              jeda — sulit dipindai, dan terlihat seperti
+                              jeda, sulit dipindai, dan terlihat seperti
                               teks hasil tempel. Sekarang setiap blok
                               dipisah dan diberi jarak vertikal.
                             */}

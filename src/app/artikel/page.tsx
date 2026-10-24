@@ -6,12 +6,12 @@ import { ARTIKEL, KATEGORI_ARTIKEL } from "@/lib/arsip";
 export const metadata: Metadata = {
   title: "Sejarah dan Budaya",
   description:
-    "Delapan catatan sejarah dan budaya Palembang: Sriwijaya, Ampera, Benteng Kuto Besak, songket, dan Sungai Musi. Setiap artikel mencantumkan sumber.",
+    `${ARTIKEL.length} catatan sejarah dan budaya Palembang: Sriwijaya, Ampera, Benteng Kuto Besak, songket, dan Sungai Musi. Setiap artikel mencantumkan sumber.`,
 };
 
 export default function HalamanArtikel() {
   return (
-    <div className="mx-auto max-w-[1760px] px-5 pb-20 pt-28 sm:px-8 lg:px-12">
+    <div className="masuk-katalog mx-auto max-w-[1760px] px-5 pb-20 pt-28 sm:px-8 lg:px-12">
       <header>
         <p className="meta-emas">Catatan</p>
         <div className="mt-3 flex flex-wrap items-end justify-between gap-x-10 gap-y-5">
@@ -19,7 +19,7 @@ export default function HalamanArtikel() {
             Kota ini punya lebih dari satu lapisan waktu.
           </h1>
           <p className="max-w-[42ch] pb-2 text-[0.875rem] leading-relaxed text-terang-2">
-            Delapan catatan, dari Sriwijaya abad ke-7 sampai pemugaran 2023.
+            {ARTIKEL.length} catatan, dari Sriwijaya abad ke-7 sampai pemugaran 2023.
           </p>
         </div>
       </header>

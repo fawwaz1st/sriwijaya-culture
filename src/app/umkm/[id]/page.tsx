@@ -90,7 +90,7 @@ export default async function DetailUMKM({ params }: { params: Promise<{ id: str
                 }
               >
                 <p className={`status ${u.statusData === "rujukan-umum" ? "text-ok status-ok" : "text-warn status-warn"}`}>
-                  {u.statusData === "rujukan-umum" ? "Asli — sudah dicek" : "Contoh"}
+                  {u.statusData === "rujukan-umum" ? "Asli, sudah dicek" : "Contoh"}
                 </p>
                 <p className="mt-2 text-[0.8125rem] leading-relaxed text-gelap-2">
                   {u.statusData === "rujukan-umum"

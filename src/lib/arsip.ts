@@ -114,6 +114,43 @@ export function statusVerifikasi() {
   return { total: semua.length, tinggi, sedang, perlu };
 }
 
+/**
+ * Indeks pencarian cepat.
+ *
+ * Dibentuk di server lalu dikirim ke komponen klien sebagai prop.
+ * Ukurannya kecil (25 baris) sehingga tidak perlu endpoint sendiri,
+ * dan pencarian berjalan seketika tanpa permintaan jaringan.
+ *
+ * `keterangan` sengaja memuat wilayah dan kategori, bukan ringkasan
+ * panjang: kolom ini ditampilkan satu baris di panel pencarian, dan
+ * yang dicari pengguna biasanya nama tempat atau jenis usaha.
+ */
+export function indeksCari() {
+  return [
+    ...DESTINASI.map((d) => ({
+      id: d.id,
+      jenis: "destinasi" as const,
+      judul: d.nama,
+      keterangan: `${d.wilayah} · ${d.kategori.join(", ")}`,
+      href: `/destinasi/${d.id}`,
+    })),
+    ...ARTIKEL.map((a) => ({
+      id: a.id,
+      jenis: "artikel" as const,
+      judul: a.judul,
+      keterangan: `${a.kategori} · ${a.sumber.length} sumber`,
+      href: `/artikel/${a.id}`,
+    })),
+    ...UMKM_PUBLIK.map((u) => ({
+      id: u.id,
+      jenis: "usaha" as const,
+      judul: u.nama,
+      keterangan: `${u.kategori} · ${u.wilayah}`,
+      href: `/umkm/${u.id}`,
+    })),
+  ];
+}
+
 export function statistikArsip() {
   const v = statusVerifikasi();
   return {

@@ -44,7 +44,7 @@ export function TimelineSejarah() {
             className="label-masuk bg-malam-2 p-3 sm:p-4"
           >
             <p className="font-mono text-[0.75rem] uppercase tracking-[0.1em] text-terang-3">
-              {e.dari}–{e.sampai === 2100 ? "kini" : e.sampai}
+              {e.dari}-{e.sampai === 2100 ? "kini" : e.sampai}
             </p>
             <p className="mt-1 flex items-baseline gap-2">
               <span

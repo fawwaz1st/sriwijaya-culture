@@ -1,17 +1,17 @@
-# CHECKLIST PENGUMPULAN — ITFEST 2026
+# CHECKLIST PENGUMPULAN, ITFEST 2026
 
-Batas akhir: **Jumat, 20.00 WIB** · Penilaian: 24–30 Oktober · Pemenang: Senin 2 November.
+Batas akhir: **Jumat, 20.00 WIB** · Penilaian: 24-30 Oktober · Pemenang: Senin 2 November.
 
 ## Sebelum mengisi form
 
-- [X] **Situs live** — https://sriwijaya-culture.vercel.app dibuka dan
+- [X] **Situs live**, https://sriwijaya-culture.vercel.app dibuka dan
   semua rute merespons (`node scripts/check-env.mjs`)
-- [ ] **Repositori publik** — https://github.com/fawwaz1st/sriwijaya-culture
-  (cek: tidak ada kunci API di riwayat commit — `node scripts/scan-secrets.mjs`)
-- [ ] **Video demo 2–5 menit** direkam dan diunggah ke Google Drive
+- [ ] **Repositori publik**, https://github.com/fawwaz1st/sriwijaya-culture
+  (cek: tidak ada kunci API di riwayat commit, `node scripts/scan-secrets.mjs`)
+- [ ] **Video demo 2-5 menit** direkam dan diunggah ke Google Drive
   (tautan: "siapa saja yang memiliki tautan dapat melihat")
 - [ ] **AI Development Log** diekspor ke **.pdf atau .docx**
-  (sumber: `docs/AI-DEVELOPMENT-LOG.md` — buka di Word/Docs lalu
+  (sumber: `docs/AI-DEVELOPMENT-LOG.md`, buka di Word/Docs lalu
   ekspor; guidebook menuntut salah satu format itu)
 - [ ] **Screenshot** disisipkan ke dalam log: beranda, destinasi,
   detail destinasi, asisten (kosong + percakapan + panel kunci),
@@ -29,7 +29,7 @@ Batas akhir: **Jumat, 20.00 WIB** · Penilaian: 24–30 Oktober · Pemenang: Sen
 ## Panduan membuat video demo
 
 **Spesifikasi teknis.** Rekam 1920×1080, 30 fps, format MP4 (H.264).
-Durasi 2–5 menit. Unggah ke Google Drive dengan izin "siapa saja yang
+Durasi 2-5 menit. Unggah ke Google Drive dengan izin "siapa saja yang
 memiliki tautan dapat melihat", lalu salin tautannya ke form.
 
 ### Struktur adegan
@@ -39,13 +39,13 @@ Satu gerakan kamera per poin, tanpa potongan kasar.
 
 | Waktu | Adegan | Yang harus terlihat |
 |---|---|---|
-| 0:00–0:20 | Beranda | Judul, pita statistik, galeri asimetris. Sebut tema: budaya + AI |
-| 0:20–0:50 | Destinasi | Katalog → detail. Sorot galeri foto, tabel data tercatat, peta yang bisa di-zoom |
-| 0:50–1:20 | UMKM | Direktori, label status data, dan penjelasan mengapa entri belum terverifikasi tidak dipromosikan |
-| 1:20–2:40 | Asisten Sari | Tiga pertanyaan berurutan: fakta, harga tiket, lalu pertanyaan di luar topik. Tunjukkan penolakan yang sopan dan kutipan bernomor yang bisa diklik |
-| 2:40–3:20 | Panel kunci API | Buka panel, tunjukkan bahwa kunci hanya tersimpan di peramban dan tidak pernah dikirim ke pihak ketiga |
-| 3:20–4:00 | Metodologi | Aturan data, status verifikasi, lalu jalankan `node scripts/audit-final.mjs` dan tunjukkan 0 masalah |
-| 4:00–4:30 | Penutup | Satu kalimat tentang keputusan paling penting selama pengembangan |
+| 0:00-0:20 | Beranda | Judul, pita statistik, galeri asimetris. Sebut tema: budaya + AI |
+| 0:20-0:50 | Destinasi | Katalog → detail. Sorot galeri foto, tabel data tercatat, peta yang bisa di-zoom |
+| 0:50-1:20 | UMKM | Direktori, label status data, dan penjelasan mengapa entri belum terverifikasi tidak dipromosikan |
+| 1:20-2:40 | Asisten Sari | Tiga pertanyaan berurutan: fakta, harga tiket, lalu pertanyaan di luar topik. Tunjukkan penolakan yang sopan dan kutipan bernomor yang bisa diklik |
+| 2:40-3:20 | Panel kunci API | Buka panel, tunjukkan bahwa kunci hanya tersimpan di peramban dan tidak pernah dikirim ke pihak ketiga |
+| 3:20-4:00 | Metodologi | Aturan data, status verifikasi, lalu jalankan `node scripts/audit-final.mjs` dan tunjukkan 0 masalah |
+| 4:00-4:30 | Penutup | Satu kalimat tentang keputusan paling penting selama pengembangan |
 
 ### Cara merekam
 

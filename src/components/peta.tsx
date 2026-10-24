@@ -145,7 +145,7 @@ export function Peta({
              *
              * Embed Google Maps mengunduh ~1 MB skrip dan tile saat
              * halaman dibuka. Dengan facade, unduhan itu ditunda sampai
-             * pengunjung benar-benar mau melihat peta — satu-satunya
+             * pengunjung benar-benar mau melihat peta, satu-satunya
              * optimasi berdampak besar yang tersisa di situs ini.
              */
             <div

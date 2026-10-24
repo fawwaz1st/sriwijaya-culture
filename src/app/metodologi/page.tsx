@@ -32,7 +32,7 @@ export default function HalamanMetodologi() {
   const daftarUnik = [...unik.values()].sort((a, b) => a.judul.localeCompare(b.judul, "id"));
 
   return (
-    <div className="mx-auto max-w-[1760px] px-5 pb-20 pt-28 sm:px-8 lg:px-12">
+    <div className="masuk-katalog mx-auto max-w-[1760px] px-5 pb-20 pt-28 sm:px-8 lg:px-12">
       <header>
         <p className="meta-emas">Metodologi</p>
         <div className="mt-3 flex flex-wrap items-end justify-between gap-x-10 gap-y-5">

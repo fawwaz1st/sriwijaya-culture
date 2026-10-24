@@ -14,7 +14,7 @@ export default function HalamanUMKM() {
   const jumlahDemonstrasi = DAFTAR_UMKM.length - UMKM_PUBLIK.length;
 
   return (
-    <div className="mx-auto max-w-[1760px] px-5 pb-20 pt-28 sm:px-8 lg:px-12">
+    <div className="masuk-katalog mx-auto max-w-[1760px] px-5 pb-20 pt-28 sm:px-8 lg:px-12">
       <header>
         <p className="meta-emas">Direktori</p>
         <div className="mt-3 flex flex-wrap items-end justify-between gap-x-10 gap-y-5">
@@ -35,7 +35,7 @@ export default function HalamanUMKM() {
       <section className="mt-16 border-t border-garis-malam pt-8">
         <div className="grid gap-6 sm:grid-cols-2">
           <div>
-            <p className="status text-ok">Rujukan umum — sudah dicek</p>
+            <p className="status text-ok">Rujukan umum, sudah dicek</p>
             <p className="mt-2 max-w-[46ch] text-[0.8125rem] leading-relaxed text-terang-2">
               Usaha nyata yang tercatat di sumber publik. Alamat baru tampil
               setelah pengelolanya mengonfirmasi.

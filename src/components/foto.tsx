@@ -22,7 +22,7 @@ import { FOTO, rasio } from "@/lib/foto";
  * `utuh` mengganti `object-fit: cover` menjadi `contain`. Ini penting
  * untuk foto potret yang ditempatkan di wadah lanskap: dengan `cover`,
  * foto 1152x2048 yang dipaksa ke bingkai 1440x720 kehilangan sekitar
- * 75% isinya — pada foto arsip itu berarti subjeknya hilang. Dengan
+ * 75% isinya, pada foto arsip itu berarti subjeknya hilang. Dengan
  * `contain`, seluruh foto terlihat dan sisa ruang diisi latar wadah.
  * Dipakai di hero dan galeri, bukan di grid katalog.
  */

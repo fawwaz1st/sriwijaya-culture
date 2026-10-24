@@ -5,6 +5,123 @@
  */
 export const artikel = [
   {
+    "id": "sejarah-kampung-arab",
+    "judul": "Kampung Arab Al Munawar: Jejak Perdagangan yang Menjadi Kampung",
+    "kategori": "Sejarah",
+    "ringkas": "Kampung Arab Al Munawar tumbuh dari jalur dagang rempah di tepi Sungai Musi. Artikel ini menelusuri bagaimana permukiman itu terbentuk dan apa yang tersisa hari ini.",
+    "tanggal": "2026-10-24",
+    "diperbarui": null,
+    "penulis": "Tim Sriwijaya Culture",
+    "gambar": "/images/kapitan-1.jpg",
+    "gambarCaption": "Kawasan permukiman tua di tepi Sungai Musi.",
+    "status": "terverifikasi-sebagian",
+    "pendahuluan": "Palembang bukan kota yang tumbuh dari satu pusat. Ia terbentuk dari beberapa permukiman yang masing-masing punya alasan sendiri untuk berada di tempatnya. Salah satunya adalah Kampung Arab Al Munawar, yang berada di kawasan Seberang Ulu dan tumbuh dari perdagangan yang melewati Sungai Musi.",
+    "bagian": [
+      {
+        "subjudul": "Sungai sebagai jalan utama",
+        "paragraf": [
+          "Sebelum jalan darat menghubungkan kawasan kota, Sungai Musi adalah jalan utama. Kapal dari berbagai penjuru datang membawa barang dan membawa pulang hasil bumi. Permukiman tumbuh di titik-titik yang memudahkan bongkar muat, bukan di titik yang strategis secara darat.",
+          "Kampung Al Munawar berada di salah satu titik itu. Posisinya di tepi sungai membuatnya menjadi tempat tinggal pedagang yang lalu-lalang, termasuk pedagang dari Hadramaut yang membentuk komunitas dari waktu ke waktu."
+        ]
+      },
+      {
+        "subjudul": "Yang tersisa hari ini",
+        "paragraf": [
+          "Yang bisa dilihat sekarang adalah permukiman padat dengan rumah-rumah tua, beberapa di antaranya masih mempertahankan bentuk asalnya. Ada masjid tua dan makam yang dikaitkan dengan tokoh-tokoh awal kampung ini.",
+          "Perlu dicatat: tidak semua bangunan di kawasan ini berusia ratusan tahun. Sebagian sudah diperbarui, sebagian dibangun ulang. Yang bertahan adalah pola kampungnya, bukan setiap bangunannya."
+        ]
+      },
+      {
+        "subjudul": "Kenapa tempat ini penting",
+        "paragraf": [
+          "Kampung ini menunjukkan bahwa Palembang terbentuk dari percampuran, bukan dari satu garis keturunan. Perdagangan membawa orang dari berbagai tempat, dan mereka menetap, menikah, lalu menjadi bagian dari kota.",
+          "Bagi pengunjung, tempat ini bukan objek wisata yang disiapkan. Ini permukiman yang dihuni. Cara terbaik mendatanginya adalah dengan sadar bahwa Anda datang ke tempat orang tinggal."
+        ]
+      }
+    ],
+    "kesimpulan": "Kampung Arab Al Munawar adalah bukti bahwa sejarah Palembang adalah sejarah perdagangan dan percampuran. Nilainya bukan pada satu bangunan tertentu, tetapi pada pola permukiman yang masih bisa dibaca sampai sekarang.",
+    "sumber": [
+      {
+        "judul": "Kampung Arab Al Munawar Palembang",
+        "penulis": "Wikipedia bahasa Indonesia",
+        "url": "https://id.wikipedia.org/wiki/Kampung_Arab_Al-Munawar",
+        "verifikasi": "sedang"
+      },
+      {
+        "judul": "Jejak Pedagang Arab di Tepi Musi",
+        "penulis": "Detik Sumsel",
+        "url": "https://www.detik.com/sumbagsel/",
+        "verifikasi": "perlu-konfirmasi"
+      }
+    ],
+    "destinasiTerkait": [
+      "kampung-arab-al-munawar",
+      "sungai-musi"
+    ],
+    "artikelTerkait": [
+      "sejarah-sungai-musi",
+      "tradisi-budaya-palembang"
+    ]
+  },
+  {
+    "id": "pempek-identitas",
+    "judul": "Kenapa Pempek Menjadi Identitas, Bukan Sekadar Makanan",
+    "kategori": "Kuliner",
+    "ringkas": "Pempek bukan hanya hidangan. Ia menjadi cara Palembang memperkenalkan diri, dan artikel ini menelusuri mengapa hal itu terjadi.",
+    "tanggal": "2026-10-24",
+    "diperbarui": null,
+    "penulis": "Tim Sriwijaya Culture",
+    "gambar": "/images/pempek-2.jpg",
+    "gambarCaption": "Pempek Palembang dengan kuah cuko.",
+    "status": "terverifikasi-sebagian",
+    "pendahuluan": "Hampir setiap orang di Indonesia mengenal pempek. Tetapi tidak banyak yang tahu mengapa makanan ini begitu melekat pada satu kota, sementara makanan khas lain di banyak daerah tidak sekuat itu. Artikel ini mencoba menjelaskan alasannya tanpa mengarang.",
+    "bagian": [
+      {
+        "subjudul": "Bahan yang berbicara tentang tempatnya",
+        "paragraf": [
+          "Pempek dibuat dari ikan giling dan tepung tapioka. Dua bahan itu bukan pilihan acak: Palembang berada di tepi Sungai Musi, dan ikan air tawar adalah hasil yang paling mudah didapat.",
+          "Cuko, kuah asam pedas manis yang menyertainya, memakai gula aren. Ini menunjukkan bahwa masakan ini terbentuk dari bahan yang ada di sekitarnya, bukan dari resep yang diimpor."
+        ]
+      },
+      {
+        "subjudul": "Dari makanan harian ke penanda kota",
+        "paragraf": [
+          "Pempek awalnya adalah makanan sehari-hari, dijual di pasar dan dimakan di rumah. Perubahan terjadi ketika kota ini mulai menerima pendatang dalam jumlah besar dan pempek menjadi salah satu hal pertama yang dicari.",
+          "Sekarang pempek dijual dalam kemasan beku dan dikirim ke luar kota. Ini mengubah cara orang mengenalnya: dari makanan segar yang dimakan di tempat menjadi oleh-oleh yang dibawa pulang."
+        ]
+      },
+      {
+        "subjudul": "Yang perlu dijaga",
+        "paragraf": [
+          "Ketika sebuah makanan menjadi identitas, ada dua risiko. Pertama, rasanya diseragamkan agar bisa diproduksi massal. Kedua, cerita asalnya dilupakan dan diganti dengan cerita pemasaran.",
+          "Arsip ini mencatat pempek sebagai bagian dari sejarah kuliner kota, bukan sebagai slogan. Yang kami catat adalah bahan, cara membuat, dan nama usaha yang bisa diperiksa, bukan klaim bahwa satu merek lebih asli dari yang lain."
+        ]
+      }
+    ],
+    "kesimpulan": "Pempek menjadi identitas karena ia lahir dari bahan yang ada di tempatnya, bukan karena dipromosikan. Memahaminya sebagai sejarah kuliner membuat kita menghargainya lebih dari sekadar sebagai oleh-oleh.",
+    "sumber": [
+      {
+        "judul": "Pempek",
+        "penulis": "Wikipedia bahasa Indonesia",
+        "url": "https://id.wikipedia.org/wiki/Pempek",
+        "verifikasi": "sedang"
+      },
+      {
+        "judul": "Sejarah Pempek Palembang",
+        "penulis": "Indonesia Travel, Kementerian Pariwisata",
+        "url": "https://www.indonesia.travel/",
+        "verifikasi": "sedang"
+      }
+    ],
+    "destinasiTerkait": [
+      "sungai-musi"
+    ],
+    "artikelTerkait": [
+      "sejarah-songket-palembang",
+      "tradisi-budaya-palembang"
+    ]
+  },
+  {
     "id": "sejarah-jembatan-ampera",
     "judul": "Sejarah Jembatan Ampera: Dari Pampasan Perang sampai Ikon Kota",
     "kategori": "Sejarah",

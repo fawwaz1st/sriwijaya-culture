@@ -7,7 +7,7 @@ import { ImageResponse } from "next/og";
  * polos. Sekarang: judul situs di atas latar gelap situs, satu berkas
  * yang dirender saat build.
  */
-export const alt = "Sriwijaya Culture — Arsip Digital Palembang";
+export const alt = "Sriwijaya Culture, Arsip Digital Palembang";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -35,7 +35,7 @@ export default function Og() {
             Sriwijaya Culture
           </div>
           <div style={{ display: "flex", fontSize: 32, color: "#b9b5ab", maxWidth: 780 }}>
-            Destinasi, usaha lokal, dan sejarah budaya — setiap angka menunjuk sumbernya.
+            Destinasi, usaha lokal, dan sejarah budaya, setiap angka menunjuk sumbernya.
           </div>
         </div>
         <div style={{ display: "flex", fontSize: 24, color: "#8a877f" }}>

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/cn";
+import { CariCepat, type ItemCari } from "@/components/cari-cepat";
 
 /**
  * Navigasi galeri.
@@ -15,13 +16,14 @@ import { cn } from "@/lib/cn";
 
 const NAV = [
   { href: "/destinasi", label: "Destinasi" },
+  { href: "/jelajah", label: "Jelajah" },
   { href: "/umkm", label: "Usaha" },
   { href: "/artikel", label: "Sejarah" },
   { href: "/metodologi", label: "Sumber" },
   { href: "/tentang", label: "Tentang" },
 ] as const;
 
-export function SiteHeader() {
+export function SiteHeader({ indeks }: { indeks: readonly ItemCari[] }) {
   const pathname = usePathname();
   const [buka, setBuka] = useState(false);
   const [gulir, setGulir] = useState(false);
@@ -90,7 +92,9 @@ export function SiteHeader() {
                   aria-current={aktif(item.href) ? "page" : undefined}
                   className={cn(
                     "group/nav relative block px-3 py-2 text-[0.8125rem] transition-colors",
-                    aktif(item.href) ? "text-terang" : "text-terang-2 hover:text-terang",
+                    aktif(item.href)
+                      ? "nav-aktif text-terang"
+                      : "text-terang-2 hover:text-terang",
                   )}
                 >
                   {item.label}
@@ -110,6 +114,8 @@ export function SiteHeader() {
         </nav>
 
         <div className="ml-auto flex items-center gap-2 md:ml-2">
+          <CariCepat indeks={indeks} />
+
           <Link
             href="/asisten"
             className="flex h-9 items-center gap-2 border border-emas/50 bg-emas/10 px-2.5 text-emas-muda shadow-[0_0_18px_rgba(217,168,50,0.15)] backdrop-blur-sm transition-all hover:-translate-y-0.5 hover:border-emas hover:bg-emas hover:text-malam hover:shadow-[0_0_28px_rgba(217,168,50,0.3)] sm:px-3.5"

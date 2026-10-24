@@ -56,7 +56,7 @@ export default function Beranda() {
           <p className="meta-emas relative">Arsip digital Palembang · 2026</p>
 
           <h1 className="display mt-3 max-w-[14ch] text-[clamp(2.5rem,8vw,7rem)] text-terang">
-            Sepuluh tempat yang membentuk kota ini.
+            {DESTINASI.length} tempat yang membentuk kota ini.
           </h1>
 
           <div className="mt-6 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">

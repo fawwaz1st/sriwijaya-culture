@@ -1,8 +1,11 @@
 import type { Metadata, Viewport } from "next";
 import { Fraunces, Instrument_Sans, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
+import "./komponen.css";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
+import { TiraiBuka } from "@/components/tirai-buka";
+import { indeksCari } from "@/lib/arsip";
 
 /**
  * Fraunces dipakai dengan sumbu WONK aktif. WONK 1 memberi bentuk huruf
@@ -17,7 +20,7 @@ import { SiteFooter } from "@/components/site-footer";
  * karena itu inti dari pilihan tipografi ini.
  *
  * Catatan teknis: `axes` dan `weight` tidak boleh dipakai bersamaan pada
- * font variabel — Next.js memilih berkas statis per weight, dan `axes`
+ * font variabel, Next.js memilih berkas statis per weight, dan `axes`
  * tidak tersedia di berkas statis. Karena itu di sini hanya `weight`
  * yang dipakai. WONK lalu diaktifkan lewat `font-variation-settings` di
  * CSS untuk elemen display saja.
@@ -48,7 +51,7 @@ const DESKRIPSI =
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://sriwijaya-culture.vercel.app"),
-  title: { default: `${SITE} — Arsip Digital Palembang`, template: `%s — ${SITE}` },
+  title: { default: `${SITE}, Arsip Digital Palembang`, template: `%s, ${SITE}` },
   description: DESKRIPSI,
   applicationName: SITE,
   authors: [{ name: "Koding Seadanya" }],
@@ -66,7 +69,7 @@ export const metadata: Metadata = {
     type: "website",
     locale: "id_ID",
     siteName: SITE,
-    title: `${SITE} — Arsip Digital Palembang`,
+    title: `${SITE}, Arsip Digital Palembang`,
     description: DESKRIPSI,
   },
   twitter: { card: "summary_large_image", title: SITE, description: DESKRIPSI },
@@ -103,7 +106,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         */}
         <div className="bilah-baca" aria-hidden="true" />
 
-        <SiteHeader />
+        <TiraiBuka />
+
+        <SiteHeader indeks={indeksCari()} />
         <main id="konten">{children}</main>
         {/* Asisten berperilaku seperti aplikasi layar penuh (pola Claude.ai/
             ChatGPT): footer disembunyikan supaya percakapan menjadi

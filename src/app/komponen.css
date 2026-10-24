@@ -1,0 +1,290 @@
+/* ============================================================================
+   Komponen kustom.
+
+   Semua yang di sini tidak bisa dibuat dengan utilitas Tailwind biasa:
+   pseudo-elemen peramban, animasi masuk, dan efek yang butuh state.
+   Dikumpulkan di satu berkas terpisah dari globals.css supaya bagian
+   dasar (token, tipografi, layout) tetap mudah dibaca.
+   ========================================================================== */
+
+/* ---------------------------------------------------------------------------
+   1. Bilah gulir kustom, seluruh situs.
+
+   Peramban bawaan memberi bilah gulir abu-abu terang yang memutus palet
+   arsip ini. Yang dipakai di sini: rel transparan, batang emas redup
+   yang menguat saat disentuh. Lebar 10px cukup untuk digenggam di layar
+   sentuh tanpa memakan ruang baca.
+
+   Catatan: `scrollbar-width` dan `scrollbar-color` adalah standar
+   (Firefox dan Chromium baru). Blok `::-webkit-scrollbar` menjaga
+   Safari dan Chromium lama. Keduanya ditulis karena peramban memilih
+   salah satu, bukan keduanya.
+   ------------------------------------------------------------------------- */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-emas-redup, #6b5518) var(--color-malam, #0b0d0c);
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-malam, #0b0d0c);
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(
+    to bottom,
+    rgba(217, 168, 50, 0.35),
+    rgba(217, 168, 50, 0.22)
+  );
+  border: 2px solid var(--color-malam, #0b0d0c);
+  border-radius: 0;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(
+    to bottom,
+    rgba(217, 168, 50, 0.6),
+    rgba(217, 168, 50, 0.4)
+  );
+}
+
+::-webkit-scrollbar-thumb:active {
+  background: var(--color-emas, #d9a832);
+}
+
+/* Sudut pertemuan bilah vertikal dan horizontal. */
+::-webkit-scrollbar-corner {
+  background: var(--color-malam, #0b0d0c);
+}
+
+/* Di bagian berlatar kertas, bilah gulir memakai tinta, bukan emas,
+   supaya tetap terbaca di atas permukaan terang. */
+.kertas ::-webkit-scrollbar-track {
+  background: var(--color-kertas, #efe9dc);
+}
+
+.kertas ::-webkit-scrollbar-thumb {
+  background: rgba(26, 22, 18, 0.28);
+  border-color: var(--color-kertas, #efe9dc);
+}
+
+.kertas ::-webkit-scrollbar-thumb:hover {
+  background: rgba(26, 22, 18, 0.45);
+}
+
+/* ---------------------------------------------------------------------------
+   2. Tirai pembuka.
+
+   Satu kali per sesi, bukan setiap navigasi. Menutup layar dengan warna
+   malam, menampilkan tanda arsip, lalu membuka ke atas seperti tirai
+   galeri. Total 1,1 detik: cukup untuk terasa disengaja, tidak cukup
+   untuk membuat orang menunggu.
+
+   Elemen ini dirender server dan disembunyikan lewat CSS setelah
+   selesai, jadi tidak ada JavaScript yang mengatur tampilannya. Kalau
+   animasi tidak didukung, elemen tidak pernah terlihat sama sekali.
+   ------------------------------------------------------------------------- */
+.tirai-buka {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: grid;
+  place-items: center;
+  background: var(--color-malam, #0b0d0c);
+  pointer-events: none;
+  animation: tirai-pergi 700ms var(--ease-keluar, cubic-bezier(0.16, 1, 0.3, 1)) 520ms both;
+}
+
+@keyframes tirai-pergi {
+  from {
+    clip-path: inset(0 0 0 0);
+    opacity: 1;
+  }
+  to {
+    clip-path: inset(0 0 100% 0);
+    opacity: 1;
+  }
+}
+
+/* Tanda di tengah tirai: garis emas yang tumbuh, lalu memudar. */
+.tirai-tanda {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  animation: tirai-tanda-pudar 520ms var(--ease-keluar, cubic-bezier(0.16, 1, 0.3, 1)) both;
+}
+
+@keyframes tirai-tanda-pudar {
+  0% {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  35% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.tirai-garis {
+  height: 1px;
+  width: 0;
+  background: var(--color-emas, #d9a832);
+  animation: tirai-garis-tumbuh 620ms var(--ease-keluar, cubic-bezier(0.16, 1, 0.3, 1)) 60ms both;
+}
+
+@keyframes tirai-garis-tumbuh {
+  from {
+    width: 0;
+  }
+  to {
+    width: 5rem;
+  }
+}
+
+/* Kalau pengunjung meminta gerak dikurangi, tirai tidak ditampilkan
+   sama sekali. Lebih baik tidak ada pembuka daripada pembuka yang
+   berkedip. */
+@media (prefers-reduced-motion: reduce) {
+  .tirai-buka {
+    display: none;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   3. Efek masuk per halaman.
+
+   Setiap halaman masuk dengan gerakan kecil yang berbeda sesuai isinya,
+   bukan satu fade seragam. Halaman katalog masuk dengan dorongan
+   vertikal (isi disusun), halaman detail dengan pembukaan dari tengah
+   (satu entri dibuka), halaman asisten dengan pendar (permukaan
+   aplikasi menyala).
+
+   Semuanya hanya menyentuh transform dan opacity pada satu pembungkus,
+   jadi tidak ada layout shift dan tidak ada konten yang tertinggal
+   tersembunyi: `animation-fill-mode: both` dengan keadaan akhir yang
+   terlihat penuh.
+   ------------------------------------------------------------------------- */
+.masuk-katalog {
+  animation: masuk-dorong 520ms var(--ease-keluar, cubic-bezier(0.16, 1, 0.3, 1)) both;
+}
+
+@keyframes masuk-dorong {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.masuk-detail {
+  animation: masuk-buka 620ms var(--ease-keluar, cubic-bezier(0.16, 1, 0.3, 1)) both;
+}
+
+@keyframes masuk-buka {
+  from {
+    opacity: 0;
+    clip-path: inset(2% 1% 2% 1%);
+  }
+  to {
+    opacity: 1;
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+.masuk-asisten {
+  animation: masuk-pendar 560ms var(--ease-keluar, cubic-bezier(0.16, 1, 0.3, 1)) both;
+}
+
+@keyframes masuk-pendar {
+  from {
+    opacity: 0;
+    filter: brightness(0.8);
+  }
+  to {
+    opacity: 1;
+    filter: brightness(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .masuk-katalog,
+  .masuk-detail,
+  .masuk-asisten {
+    animation: none;
+    opacity: 1;
+    transform: none;
+    clip-path: none;
+    filter: none;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   4. Sorot tautan aktif di navigasi.
+
+   Sudah ada garis bawah di header, tetapi halaman dalam (misalnya
+   /destinasi/jembatan-ampera) tidak menandai menu induknya. Aturan ini
+   memberi latar sangat redup pada item yang cocok, sehingga pengunjung
+   tahu di bagian mana ia berada.
+   ------------------------------------------------------------------------- */
+.nav-aktif {
+  background: rgba(217, 168, 50, 0.08);
+}
+
+/* ---------------------------------------------------------------------------
+   5. Pemisah bergaya katalog.
+
+   Garis tipis dengan tiga titik di tengah, dipakai di antara bagian
+   panjang. Mengikuti kebiasaan katalog cetak: pemisah bukan hiasan,
+   tetapi penanda bahwa satu entri selesai dan entri berikutnya mulai.
+   ------------------------------------------------------------------------- */
+.pemisah-katalog {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: var(--color-terang-3, #8a8578);
+}
+
+.pemisah-katalog::before,
+.pemisah-katalog::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.3;
+}
+
+/* ---------------------------------------------------------------------------
+   6. Angka besar yang bergerak saat digulir.
+
+   Dipakai pada statistik arsip di halaman metodologi. Angka bergeser
+   sedikit lebih lambat dari halaman (parallax halus), memberi kesan
+   angka itu berdiri di lapisan belakang.
+   ------------------------------------------------------------------------- */
+@media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
+  .angka-lambat {
+    animation: angka-lambat linear both;
+    animation-timeline: view();
+    animation-range: entry 0% exit 100%;
+  }
+
+  @keyframes angka-lambat {
+    from {
+      transform: translateY(18px);
+    }
+    to {
+      transform: translateY(-18px);
+    }
+  }
+}

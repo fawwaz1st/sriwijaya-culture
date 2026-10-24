@@ -1,4 +1,4 @@
-# TODO — Sriwijaya Culture
+# TODO, Sriwijaya Culture
 
 Status per 23 Oktober 2026. Dokumen ini mencatat apa yang sudah selesai,
 apa yang sengaja tidak dikerjakan, dan apa yang tersisa. Diperbarui
@@ -16,7 +16,7 @@ ditunda dengan alasan.
 - [x] Migrasi penuh dari HTML statis ke Next.js 16 + TypeScript + Tailwind 4
 - [x] 38 rute statis, semuanya `200`
 - [x] Asisten Sari: sitasi bernomor, rantai model berlapis, penjaga topik
-- [x] Peta Google Maps nyata di beranda dan detail destinasi (diukur: iframe 233 KB–1,4 MB, hidup)
+- [x] Peta Google Maps nyata di beranda dan detail destinasi (diukur: iframe 233 KB-1,4 MB, hidup)
 - [x] Atlas SVG dari geometri OpenStreetMap
 - [x] Rate limit per-IP dengan urutan kepercayaan header yang benar
 - [x] BYOK di localStorage, CSP dengan `frame-src` terbatas
@@ -44,12 +44,45 @@ ditunda dengan alasan.
 
 - [x] Diaudit pada **11 lebar**: 320, 360, 390, 430, 768, 820, 1024, 1280, 1440, 1920, 2560 px
 - [x] **0 overflow horizontal** di seluruh 50 kombinasi halaman × lebar
-- [x] **Tidak ada teks di bawah 12px** di seluruh halaman (sebelumnya 116 elemen di beranda berukuran 8–11px)
+- [x] **Tidak ada teks di bawah 12px** di seluruh halaman (sebelumnya 116 elemen di beranda berukuran 8-11px)
 - [x] Token `--text-2xs` dinaikkan 10px → 12px, `--text-xs` 11px → 13px
 - [x] Skala dasar dinaikkan untuk layar ≥1920px dan ≥2560px
 - [x] Container diperlebar 1600px → 1760px untuk monitor besar
 - [x] Overflow 21px di 320px pada galeri detail destinasi diperbaiki (`min-w-0`)
 - [x] Tautan "destinasi lain" menyusut dengan benar di 320px
+
+### Fitur baru sesi ekspansi
+
+- [x] **Tirai pembuka** sekali per sesi, dihormati `prefers-reduced-motion`, tidak pernah menangkap klik
+- [x] **Pencarian Ctrl+K** lintas 28 entri, navigasi papan ketik penuh, indeks dikirim dari server
+- [x] **Ikon tab dan ikon iOS** dibuat sebagai `ImageResponse`, dirujuk di HTML
+- [x] **Halaman `/jelajah`** peta fokus utama dengan penyaring kategori yang menyaring peta dan daftar sekaligus
+- [x] **Tombol entri acak** di katalog destinasi
+- [x] **Bilah gulir kustom** seluruh situs, versi tinta di bagian berlatar kertas
+- [x] **Efek masuk per halaman** berbeda menurut jenis isi (katalog, detail, asisten)
+- [x] **Navigasi aktif** memberi latar redup pada menu induk halaman dalam
+- [x] **Pemisah katalog** dan nomor bagian ekspresif
+
+### Em dash dan en dash
+
+- [x] 50 em dash dan 24 en dash dihapus dari seluruh `src`, `docs`, dan `scripts`
+- [x] Skrip `hapus-dash.mjs` hanya menyentuh karakter dash, tidak menyentuh indentasi
+- [x] Verifikasi akhir: em=0, en=0 di seluruh sumber dan dokumentasi
+
+### Perluasan Sari
+
+- [x] Prompt sistem ditambah panduan per jenis pertanyaan dan batas eksplisit (medis, hukum, keuangan, keselamatan)
+- [x] Penjaga topik diperluas dari 22 menjadi 44 penanda
+- [x] Jawaban langsung tanpa model untuk aktivitas, lokasi, dan kategori (sebelumnya hanya tiket dan jam)
+- [x] `deteksiNiat` mengenali tujuh jenis pertanyaan
+- [x] Diukur: pertanyaan dalam topik 981-1340 ms, penolakan 8-19 ms, tiket ~280 ms
+
+### Konten baru
+
+- [x] Artikel: Kampung Arab Al Munawar, dan Kenapa Pempek Menjadi Identitas
+- [x] Destinasi: Masjid Ki Mas Adirojo (tahun pendirian ditandai belum terverifikasi, koordinat sengaja kosong)
+- [x] Angka tetap ("Sepuluh tempat", "Delapan catatan") diganti nilai yang dihitung dari data
+- [x] Jumlah akhir: 11 destinasi, 10 artikel, 7 usaha (4 berstatus demonstrasi, tidak dipromosikan)
 
 ### Keamanan AI
 
@@ -75,8 +108,8 @@ ditunda dengan alasan.
 ### Kunci model untuk produksi
 
 - [x] Lima variabel lingkungan terpasang di Vercel (`GROQ_API_KEY`, tiga model, site URL)
-- [x] Terverifikasi di produksi: `mode=groq`, jawaban 1,3–2,2 detik dengan sitasi
-- [x] Injeksi `system` di produksi diabaikan; pertanyaan luar topik ditolak 12–26 ms
+- [x] Terverifikasi di produksi: `mode=groq`, jawaban 1,3-2,2 detik dengan sitasi
+- [x] Injeksi `system` di produksi diabaikan; pertanyaan luar topik ditolak 12-26 ms
 - [x] `scan-secrets.mjs` bersih: tidak ada kunci di berkas kerja maupun riwayat commit
 
 

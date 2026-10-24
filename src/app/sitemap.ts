@@ -4,7 +4,16 @@ import { ARTIKEL, DAFTAR_UMKM, DESTINASI } from "@/lib/arsip";
 const BASE = process.env.NEXT_PUBLIC_SITE_URL || "https://sriwijaya-culture.vercel.app";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const tetap = ["", "/destinasi", "/umkm", "/artikel", "/asisten", "/metodologi", "/tentang"];
+  const tetap = [
+    "",
+    "/destinasi",
+    "/jelajah",
+    "/umkm",
+    "/artikel",
+    "/asisten",
+    "/metodologi",
+    "/tentang",
+  ];
 
   return [
     ...tetap.map((r) => ({

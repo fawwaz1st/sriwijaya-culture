@@ -5,6 +5,82 @@
  */
 export const destinasi = [
   {
+    "id": "masjid-ki-mas-adirojo",
+    "nama": "Masjid Ki Mas Adirojo",
+    "namaLengkap": "Masjid Ki Mas Adirojo",
+    "kategori": [
+      "Religi",
+      "Sejarah"
+    ],
+    "wilayah": "Ilir Timur",
+    "ringkas": "Masjid tua di kawasan 16 Ilir yang dikaitkan dengan penyebaran Islam di Palembang. Bangunannya masih mempertahankan bentuk asal pada beberapa bagian.",
+    "gambar": [
+      {
+        "src": "/images/masjid-1.jpg",
+        "caption": "Masjid bersejarah di kawasan Ilir Timur.",
+        "kredit": "Wikimedia Commons, CC BY-SA 4.0"
+      }
+    ],
+    "deskripsi": "Masjid Ki Mas Adirojo adalah salah satu masjid tua di Palembang yang berada di kawasan permukiman padat. Namanya dikaitkan dengan tokoh penyebar Islam di kota ini. Bangunan masjid masih mempertahankan beberapa ciri arsitektur lama, meski sudah melalui beberapa kali perbaikan.",
+    "sejarah": "Masjid ini diperkirakan berdiri sejak abad ke-18, tetapi angka tahun pastinya belum bisa kami pastikan dari sumber yang bisa diperiksa. Yang tercatat adalah bahwa masjid ini menjadi salah satu pusat kegiatan keagamaan di kawasan Ilir Timur.",
+    "dayaTarik": [
+      "Arsitektur masjid tua dengan ciri bangunan abad ke-18.",
+      "Kawasan permukiman padat yang menunjukkan kehidupan kota lama.",
+      "Suasana ibadah yang masih aktif sampai sekarang."
+    ],
+    "aktivitas": [
+      "Beribadah jika datang pada waktu salat.",
+      "Melihat arsitektur dari halaman masjid tanpa mengganggu jamaah.",
+      "Berjalan kaki menyusuri kawasan 16 Ilir di sekitarnya."
+    ],
+    "alamat": "Kawasan 16 Ilir, Kecamatan Ilir Timur, Kota Palembang.",
+    "koordinat": null,
+    "mapsQuery": "Masjid Ki Mas Adirojo Palembang",
+    "tiket": {
+      "verifikasi": "perlu-konfirmasi",
+      "teks": "Masjid adalah tempat ibadah, bukan objek wisata berbayar. Tidak ada tiket masuk."
+    },
+    "jam": {
+      "verifikasi": "perlu-konfirmasi",
+      "teks": "Terbuka pada waktu salat. Untuk kunjungan di luar itu, sebaiknya meminta izin pengurus."
+    },
+    "akses": "Berada di kawasan 16 Ilir, dapat dicapai dengan kendaraan pribadi atau angkutan kota. Parkir terbatas karena berada di permukiman padat.",
+    "fakta": [
+      {
+        "k": "Perkiraan berdiri",
+        "v": "abad ke-18 (belum terverifikasi)"
+      },
+      {
+        "k": "Kategori",
+        "v": "Masjid bersejarah"
+      },
+      {
+        "k": "Status",
+        "v": "Masih aktif digunakan"
+      }
+    ],
+    "ulasan": {
+      "status": "belum",
+      "pesan": "Informasi ulasan pengunjung belum tersedia."
+    },
+    "sumber": [
+      {
+        "judul": "Masjid Ki Mas Adirojo",
+        "penulis": "Wikipedia bahasa Indonesia",
+        "url": "https://id.wikipedia.org/wiki/Masjid_Ki_Mas_Adirojo",
+        "verifikasi": "sedang"
+      }
+    ],
+    "catatanVerifikasi": "Tahun pendirian belum bisa dipastikan dari sumber pemerintah. Koordinat tidak dicatat karena titik pastinya belum diverifikasi. Nama tokoh dan perannya dicatat sebagai keterangan yang beredar di sumber publik, bukan sebagai fakta yang sudah dikonfirmasi.",
+    "artikelTerkait": [
+      "tradisi-budaya-palembang"
+    ],
+    "destinasiTerkait": [
+      "masjid-agung",
+      "kampung-arab-al-munawar"
+    ]
+  },
+  {
     "id": "jembatan-ampera",
     "nama": "Jembatan Ampera",
     "namaLengkap": "Jembatan Ampera (Amanat Penderitaan Rakyat)",

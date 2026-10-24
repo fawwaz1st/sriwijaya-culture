@@ -8,7 +8,7 @@ import type { ReactNode } from "react";
  * group, root me-render footer di dalam slot `chrome` bawaan dan layout
  * ini menggantinya lewat pola berikut: karena root layout tidak bisa
  * dikondisikan per halaman secara aman, pendekatan yang dipakai adalah
- * CSS — footer disembunyikan saat halaman ini aktif lewat kelas pada
+ * CSS, footer disembunyikan saat halaman ini aktif lewat kelas pada
  * <main> yang di-set layout root berdasarkan URL saat ini.
  *
  * Yang benar-benar dilakukan file ini: memberi halaman tinggi layar

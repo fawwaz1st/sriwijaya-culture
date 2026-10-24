@@ -284,10 +284,10 @@ export async function POST(req: Request) {
    * Identitas untuk pembatas laju.
    *
    * Urutan kepercayaan, dari paling otoritatif:
-   *   1. `x-vercel-forwarded-for` — di-set oleh edge Vercel, tidak bisa
+   *   1. `x-vercel-forwarded-for`, di-set oleh edge Vercel, tidak bisa
    *      dipalsukan klien.
-   *   2. `x-real-ip` — di-set reverse proxy lokal.
-   *   3. `x-forwarded-for` hop TERAKHIR — hanya kalau dua di atas tidak ada.
+   *   2. `x-real-ip`, di-set reverse proxy lokal.
+   *   3. `x-forwarded-for` hop TERAKHIR, hanya kalau dua di atas tidak ada.
    *
    * Hop pertama `x-forwarded-for` dikendalikan klien dan bisa diisi apa
    * saja, jadi tidak pernah dipakai. Kalau tidak ada satu pun header,
@@ -463,7 +463,7 @@ export async function POST(req: Request) {
     const teks =
       langsung.teks +
       (langsung.sumber.length
-        ? "\n\n" + langsung.sumber.map((s) => `[${s.no}] ${s.judul} — ${s.href}`).join("\n")
+        ? "\n\n" + langsung.sumber.map((s) => `[${s.no}] ${s.judul}, ${s.href}`).join("\n")
         : "");
     return balasanTeks(teks, "arsip-langsung", langsung.sumber.length);
   }
@@ -576,7 +576,7 @@ export async function POST(req: Request) {
         const penuh =
           teks +
           (sumber.length
-            ? "\n\n" + sumber.map((s) => `[${s.no}] ${s.judul} — ${s.href}`).join("\n")
+            ? "\n\n" + sumber.map((s) => `[${s.no}] ${s.judul}, ${s.href}`).join("\n")
             : "");
         return balasanTeks(penuh, "arsip-langsung", sumber.length);
       } else {
@@ -652,7 +652,7 @@ export async function POST(req: Request) {
   const penuh =
     teks +
     (sumber.length
-      ? "\n\n" + sumber.map((s) => `[${s.no}] ${s.judul} — ${s.href}`).join("\n")
+      ? "\n\n" + sumber.map((s) => `[${s.no}] ${s.judul}, ${s.href}`).join("\n")
       : "");
 
   return balasanTeks(penuh, "arsip-langsung", sumber.length);

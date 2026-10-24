@@ -5,7 +5,7 @@ const SITE = "https://sriwijaya-culture.vercel.app";
  *
  * TouristDestination di beranda dan Article di halaman artikel memberi
  * Google konteks eksplisit: ini tempat wisata, ini artikel sejarah.
- * Ditaruh sebagai komponen server murni — tidak ada JS yang jalan.
+ * Ditaruh sebagai komponen server murni, tidak ada JS yang jalan.
  */
 export function JsonLdDestinasi({
   nama,

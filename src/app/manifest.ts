@@ -8,7 +8,7 @@
  */
 export default function manifest() {
   return {
-    name: "Sriwijaya Culture — Arsip Digital Palembang",
+    name: "Sriwijaya Culture, Arsip Digital Palembang",
     short_name: "Sriwijaya",
     description:
       "Destinasi, usaha lokal, dan sejarah budaya Kota Palembang. Setiap angka menunjuk sumbernya.",

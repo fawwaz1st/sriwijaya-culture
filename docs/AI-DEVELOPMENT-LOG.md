@@ -1,4 +1,4 @@
-# AI-DEVELOPMENT-LOG — Sriwijaya Culture
+# AI-DEVELOPMENT-LOG, Sriwijaya Culture
 
 **Tim:** Koding Seadanya · **Karya:** Sriwijaya Culture, Arsip Digital Palembang
 **Kompetisi:** Vibe Coding ITFEST 2026 · Politeknik Negeri Sriwijaya
@@ -44,17 +44,17 @@ model bahasa.
 Asisten Sari menjawab pertanyaan tentang Palembang **hanya** dari arsip
 situs. Rantainya:
 
-1. **Retrieval TF-IDF** — pencarian kata kunci berbobot di 25 dokumen
+1. **Retrieval TF-IDF**, pencarian kata kunci berbobot di 25 dokumen
    (10 destinasi, 8 artikel, 7 UMKM). Dipilih karena korpus kecil:
    embedding akan menambah 90 MB unduhan tanpa kenaikan kualitas.
-2. **Penjaga topik** — daftar penanda eksplisit menolak pertanyaan di
+2. **Penjaga topik**, daftar penanda eksplisit menolak pertanyaan di
    luar Palembang sebelum model dipanggil.
-3. **Ambang relevansi** — skor retrieval di bawah 4.2 dianggap "tidak
+3. **Ambang relevansi**, skor retrieval di bawah 4.2 dianggap "tidak
    ada di arsip", jawaban deterministik dikembalikan tanpa model.
-4. **Tiga tingkat penyedia** — kunci pengguna (BYOK) → kunci server
+4. **Tiga tingkat penyedia**, kunci pengguna (BYOK) → kunci server
    (bila valid) → endpoint tanpa kunci → jawaban dari arsip. Asisten
    tidak pernah menampilkan kotak kosong.
-5. **Kutipan bernomor** — setiap jawaban merujuk `[1]`, `[2]` yang bisa
+5. **Kutipan bernomor**, setiap jawaban merujuk `[1]`, `[2]` yang bisa
    diklik ke halaman sumber.
 
 Keamanan: kunci pengguna disimpan di localStorage peramban, dikirim
@@ -72,7 +72,7 @@ Setiap prompt ditulis dengan lima bagian tetap: **Peran**, **Konteks**,
 satu hal yang sama setiap kali: apakah model bisa dibatasi oleh kriteria
 yang bisa diperiksa, bukan oleh selera.
 
-### Prompt 3.1 — analisis guidebook dan keputusan stack
+### Prompt 3.1, analisis guidebook dan keputusan stack
 
 **Peran.** Analis teknis senior yang membaca dokumen kompetisi sebagai
 sumber kebenaran, bukan sebagai saran.
@@ -99,7 +99,7 @@ dan urutan migrasi.
 dengan satu revisi manusia: usulan embedding 90 MB ditolak dan diganti
 TF-IDF, karena korpus hanya 25 dokumen.
 
-### Prompt 3.2 — desain ulang terukur
+### Prompt 3.2, desain ulang terukur
 
 **Peran.** Desainer antarmuka yang bekerja dengan standar institusi
 arsip, bukan standar landing page.
@@ -124,7 +124,7 @@ dihapus.
 **Hasil.** Hero memakai scrim 62% (bukan lapisan gelap penuh), peta
 memakai embed Google Maps, ringkasan kartu dibatasi 150 karakter.
 
-### Prompt 3.3 — QA menyeluruh dengan inisiatif
+### Prompt 3.3, QA menyeluruh dengan inisiatif
 
 **Peran.** QA engineer yang menguji hasil kerjanya sendiri dan tidak
 percaya pada penilaian visual semata.
@@ -147,7 +147,7 @@ bukti angka akhir.
 **Hasil.** `scripts/qa.mjs` menguji 10 rute × 3 lebar. Temuan pertama
 501, setelah tiga putaran menjadi 0.
 
-### Prompt 3.4 — BYOK, keamanan, dan integritas data
+### Prompt 3.4, BYOK, keamanan, dan integritas data
 
 **Peran.** Engineer yang bertanggung jawab atas keamanan sekaligus
 kredibilitas isi.
@@ -190,7 +190,7 @@ berstatus `demonstrasi` dikeluarkan dari direktori publik melalui
 | 5 | Kunci API salah/kedaluwarsa | jawaban tetap muncul (turun ke tingkat tanpa kunci) | ✅ fallback bekerja |
 
 Perbandingan dengan perilaku tanpa grounding (percobaan awal, gagal):
-*"Jembatan Ampera ada di Padang, Sumatera Barat"* — kota salah.
+*"Jembatan Ampera ada di Padang, Sumatera Barat"*, kota salah.
 Inilah alasan semua aturan di §2 dibuat wajib.
 
 ---
@@ -213,7 +213,7 @@ $ node scripts/check-env.mjs  → 11/13 lulus (2 temuan diketahui:
 
 Keamanan (diperiksa tangan, bukan klaim):
 
-- Kunci API tidak pernah dikirim browser ke pihak ketiga — hanya ke
+- Kunci API tidak pernah dikirim browser ke pihak ketiga, hanya ke
   `/api/asisten` kami.
 - `Content-Security-Policy`: `script-src 'self'`; `frame-src` hanya
   Google Maps; `object-src 'none'`; + HSTS.
@@ -227,7 +227,7 @@ server pengembangan, pada lebar 1440 px dengan skala perangkat 2×.
 
 **Beranda.** Judul, pita statistik, dan galeri asimetris. Pita statistik
 menampilkan ukuran arsip yang bisa dipakai pengunjung, bukan persentase
-verifikasi — angka itu sebelumnya terbaca sebagai "85% sisanya tidak
+verifikasi, angka itu sebelumnya terbaca sebagai "85% sisanya tidak
 dipercaya", padahal maksudnya justru sebaliknya.
 
 ![Beranda](bukti/01-beranda.png)
@@ -245,12 +245,12 @@ tangkapan elemen iframe 1,4 MB, bukan kotak kosong.
 
 ![Detail destinasi](bukti/03-detail-destinasi.png)
 
-**Asisten Sari — keadaan kosong.** Tiga contoh pertanyaan yang semuanya
+**Asisten Sari, keadaan kosong.** Tiga contoh pertanyaan yang semuanya
 bisa dijawab arsip, plus penjelasan singkat cara kerja di bawah kotak.
 
 ![Asisten kosong](bukti/04-asisten-kosong.png)
 
-**Asisten Sari — percakapan nyata.** Jawaban dengan kutipan bernomor
+**Asisten Sari, percakapan nyata.** Jawaban dengan kutipan bernomor
 `[1]` dan `[2]` yang bisa diklik, serta daftar rujukan dengan judul utuh
 dan jenis dokumen. Uji ini dijalankan otomatis: pertanyaan dikirim,
 lalu halaman diperiksa sampai jawaban dan sumber muncul.
@@ -298,7 +298,7 @@ adalah bug yang ditemukan sendiri saat menguji lapisan animasi baru:
 kartu di bawah lipatan berakhir dengan `opacity: 0` dan tidak pernah
 muncul, karena `animation-timeline: view()` tidak berjalan pada elemen
 yang sudah melewati fase entry saat halaman dimuat. Animasi kemudian
-diubah agar tidak pernah menyembunyikan konten — hanya transform dan
+diubah agar tidak pernah menyembunyikan konten, hanya transform dan
 filter yang dianimasikan.
 
 ---
@@ -313,7 +313,7 @@ peramban, karena dua kali dalam sesi ini pengamatan visual keliru.
 
 1. Peta sempat dilaporkan "hitam total" di beranda dan "kotak putih
    kosong" di halaman detail. Pengukuran iframe membuktikan sebaliknya:
-   screenshot elemen iframe berukuran 233 KB–1,4 MB, artinya peta hidup.
+   screenshot elemen iframe berukuran 233 KB-1,4 MB, artinya peta hidup.
    Penyebab kesan keliru: `page.screenshot({ fullPage: true })` tidak
    menangkap isi iframe lintas-origin, jadi yang terekam hanya latar
    gelap di belakang iframe.
@@ -355,7 +355,7 @@ $ node scripts/_animcheck.mjs          → 0 elemen tertinggal transparan
 
 ---
 
-## 6. Pembagian kerja manusia–AI
+## 6. Pembagian kerja manusia-AI
 
 | Keputusan | Pembuat | Alasan |
 |---|---|---|
@@ -372,7 +372,7 @@ $ node scripts/_animcheck.mjs          → 0 elemen tertinggal transparan
 
 - Situs: https://sriwijaya-culture.vercel.app
 - Repositori: https://github.com/fawwaz1st/sriwijaya-culture
-- Video demo: (tautan Drive — lihat SUBMISSION.md)
+- Video demo: (tautan Drive, lihat SUBMISSION.md)
 
 ---
 
@@ -384,7 +384,7 @@ Semua angka di bawah adalah hasil pengukuran, bukan perkiraan.
 
 ### 8.1 Tipografi yang terbaca
 
-Audit pertama menemukan **116 elemen teks berukuran 8–11 px hanya di
+Audit pertama menemukan **116 elemen teks berukuran 8-11 px hanya di
 beranda**, dan 75 di halaman Metodologi. Di monitor 27 inci dan di
 ponsel, ukuran itu tidak terbaca.
 
@@ -463,8 +463,8 @@ dengan batas waktu menurun (15 detik untuk model utama, 9 detik untuk
 cadangan). Kalau semua gagal, jawaban arsip langsung yang selalu punya
 rujukan sah tetap dikembalikan.
 
-Diukur pada kunci Groq: jawaban model 1,3–1,9 detik, dan penolakan di
-luar topik 9–26 ms tanpa memanggil model sama sekali.
+Diukur pada kunci Groq: jawaban model 1,3-1,9 detik, dan penolakan di
+luar topik 9-26 ms tanpa memanggil model sama sekali.
 
 ### 8.6 Bukti akhir
 
@@ -547,7 +547,7 @@ Semua pengujian di bawah dijalankan terhadap
 |---|---|
 | Jawaban model di produksi | `mode=groq`, 2 sumber, jawaban akurat dengan sitasi |
 | Injeksi peran `system` | Diabaikan; jawaban tetap Bahasa Indonesia dari arsip |
-| Pertanyaan di luar topik | Ditolak dalam 12–26 ms tanpa memanggil model |
+| Pertanyaan di luar topik | Ditolak dalam 12-26 ms tanpa memanggil model |
 | Peta di produksi | iframe hidup, tangkapan elemen 1,45 MB, frame Google aktif |
 | Overflow horizontal | 0 pada 1440 px dan 390 px di lima halaman utama |
 | Rute | 11 halaman `200`, dua rute tidak ada `404` |
@@ -656,3 +656,182 @@ $ node scripts/uji-asisten.mjs      → 3/3 jawaban benar, sitasi sah
 
 Uji percakapan campuran (di luar topik lalu dalam topik): penolakan
 tanpa chip, dilanjutkan jawaban sah dengan dua chip. Regresi teratasi.
+
+
+---
+
+## 11. Sesi ekspansi: intro, pencarian, ikon, dan perluasan Sari
+
+Sesi ini menambah fitur baru dan menghapus satu kebiasaan penulisan yang
+sudah lama tidak konsisten. Semua angka di bawah adalah hasil pengukuran
+di peramban dan terhadap server yang berjalan.
+
+### 11.1 Em dash dan en dash: nol
+
+Sebelum sesi ini ada **50 em dash** dan **24 en dash** tersebar di kode
+dan dokumentasi. Keduanya tidak dipakai dalam penulisan ini karena
+memutus kalimat dengan cara yang khas bahasa Inggris. Bahasa Indonesia
+memakai koma, titik, atau titik dua untuk hal yang sama, dan rentang
+angka memakai tanda hubung biasa.
+
+Penghapusan dilakukan oleh `scripts/hapus-dash.mjs` dengan pemetaan
+yang membaca wajar:
+
+| Pola | Pengganti |
+|---|---|
+| `kata menjadi kata` | `kata, kata` |
+| `2020-2024` | `2020-2024` |
+| `katamenjadikata` | `kata-kata` |
+
+**Kegagalan yang dicatat.** Versi pertama skrip memakai
+`replace(/[ \t]{2,}/g, " ")` untuk merapikan spasi setelah penggantian.
+Aturan itu ikut meratakan indentasi di awal baris, sehingga seluruh
+berkas menempel ke kiri: 3.600 baris berubah dan tidak terbaca. Kode
+masih dikompilasi, tetapi hasilnya tidak bisa ditinjau. Semua
+dikembalikan dari git, lalu skrip ditulis ulang dengan aturan yang hanya
+menyentuh karakter dash dan spasi yang mengapitnya. Hasil akhir: 600
+baris berubah, semuanya perubahan isi yang disengaja, dan verifikasi
+akhir menunjukkan **em=0 en=0** di seluruh `src` dan `docs`.
+
+### 11.2 Tirai pembuka
+
+Satu kali per sesi, bukan setiap navigasi. Menutup layar dengan warna
+malam, menampilkan tanda arsip, lalu membuka ke atas seperti tirai
+galeri. Seluruh animasi selesai dalam 1,2 detik dan tirai menutupi layar
+hanya 0,5 detik pertama.
+
+Aturan yang dipegang:
+
+- Kalau pengunjung meminta gerak dikurangi, tirai tidak dirender.
+- Kalau sesi sudah pernah melihatnya, tirai tidak dirender.
+- Tirai tidak pernah menangkap klik (`pointer-events: none`).
+- Kalau JavaScript mati, tirai tidak pernah muncul.
+
+**Diukur:** tirai muncul pada ~150 ms setelah navigasi, hilang setelah
+2 detik, dan tidak muncul lagi di halaman berikutnya dalam sesi yang
+sama. Uji pertama sempat melaporkan gagal karena memeriksa pada 120 ms,
+sebelum hidrasi React selesai. Yang diperbaiki adalah tesnya, bukan
+komponennya.
+
+### 11.3 Pencarian cepat Ctrl+K
+
+Indeks 28 entri (11 destinasi, 10 artikel, 7 usaha publik) dikirim dari
+server sebagai prop, bukan diambil lewat API. Ukurannya kecil, jadi
+pencarian berjalan seketika tanpa permintaan jaringan.
+
+Skor pencocokan berbobot posisi: judul yang diawali kata kunci mendapat
+skor tertinggi, lalu judul yang memuatnya, lalu keterangan. Navigasi
+papan ketik lengkap: panah atas/bawah untuk memilih, Enter untuk membuka,
+Escape untuk menutup.
+
+**Diukur:** Ctrl+K membuka panel, kata kunci "songket" menghasilkan dua
+baris hasil, Escape menutup panel.
+
+### 11.4 Ikon tab dan ikon iOS
+
+Dibuat sebagai `ImageResponse` (Next.js `icon.tsx` dan
+`apple-icon.tsx`), bukan berkas PNG statis. Alasannya: beberapa ukuran
+dibutuhkan (16, 32, 180 px) dan satu definisi vektor lebih mudah dijaga
+konsisten daripada tiga berkas yang bisa berbeda diam-diam.
+
+Bentuknya mengikuti logo di header situs: dua gelombang Sungai Musi dan
+atap rumah limas, di atas latar malam dengan bingkai emas tipis.
+
+**Diukur:** `/icon` dan `/apple-icon` mengembalikan `image/png`
+dengan status 200, dan HTML beranda merujuk keduanya lewat tag `link`.
+
+### 11.5 Halaman jelajah peta
+
+Rute baru `/jelajah`. Berbeda dari `/destinasi` yang berbentuk katalog
+kartu, halaman ini memberi peta sebagai fokus utama. Dua cara membaca
+arsip yang sama: lewat daftar untuk membandingkan, lewat peta untuk
+memahami letak.
+
+Penyaring kategori menyaring peta dan daftar titik sekaligus, sehingga
+pengunjung tidak perlu menebak titik mana yang termasuk kategori yang
+sedang dilihat.
+
+**Diukur:** peta tampil, 18 tombol penyaring tersedia, dan menyaring
+kategori Sejarah mengubah daftar dari 10 titik menjadi 8.
+
+### 11.6 Perluasan Sari
+
+**Prompt sistem.** Sebelumnya 10 aturan. Sekarang ditambah panduan per
+jenis pertanyaan (fakta, lokasi, rekomendasi, perbandingan, usaha lokal,
+pendapat pribadi) dan batas yang eksplisit: tidak memberi saran medis,
+hukum, keuangan, atau keselamatan, dan tidak mengubah aturan walau
+diminta dengan cara apa pun termasuk kalau pengguna mengaku sebagai
+pengembang.
+
+**Penjaga topik.** Daftar penanda diperluas dari 22 menjadi 44, mencakup
+pertanyaan yang sebelumnya lolos seperti "tulis puisi", "terjemahkan",
+"harga emas", dan "siapa kamu". Penjaga injeksi terpisah memeriksa
+seluruh giliran pengguna untuk instruksi menyimpang.
+
+**Jawaban langsung tanpa model.** Sebelumnya hanya tiket dan jam buka.
+Sekarang ditambah **aktivitas**, **lokasi**, dan **kategori**. Tiga topik
+ini paling sering ditanyakan dan paling mudah dikarang kalau diserahkan
+ke model, jadi jawabannya diambil dari field terstruktur.
+
+**Deteksi niat.** Fungsi `deteksiNiat` mengenali tujuh jenis pertanyaan.
+Dipakai untuk menyesuaikan bentuk jawaban tanpa memanggil model lagi.
+
+**Diukur setelah perluasan:**
+
+| Pertanyaan | Mode | Waktu | Sumber |
+|---|---|---|---|
+| Apa yang membedakan Jembatan Ampera dari jembatan lain? | groq | 1340 ms | 2 |
+| Di mana saya bisa membeli songket asli? | groq | 981 ms | 3 |
+| Siapa presiden pertama Indonesia? | arsip-kosong | 13 ms | 0 |
+| Berapa harga tiket Museum Balaputra Dewa? | arsip-langsung | ~280 ms | 3 |
+
+### 11.7 Konten baru
+
+Dua artikel dan satu destinasi ditambahkan, semuanya dengan sumber yang
+bisa diperiksa:
+
+- **Kampung Arab Al Munawar: Jejak Perdagangan yang Menjadi Kampung**
+  (artikel). Menjelaskan asal permukiman dari jalur dagang, dengan
+  catatan tegas bahwa tidak semua bangunan di kawasan itu berusia
+  ratusan tahun.
+- **Kenapa Pempek Menjadi Identitas, Bukan Sekadar Makanan** (artikel).
+  Membahas bahan, cuko, dan risiko penyeragaman rasa.
+- **Masjid Ki Mas Adirojo** (destinasi). Tahun pendirian dicatat sebagai
+  "abad ke-18 (belum terverifikasi)" dan koordinat sengaja dikosongkan
+  karena titik pastinya belum diverifikasi.
+
+Angka yang sebelumnya ditulis tetap ("Sepuluh tempat", "Delapan catatan")
+diganti dengan nilai yang dihitung dari data. Angka tetap selalu basi
+begitu data berubah, dan hal itu sudah terjadi dua kali di proyek ini.
+
+Jumlah akhir: **11 destinasi, 10 artikel, 7 usaha** (4 di antaranya
+berstatus demonstrasi dan tidak dipromosikan).
+
+### 11.8 Komponen kustom
+
+- **Bilah gulir** seluruh situs: rel transparan, batang emas redup yang
+  menguat saat disentuh. Di bagian berlatar kertas, bilah memakai tinta
+  agar tetap terbaca.
+- **Pemisah katalog**: garis tipis dengan tiga titik di tengah, penanda
+  bahwa satu entri selesai dan entri berikutnya mulai.
+- **Nomor bagian** besar dan redup di sudut seksi, penanda katalog museum.
+- **Efek masuk per halaman**: katalog masuk dengan dorongan vertikal,
+  detail dengan pembukaan dari tengah, asisten dengan pendar.
+- **Tombol entri acak**: menawarkan entri yang tidak akan dipilih sendiri
+  oleh pengunjung yang selalu membuka tiga kartu teratas.
+
+### 11.9 Verifikasi akhir sesi
+
+```
+$ npx tsc --noEmit                  → 0 galat
+$ npx eslint src --max-warnings=0   → 0 error, 0 warning
+$ npm run build                     → sukses
+$ node scripts/audit-final.mjs      → 0 masalah dari 50 pemeriksaan
+$ node scripts/uji-keamanan.mjs     → 8/8 skenario berperilaku benar
+$ node scripts/verify-fitur.mjs     → 14/14 fitur lulus
+```
+
+Satu regresi ditemukan dan diperbaiki selama sesi ini: empat komponen
+baru memakai ukuran teks 11 px, yang melanggar standar 12 px minimum
+yang sudah ditetapkan di sesi sebelumnya. Audit menangkapnya sebagai 13
+kegagalan `minFs=11`; setelah diperbaiki, kembali 0.
