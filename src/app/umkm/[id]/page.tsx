@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Foto } from "@/components/foto";
 import { BadgeVerifikasi, BarisMeta, Tombol } from "@/components/ui";
+import { TombolBagikan } from "@/components/tombol-bagikan";
 import { DAFTAR_UMKM, cariUMKM, umkmTerkaitDari } from "@/lib/arsip";
 import { koordinatTeks } from "@/lib/format";
 
@@ -44,7 +45,7 @@ export default async function DetailUMKM({ params }: { params: Promise<{ id: str
             alt=""
             aria-hidden
             sizes="100vw"
-            className="absolute inset-0 -z-10 h-full w-full scale-110 object-cover opacity-25 blur-2xl"
+            className="absolute inset-0 -z-10 h-full w-full object-cover opacity-25 blur-2xl"
           />
           <Foto
             src={u.gambar[0].src}
@@ -186,6 +187,10 @@ export default async function DetailUMKM({ params }: { params: Promise<{ id: str
                     {u.alamat}
                   </p>
                 )}
+                <div className="mt-3 flex flex-wrap gap-2">
+                  <TombolBagikan judul={u.nama} url={`/umkm/${u.id}`} ringkas />
+                </div>
+
                 {u.mapsQuery && (
                   <div className="mt-3">
                     <Tombol

@@ -21,6 +21,7 @@ const NAV = [
   { href: "/artikel", label: "Sejarah" },
   { href: "/metodologi", label: "Sumber" },
   { href: "/tentang", label: "Tentang" },
+  { href: "/favorit", label: "Favorit" },
 ] as const;
 
 export function SiteHeader({ indeks }: { indeks: readonly ItemCari[] }) {
@@ -83,7 +84,7 @@ export function SiteHeader({ indeks }: { indeks: readonly ItemCari[] }) {
           </span>
         </Link>
 
-        <nav aria-label="Navigasi utama" className="ml-auto hidden md:block">
+        <nav aria-label="Navigasi utama" className="ml-auto hidden lg:block">
           <ul className="flex items-center gap-1">
             {NAV.map((item) => (
               <li key={item.href}>
@@ -135,7 +136,7 @@ export function SiteHeader({ indeks }: { indeks: readonly ItemCari[] }) {
             aria-expanded={buka}
             aria-controls="menu-mobile"
             aria-label={buka ? "Tutup menu" : "Buka menu"}
-            className="grid h-9 w-9 place-items-center border border-malam-5 text-terang transition-colors hover:border-terang-3 md:hidden"
+            className="grid h-9 w-9 place-items-center border border-malam-5 text-terang transition-colors hover:border-terang-3 lg:hidden"
           >
             <svg viewBox="0 0 20 20" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.5">
               {buka ? <path d="M5 5l10 10M15 5L5 15" /> : <path d="M3 6h14M3 10h14M3 14h14" />}

@@ -2,6 +2,7 @@ import type { MetadataRoute } from "next";
 import { ARTIKEL, DAFTAR_UMKM, DESTINASI } from "@/lib/arsip";
 
 const BASE = process.env.NEXT_PUBLIC_SITE_URL || "https://sriwijaya-culture.vercel.app";
+const TERAKHIR_DIPERBARUI = new Date("2026-10-28");
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const tetap = [
@@ -18,13 +19,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
   return [
     ...tetap.map((r) => ({
       url: `${BASE}${r}`,
-      lastModified: new Date("2026-10-21"),
+      lastModified: TERAKHIR_DIPERBARUI,
       changeFrequency: "monthly" as const,
       priority: r === "" ? 1 : 0.8,
     })),
     ...DESTINASI.map((d) => ({
       url: `${BASE}/destinasi/${d.id}`,
-      lastModified: new Date("2026-10-21"),
+      lastModified: TERAKHIR_DIPERBARUI,
       changeFrequency: "yearly" as const,
       priority: 0.7,
     })),
@@ -36,7 +37,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     })),
     ...DAFTAR_UMKM.map((u) => ({
       url: `${BASE}/umkm/${u.id}`,
-      lastModified: new Date("2026-10-21"),
+      lastModified: TERAKHIR_DIPERBARUI,
       changeFrequency: "yearly" as const,
       priority: 0.6,
     })),

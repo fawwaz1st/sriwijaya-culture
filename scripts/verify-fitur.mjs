@@ -129,6 +129,97 @@ const cek = (nama, lulus, detail = "") => {
   await ctx.close();
 }
 
+/* ---------- 7. Favorit lokal di peramban ---------- */
+{
+  const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+  const page = await ctx.newPage();
+  await page.goto(BASE + "/destinasi", { waitUntil: "networkidle", timeout: 60000 });
+  await page.waitForTimeout(500);
+  const tombolSimpan = page.locator("button[aria-label=\"Simpan ke favorit\"]").first();
+  const adaTombol = await tombolSimpan.count();
+  cek("katalog punya tombol simpan", adaTombol === 1, "tombol " + adaTombol);
+  if (adaTombol) {
+    await tombolSimpan.click();
+    const tersimpan = await page.evaluate(() => {
+      try { return window.localStorage.getItem("sriwijaya-favorit-v1"); } catch { return null; }
+    });
+    cek("favorit tersimpan di peramban", Boolean(tersimpan) && String(tersimpan).includes("destinasi"), String(tersimpan).slice(0, 80));
+    await page.goto(BASE + "/favorit", { waitUntil: "networkidle", timeout: 60000 });
+    await page.waitForTimeout(500);
+    const tautanFavorit = await page.locator('a[href^="/destinasi/"]').count();
+    cek("halaman favorit menampilkan entri tersimpan", tautanFavorit > 0, "tautan " + tautanFavorit);
+  }
+  await ctx.close();
+}
+
+/* ---------- 8. Bagikan tautan tanpa layanan pihak ketiga ---------- */
+{
+  const ctx = await browser.newContext({ permissions: ["clipboard-read", "clipboard-write"], viewport: { width: 1280, height: 900 } });
+  const page = await ctx.newPage();
+  await page.goto(BASE + "/destinasi/jembatan-ampera", { waitUntil: "networkidle", timeout: 60000 });
+  const shareAda = await page.evaluate(() => typeof navigator.share === "function");
+  if (shareAda) {
+    cek("bagikan tersedia", true, "Web Share API tersedia di peramban");
+  } else {
+    await page.locator("button[aria-label=\"Bagikan tautan halaman ini\"]").first().click();
+    await page.waitForTimeout(400);
+    const disalin = await page.getByText("Tautan disalin").count();
+    cek("bagikan menyalin tautan saat share API tidak ada", disalin > 0, "status " + disalin);
+  }
+  await ctx.close();
+}
+
+/* ---------- 9. Data kota nyata ---------- */
+{
+  const res = await fetch(BASE + "/api/cuaca");
+  const data = await res.json();
+  cek("API cuaca aktif", res.status === 200 && typeof data.temperatur === "number", "suhu " + data.temperatur);
+
+  const resGempa = await fetch(BASE + "/api/gempa");
+  const dataGempa = await resGempa.json();
+  cek("API gempa aktif", resGempa.status === 200 && Boolean(dataGempa.magnitudo), "M " + dataGempa.magnitudo);
+
+  const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+  const page = await ctx.newPage();
+  await page.goto(BASE + "/", { waitUntil: "networkidle", timeout: 60000 });
+  const cuacaSiap = await page
+    .waitForFunction(() => {
+      const teks = document.body.innerText;
+      return /cuaca palembang saat ini/i.test(teks) && (/Sumber: Open-Meteo/.test(teks) || /cuaca belum tersedia/i.test(teks));
+    }, { timeout: 15000 })
+    .then(() => true)
+    .catch(() => false);
+  cek("widget cuaca menampilkan sumber atau pesan gagal", cuacaSiap);
+
+  await page.goto(BASE + "/jelajah", { waitUntil: "networkidle", timeout: 60000 });
+  const gempaSiap = await page
+    .waitForFunction(() => {
+      const teks = document.body.innerText;
+      return /gempa terkini \(bmkg\)/i.test(teks) && (/Sumber: BMKG/.test(teks) || /data gempa belum tersedia/i.test(teks));
+    }, { timeout: 15000 })
+    .then(() => true)
+    .catch(() => false);
+  cek("widget gempa menampilkan sumber atau pesan gagal", gempaSiap);
+  await ctx.close();
+}
+
+/* ---------- 10. Jarak dari posisi pengguna ---------- */
+{
+  const ctx = await browser.newContext({
+    permissions: ["geolocation"],
+    geolocation: { latitude: -2.99, longitude: 104.76 },
+    viewport: { width: 1280, height: 900 },
+  });
+  const page = await ctx.newPage();
+  await page.goto(BASE + "/destinasi/jembatan-ampera", { waitUntil: "networkidle", timeout: 60000 });
+  await page.locator("button:has-text(\"Hitung jarak\")").first().click();
+  const jarakSiap = await page
+    .waitForFunction(() => /jalan kaki/i.test(document.body.innerText), undefined, { timeout: 15000 })
+    .then(() => true)
+    .catch(() => false);
+  cek("jarak tampil setelah izin lokasi diberikan", jarakSiap);
+  await ctx.close();
+}
 console.log(`\n=== TOTAL GAGAL: ${gagal} ===`);
 await browser.close();
 process.exit(gagal === 0 ? 0 : 1);

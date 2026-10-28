@@ -8,6 +8,9 @@ import { DESTINASI, artikelUntukDestinasi, cariDestinasi, destinasiTerkait } fro
 import { koordinatTeks, tanggalPanjang } from "@/lib/format";
 import { potret } from "@/lib/foto";
 import { PetaDestinasi } from "@/components/peta";
+import { JarakDariSaya } from "@/components/jarak-dari-saya";
+import { TombolSimpan } from "@/components/tombol-simpan";
+import { TombolBagikan } from "@/components/tombol-bagikan";
 
 export function generateStaticParams() {
   return DESTINASI.map((d) => ({ id: d.id }));
@@ -283,6 +286,10 @@ export default async function DetailDestinasi({ params }: { params: Promise<{ id
             </div>
 
             <aside className="min-w-0 space-y-8 lg:sticky lg:top-20 lg:self-start">
+              <div className="flex items-center justify-between gap-2">
+                <TombolBagikan judul={d.nama} url={`/destinasi/${d.id}`} ringkas />
+                <TombolSimpan id={d.id} jenis="destinasi" nama={d.nama} href={`/destinasi/${d.id}`} lat="kertas" />
+              </div>
               <div>
                 <p className="meta-emas">Data tercatat</p>
                 <dl className="mt-2">
@@ -317,6 +324,8 @@ export default async function DetailDestinasi({ params }: { params: Promise<{ id
               </div>
 
               {d.koordinat && <PetaDestinasi destinasi={d} />}
+
+              {d.koordinat && <JarakDariSaya lat={d.koordinat.lat} lng={d.koordinat.lng} />}
             </aside>
           </div>
         </div>

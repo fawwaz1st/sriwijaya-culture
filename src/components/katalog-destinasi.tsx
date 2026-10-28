@@ -7,6 +7,7 @@ import { Foto } from "@/components/foto";
 import { KeadaanKosong, Tombol } from "@/components/ui";
 import { warnaKategori } from "@/lib/warna";
 import { cn } from "@/lib/cn";
+import { TombolSimpan } from "@/components/tombol-simpan";
 import type { Destinasi, KategoriDestinasi } from "@/lib/types";
 
 /**
@@ -125,7 +126,15 @@ export function KatalogDestinasi({
         <ul className="mt-8 grid grid-cols-2 items-stretch gap-x-5 gap-y-10 sm:gap-x-6 lg:grid-cols-3">
           {hasil.map((d, i) => {
             return (
-              <li key={d.id} className="kartu-masuk h-full">
+              <li key={d.id} className="kartu-masuk relative h-full">
+                <TombolSimpan
+                  id={d.id}
+                  jenis="destinasi"
+                  nama={d.nama}
+                  href={`/destinasi/${d.id}`}
+                  ringkas
+                  className="absolute right-4 top-4 z-10"
+                />
                 <Link
                   href={`/destinasi/${d.id}`}
                   className="group kartu flex h-full flex-col p-2.5"

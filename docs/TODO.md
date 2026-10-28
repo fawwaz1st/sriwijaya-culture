@@ -1,6 +1,6 @@
 # TODO, Sriwijaya Culture
 
-Status per 23 Oktober 2026. Dokumen ini mencatat apa yang sudah selesai,
+Status per 28 Oktober 2026. Dokumen ini mencatat apa yang sudah selesai,
 apa yang sengaja tidak dikerjakan, dan apa yang tersisa. Diperbarui
 setiap kali ada perubahan yang mengubah keadaan proyek.
 
@@ -52,6 +52,14 @@ ditunda dengan alasan.
 - [x] Tautan "destinasi lain" menyusut dengan benar di 320px
 
 ### Fitur baru sesi ekspansi
+
+- [x] **Data nyata langsung**: cuaca Palembang dari Open-Meteo lewat `/api/cuaca`, diulang tiap 10 menit
+- [x] **Gempa terkini**: BMKG `autogempa` lewat `/api/gempa`, diulang tiap 5 menit
+- [x] **Favorit lokal**: halaman `/favorit` di peramban, `useSyncExternalStore`, tanpa server, tanpa akun
+- [x] **Bug favorit diperbaiki**: cache snapshot memperlakukan `null` dan string kosong sama, jadi tidak lagi memicu React error 185 di `/favorit`
+- [x] **Bagikan tautan**: Web Share API, fallback salin clipboard, tanpa layanan pihak ketiga
+- [x] **Jarak dari posisi pengguna**: haversine + izin geolokasi, tanpa jarak perkiraan saat izin ditolak
+- [x] **Fakta Palembang**: penduduk, luas, Kedukan Bukit 683, LRT pertama 2018, dengan sumber Wikipedia
 
 - [x] **Tirai pembuka** sekali per sesi, dihormati `prefers-reduced-motion`, tidak pernah menangkap klik
 - [x] **Pencarian Ctrl+K** lintas 28 entri, navigasi papan ketik penuh, indeks dikirim dari server
@@ -110,6 +118,8 @@ ditunda dengan alasan.
 - [x] Lima variabel lingkungan terpasang di Vercel (`GROQ_API_KEY`, tiga model, site URL)
 - [x] Terverifikasi di produksi: `mode=groq`, jawaban 1,3-2,2 detik dengan sitasi
 - [x] Injeksi `system` di produksi diabaikan; pertanyaan luar topik ditolak 12-26 ms
+- [x] `verify-fitur.mjs http://127.0.0.1:3100` → 23 pemeriksaan, **0 gagal**
+- [x] `Permissions-Policy` diperbaiki menjadi `geolocation=(self)` sehingga fitur jarak tidak diblokir peramban
 - [x] `scan-secrets.mjs` bersih: tidak ada kunci di berkas kerja maupun riwayat commit
 
 
@@ -160,7 +170,13 @@ ditunda dengan alasan.
 - [x] `tsc --noEmit` bersih
 - [x] `eslint --max-warnings=0` bersih
 - [x] `npm run build` sukses
-- [x] `audit-final.mjs` → **0 masalah dari 50 pemeriksaan**
+- [x] `audit-final.mjs` → **0 masalah dari 50 pemeriksaan** pada 5 lebar (4k, desktop, tablet, mobile, mobile-xs)
+- [x] `qa.mjs http://127.0.0.1:3100` → 36 kombinasi 12 rute dan 3 lebar, **0 temuan**
+- [x] `check-env.mjs http://127.0.0.1:3100` → 13/13 lulus
+- [x] `uji-keamanan.mjs http://127.0.0.1:3100` → delapan skenario asisten berperilaku benar
+- [x] `verify-fitur.mjs http://127.0.0.1:3100` → 23 pemeriksaan, **0 gagal**
+- [x] `Permissions-Policy` diperbaiki menjadi `geolocation=(self)` sehingga fitur jarak tidak diblokir peramban
+- [x] `scan-secrets.mjs` bersih
 - [x] `uji-keamanan.mjs` → 8/8 skenario berperilaku benar
 - [x] `uji-asisten.mjs` → jawaban model 1,3 detik dengan sitasi sah
 
@@ -200,6 +216,7 @@ ditunda dengan alasan.
 
 ## Tersisa (kalau ada waktu)
 
+- [x] Halaman favorit dikecualikan dari perayap lewat robots dan sitemap
 - [ ] Nonce-based CSP lewat middleware, hapus `unsafe-inline` dari `script-src`
 - [ ] Rate limit berbasis KV/Redis agar bertahan lintas instans di Vercel
 - [ ] Lightbox galeri foto dengan navigasi keyboard

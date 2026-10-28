@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { JelajahPeta } from "@/components/jelajah-peta";
+import { CuacaPalembang } from "@/components/cuaca-palembang";
+import { GempaTerkini } from "@/components/gempa-terkini";
 import { DESTINASI, KATEGORI_DESTINASI, statistikArsip } from "@/lib/arsip";
 
 export const metadata: Metadata = {
@@ -36,6 +38,11 @@ export default function HalamanJelajah() {
       <div className="mt-10">
         <JelajahPeta daftar={DESTINASI} kategori={KATEGORI_DESTINASI} />
       </div>
+
+      <section className="mt-12 grid gap-4 sm:grid-cols-2">
+        <CuacaPalembang />
+        <GempaTerkini />
+      </section>
 
       <section className="mt-12 border-t border-garis-malam pt-8">
         <div className="grid gap-6 sm:grid-cols-3">

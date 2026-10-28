@@ -171,7 +171,7 @@ export default function HalamanMetodologi() {
               Peta: data © OpenStreetMap contributors (ODbL).
             </p>
             <p className="mt-4 border-t border-garis-malam pt-3 font-mono text-[0.75rem] uppercase tracking-[0.1em] text-terang-3">
-              Data diperiksa terakhir 20 Oktober 2026
+              Data diperiksa terakhir 28 Oktober 2026
             </p>
           </div>
         </div>
@@ -207,6 +207,33 @@ export default function HalamanMetodologi() {
             </li>
           ))}
         </ol>
+      </section>
+
+      <section className="mt-14">
+        <p className="meta-emas">Data nyata, diperbarui otomatis</p>
+        <h2 className="display mt-2 max-w-[22ch] text-[clamp(1.9rem,4vw,3rem)] text-terang">
+          Angka hidup, bukan gambar mati.
+        </h2>
+        <p className="mt-3 max-w-[60ch] text-[0.875rem] leading-relaxed text-terang-2">
+          Halaman jelajah dan beranda sekarang menampilkan cuaca dan gempa
+          terkini dari sumber resmi (Open-Meteo dan BMKG). Keduanya ditarik
+          langsung lewat API publik, tanpa kunci berbayar, dan diperbarui
+          otomatis setiap beberapa menit.
+        </p>
+        <ul className="mt-6 grid gap-4 sm:grid-cols-2">
+          <li>
+            <p className="meta-emas">Cuaca</p>
+            <p className="mt-1.5 text-[0.8125rem] leading-relaxed text-terang-2">
+              Sumber: Open-Meteo, tanpa kunci. Diperbarui setiap 10 menit.
+            </p>
+          </li>
+          <li>
+            <p className="meta-emas">Gempa</p>
+            <p className="mt-1.5 text-[0.8125rem] leading-relaxed text-terang-2">
+              Sumber: BMKG autogempa, dimuat ulang setiap 5 menit.
+            </p>
+          </li>
+        </ul>
       </section>
 
       <p className="mt-10 border-t border-garis-malam pt-5 text-[0.8125rem] leading-relaxed text-terang-2">

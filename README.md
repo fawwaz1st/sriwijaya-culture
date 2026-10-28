@@ -10,12 +10,12 @@ Dibuat oleh tim **Koding Seadanya** untuk ITFEST 2026, tema
 
 ## Apa yang situs ini lakukan
 
-Sepuluh destinasi, tiga usaha lokal terverifikasi, delapan catatan
-sejarah, dan sembilan belas tonggak waktu. Setiap klaim menunjuk
+Sebelas destinasi, tiga usaha publik yang sudah dicek, sepuluh
+catatan sejarah, dan sembilan belas tonggak waktu. Setiap klaim menunjuk
 sumber, dan klaim yang belum pasti ditandai, bukan ditulis sebagai
 fakta.
 
-Tiga hal yang membedakannya dari direktori wisata biasa:
+Lima hal yang membedakannya dari direktori wisata biasa:
 
 1. **Peta yang benar-benar bisa dipakai.** Embed Google Maps asli
    dengan dua lapisan (satelit dan jalan), sehingga pengunjung bisa
@@ -28,6 +28,12 @@ Tiga hal yang membedakannya dari direktori wisata biasa:
    arsip, menyebut nomor rujukan yang bisa diklik, dan menolak
    pertanyaan di luar topik. Penolakan itu ditegakkan oleh kode, bukan
    hanya oleh instruksi ke model.
+4. **Data kota yang hidup.** Cuaca dan gempa terkini ditarik dari
+   Open-Meteo dan BMKG lewat rute API. Kalau sumber gagal, situs
+   mengatakan belum tersedia, bukan menampilkan angka perkiraan.
+5. **Favorit dan jarak nyata.** Pengunjung bisa menyimpan destinasi di
+   peramban ini dan menghitung jarak dari posisinya bila memberi izin.
+   Tidak ada akun, tidak ada data pribadi yang dikirim.
 
 ---
 
@@ -64,7 +70,7 @@ pernah menampilkan jawaban kosong.
 
 | Lapisan | Pilihan | Alasan |
 |---|---|---|
-| Framework | Next.js 16.4 (App Router) | Server component untuk katalog, rute dinamis untuk 25 rekaman, prerender 38 halaman |
+| Framework | Next.js 16.4 (App Router) | Server component untuk katalog, rute dinamis untuk rekaman arsip, prerender 48 halaman |
 | Bahasa | TypeScript 5.9 | Skema data ditegakkan di satu tempat, kesalahan tertangkap saat build |
 | Styling | Tailwind CSS 4.3 | Token di CSS, kontras dihitung bukan dikira-kira |
 | AI | Vercel AI SDK 7 | Streaming jawaban, rantai model berlapis lewat env |
@@ -81,11 +87,14 @@ src/
 ├── app/
 │   ├── layout.tsx              Font, metadata, header, footer
 │   ├── page.tsx                Beranda
+│   ├── api/cuaca/route.ts    Cuaca Palembang dari Open-Meteo
+│   ├── api/gempa/route.ts    Gempa terkini dari BMKG
 │   ├── globals.css             Token warna, tipe, utilitas arsip
 │   ├── destinasi/              Katalog + detail (?kategori=)
 │   ├── umkm/                   Direktori + profil usaha
 │   ├── artikel/                Katalog + artikel panjang
 │   ├── asisten/                Halaman Asisten Sari
+│   ├── favorit/                Daftar simpanan lokal pengunjung
 │   ├── metodologi/             Aturan data, tingkat verifikasi, daftar sumber
 │   ├── tentang/                Tim dan teknologi
 │   ├── api/asisten/route.ts    Rantai 3 tingkat penyedia model
@@ -126,6 +135,7 @@ npm run lint         # ESLint
 npm run typecheck    # tsc --noEmit
 node scripts/check-env.mjs        # cek kesiapan deploy
 node scripts/verify-visual.mjs    # screenshot 11 rute x 3 viewport + cek overflow
+node scripts/verify-fitur.mjs      # uji tirai, pencarian, favorit, API data nyata, jarak
 ```
 
 ---
@@ -249,7 +259,7 @@ Foto dari Wikimedia Commons dengan lisensi Creative Commons. Kredit per
 berkas tercantum di halaman detail masing-masing dan di `/metodologi`.
 Geometri peta dari OpenStreetMap contributors (ODbL).
 
-Data diperiksa terakhir 20 Oktober 2026.
+Data diperiksa terakhir 28 Oktober 2026.
 
 ---
 

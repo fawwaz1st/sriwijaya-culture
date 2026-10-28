@@ -4,7 +4,10 @@ const BASE = process.env.NEXT_PUBLIC_SITE_URL || "https://sriwijaya-culture.verc
 
 export default function robots(): MetadataRoute.Robots {
   return {
-    rules: [{ userAgent: "*", allow: "/", disallow: ["/api/"] }],
+    // Favorit hanya hidup di peramban pengunjung, jadi tidak berguna bagi
+    // perayap. API memegang data pihak ketiga, bukan halaman yang layak
+    // diindeks.
+    rules: [{ userAgent: "*", allow: "/", disallow: ["/api/", "/favorit"] }],
     sitemap: `${BASE}/sitemap.xml`,
   };
 }

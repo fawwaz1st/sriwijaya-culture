@@ -124,6 +124,39 @@ export default function HalamanTentang() {
       </section>
 
       <section className="mt-16">
+        <p className="meta-emas">Palembang dalam angka</p>
+        <h2 className="display mt-2 max-w-[22ch] text-[clamp(1.9rem,4vw,3rem)] text-terang">
+          Fakta yang bisa diperiksa, bukan hiasan.
+        </h2>
+        <dl className="mt-8 grid gap-x-8 gap-y-4 sm:grid-cols-2 lg:grid-cols-4">
+          {[
+            { k: "Penduduk", v: "1.829.745 jiwa", s: "Perkiraan pertengahan 2025 (Wikipedia, data BPS)" },
+            { k: "Luas", v: "352,51 km²", s: "Wikipedia bahasa Indonesia, BPS 2024" },
+            { k: "Kota tertua", v: "Sejak 683 M", s: "Prasasti Kedukan Bukit, 16 Juni 683" },
+            { k: "LRT pertama", v: "Juli 2018", s: "Wikipedia, Palembang" },
+          ].map((x) => (
+            <div key={x.k} className="border-t border-garis-malam pt-4">
+              <dt className="meta">{x.k}</dt>
+              <dd className="tabular mt-1 font-display text-2xl leading-none text-terang">{x.v}</dd>
+              <dd className="mt-2 text-[0.75rem] leading-snug text-terang-3">{x.s}</dd>
+            </div>
+          ))}
+        </dl>
+        <p className="mt-4 text-[0.75rem] leading-relaxed text-terang-3">
+          Sumber:{" "}
+          <a href="https://id.wikipedia.org/wiki/Kota_Palembang" target="_blank" rel="noopener noreferrer" className="tautan sentuh inline-flex min-h-8 items-center text-terang-2">
+            Wikipedia bahasa Indonesia, Kota Palembang
+          </a>{" "}
+          dan{" "}
+          <a href="https://en.wikipedia.org/wiki/Palembang" target="_blank" rel="noopener noreferrer" className="tautan sentuh inline-flex min-h-8 items-center text-terang-2">
+            Wikipedia, Palembang
+          </a>
+          . Angka penduduk berbeda antar sumber karena tahun pengukuran
+          berbeda; keduanya dicatat, bukan dipilih.
+        </p>
+      </section>
+
+      <section className="mt-16">
         <p className="meta-emas">Teknologi</p>
         <h2 className="display mt-2 max-w-[22ch] text-[clamp(1.9rem,4vw,3rem)] text-terang">
           Dibangun dengan apa.
@@ -184,7 +217,7 @@ export default function HalamanTentang() {
       </section>
 
       <p className="mt-10 text-[0.8125rem] leading-relaxed text-terang-3">
-        Data diperiksa terakhir 20 Oktober 2026. Kode sumber tersedia di repositori
+        Data diperiksa terakhir 28 Oktober 2026. Kode sumber tersedia di repositori
         publik. Untuk koreksi data, sertakan tautan sumber agar bisa kami periksa.
       </p>
     </div>

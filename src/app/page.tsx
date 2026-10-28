@@ -3,6 +3,7 @@ import { JsonLdSitus } from "@/components/json-ld";
 import { Foto } from "@/components/foto";
 import { Peta } from "@/components/peta";
 import { TimelineSejarah } from "@/components/timeline";
+import { CuacaPalembang } from "@/components/cuaca-palembang";
 import { ARTIKEL, DESTINASI, UMKM_PUBLIK, statistikArsip } from "@/lib/arsip";
 
 /**
@@ -113,6 +114,23 @@ export default function Beranda() {
               </div>
             ))}
           </dl>
+        </div>
+      </section>
+
+      {/* ================================================================
+          KEADAAN KOTA: cuaca nyata, bukan ilustrasi.
+          ================================================================ */}
+      <section aria-label="Keadaan Palembang hari ini" className="border-y border-garis-malam bg-malam-2 py-5">
+        <div className="mx-auto flex max-w-[1760px] flex-col gap-3 px-5 sm:flex-row sm:items-center sm:justify-between sm:px-8 lg:px-12">
+          <div className="max-w-[46ch]">
+            <p className="meta-emas">Cuaca hari ini</p>
+            <p className="mt-1 text-[0.8125rem] leading-relaxed text-terang-2">
+              Angka di bawah ini diambil langsung dari stasiun meteorologi
+              terdekat, bukan perkiraan. Cuaca berubah, jadi angkanya ikut
+              berubah saat halaman dibuka.
+            </p>
+          </div>
+          <CuacaPalembang />
         </div>
       </section>
 

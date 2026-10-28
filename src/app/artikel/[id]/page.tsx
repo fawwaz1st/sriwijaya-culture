@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Foto } from "@/components/foto";
 import { Tombol } from "@/components/ui";
+import { TombolBagikan } from "@/components/tombol-bagikan";
 import { ARTIKEL, artikelTerkait, cariArtikel, cariDestinasi } from "@/lib/arsip";
 import { tanggalPanjang } from "@/lib/format";
 
@@ -69,7 +70,7 @@ export default async function DetailArtikel({ params }: { params: Promise<{ id: 
             alt=""
             aria-hidden
             sizes="100vw"
-            className="absolute inset-0 -z-10 h-full w-full scale-110 object-cover opacity-30 blur-2xl"
+            className="absolute inset-0 -z-10 h-full w-full object-cover opacity-30 blur-2xl"
           />
           <Foto
             src={a.gambar}
@@ -183,6 +184,10 @@ export default async function DetailArtikel({ params }: { params: Promise<{ id: 
                   ))}
                 </ol>
               </section>
+
+              <div className="mt-6 flex flex-wrap gap-2">
+                <TombolBagikan judul={a.judul} url={`/artikel/${a.id}`} />
+              </div>
 
               <div className="mt-10 flex flex-wrap gap-2 border-t border-garis-kertas pt-6">
                 <Tombol href="/destinasi" varian="gelap" panah>

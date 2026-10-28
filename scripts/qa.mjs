@@ -17,6 +17,8 @@ const BASE = process.argv[2] || "http://localhost:3100";
 
 const RUTE = [
   "/",
+  "/jelajah",
+  "/favorit",
   "/destinasi",
   "/destinasi/jembatan-ampera",
   "/umkm",
