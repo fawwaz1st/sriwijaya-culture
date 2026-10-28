@@ -126,7 +126,7 @@ export function Peta({
         )}
       </div>
 
-      <div className="grid lg:grid-cols-[minmax(0,1fr)_240px]">
+      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_240px]">
         <div className="relative border-b border-garis-malam lg:border-b-0 lg:border-r">
           {dimuat ? (
             <iframe
@@ -180,7 +180,7 @@ export function Peta({
 
         {/* Indeks: satu baris per destinasi. Sebelumnya baris membengkak
             karena kolom terlalu sempit untuk dua baris teks. */}
-        <div className="flex min-h-0 flex-col bg-malam-2">
+        <div className="flex min-h-0 min-w-0 flex-col bg-malam-2">
           <p className="meta border-b border-garis-malam px-3 py-2">
             {String(denganKoordinat.length).padStart(2, "0")} titik
           </p>

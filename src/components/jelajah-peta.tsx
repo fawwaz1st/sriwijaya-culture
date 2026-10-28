@@ -105,7 +105,7 @@ export function JelajahPeta({
         </div>
       </div>
 
-      <div className="grid lg:grid-cols-[minmax(0,1fr)_20rem]">
+      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_20rem]">
         <div className="relative min-h-[24rem] border-b border-garis-malam bg-malam-3 lg:min-h-[34rem] lg:border-b-0 lg:border-r">
           <iframe
             key={src}
@@ -119,7 +119,7 @@ export function JelajahPeta({
           />
         </div>
 
-        <div className="flex min-h-0 flex-col bg-malam-2">
+        <div className="flex min-h-0 min-w-0 flex-col bg-malam-2">
           <p className="meta border-b border-garis-malam px-3 py-2">
             {String(tersaring.length).padStart(2, "0")} titik
           </p>

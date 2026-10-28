@@ -24,6 +24,28 @@ const NAV = [
   { href: "/favorit", label: "Favorit" },
 ] as const;
 
+/** Ikon sederhana untuk menu seluler. Garis tipis, satu bahasa visual. */
+const IKON_NAV: Record<string, string> = {
+  "/": "M3 10.5 10 4l7 6.5V16a1 1 0 0 1-1 1h-4v-5H9v5H4a1 1 0 0 1-1-1Z",
+  "/destinasi": "M10 17s6-5.2 6-9.2A6 6 0 1 0 4 7.8C4 11.8 10 17 10 17Z",
+  "/jelajah": "M10 2a8 8 0 1 0 0 16 8 8 0 0 0 0-16Zm3.5 4.5-2.2 4.7-4.7 2.2 2.2-4.7 4.7-2.2Z",
+  "/umkm": "M4 7h12l-1 10H5L4 7Zm2 0V5a4 4 0 0 1 8 0v2",
+  "/artikel": "M4 4h6a2 2 0 0 1 2 2v12a4 4 0 0 0-4-4H4V4Zm12 0h-4a2 2 0 0 0-2 2v12a4 4 0 0 1 4-4h2V4Z",
+  "/metodologi": "M9 15a6 6 0 1 1 0-12 6 6 0 0 1 0 12Zm4.5-1.5L17 17",
+  "/tentang": "M10 3a7 7 0 1 0 0 14 7 7 0 0 0 0-14Zm0 4v5m0 3h.01",
+  "/favorit": "M10 16s-6-3.8-6-7.2A3.2 3.2 0 0 1 10 7a3.2 3.2 0 0 1 6 1.8C16 12.2 10 16 10 16Z",
+};
+
+function IkonNav({ href }: { href: string }) {
+  const d = IKON_NAV[href];
+  if (!d) return null;
+  return (
+    <svg viewBox="0 0 20 20" className="h-5 w-5 flex-none" fill="none" stroke="currentColor" strokeWidth="1.4" aria-hidden="true">
+      <path d={d} strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
 export function SiteHeader({ indeks }: { indeks: readonly ItemCari[] }) {
   const pathname = usePathname();
   const [buka, setBuka] = useState(false);
@@ -60,7 +82,7 @@ export function SiteHeader({ indeks }: { indeks: readonly ItemCari[] }) {
       )}
     >
       <div className="mx-auto flex h-16 max-w-[1760px] items-center gap-3 px-5 sm:px-8 lg:px-12">
-        <Link href="/" className="group flex items-center gap-2.5" aria-label="Sriwijaya Culture">
+        <Link href="/" className="group flex min-w-0 items-center gap-2.5" aria-label="Sriwijaya Culture">
           <svg viewBox="0 0 28 28" className="h-6 w-6 flex-none" aria-hidden="true">
             <path
               d="M2 17c4 0 4-3.2 8-3.2s4 3.2 8 3.2 4-2.4 8-2.4"
@@ -79,12 +101,12 @@ export function SiteHeader({ indeks }: { indeks: readonly ItemCari[] }) {
             />
             <path d="M14 4v8M10 7.5l4-3.5 4 3.5" fill="none" stroke="#f2efe8" strokeWidth="1.2" strokeLinecap="round" />
           </svg>
-          <span className="font-display text-[1.0625rem] font-medium tracking-[-0.02em] text-terang">
+          <span className="truncate font-display text-[1.0625rem] font-medium tracking-[-0.02em] text-terang">
             Sriwijaya Culture
           </span>
         </Link>
 
-        <nav aria-label="Navigasi utama" className="ml-auto hidden lg:block">
+        <nav aria-label="Navigasi utama" className="hidden lg:flex lg:flex-1 lg:justify-center">
           <ul className="flex items-center gap-1">
             {NAV.map((item) => (
               <li key={item.href}>
@@ -114,7 +136,7 @@ export function SiteHeader({ indeks }: { indeks: readonly ItemCari[] }) {
           </ul>
         </nav>
 
-        <div className="ml-auto flex items-center gap-2 md:ml-2">
+        <div className="ml-auto flex shrink-0 items-center gap-2 lg:ml-2">
           <CariCepat indeks={indeks} />
 
           <Link
@@ -148,7 +170,7 @@ export function SiteHeader({ indeks }: { indeks: readonly ItemCari[] }) {
       {buka && (
         <div
           id="menu-mobile"
-          className="fixed inset-x-0 bottom-0 top-16 z-40 overflow-y-auto bg-malam md:hidden"
+          className="fixed inset-x-0 bottom-0 top-16 z-40 overflow-y-auto bg-malam lg:hidden"
         >
           <nav aria-label="Navigasi seluler" className="px-5 py-8">
             <ul>
@@ -158,15 +180,16 @@ export function SiteHeader({ indeks }: { indeks: readonly ItemCari[] }) {
                     href={item.href}
                     onClick={() => setBuka(false)}
                     aria-current={aktif(item.href) ? "page" : undefined}
-                    className="flex items-baseline justify-between gap-4 py-4"
+                    className="flex items-center gap-4 py-4"
                   >
                     <span
                       className={cn(
-                        "font-display text-[1.75rem] leading-none",
+                        "flex items-center gap-4",
                         aktif(item.href) ? "text-emas" : "text-terang",
                       )}
                     >
-                      {item.label}
+                      <IkonNav href={item.href} />
+                      <span className="font-display text-[1.75rem] leading-none">{item.label}</span>
                     </span>
                     {aktif(item.href) && (
                       <span className="h-1.5 w-1.5 flex-none rounded-full bg-emas" aria-hidden="true" />

@@ -70,6 +70,25 @@ const cek = (nama, lulus, detail = "") => {
   await ctx.close();
 }
 
+/* ---------- 2b. Hamburger tetap jalan di tablet ---------- */
+{
+  for (const width of [768, 820, 1023]) {
+    const ctx = await browser.newContext({ viewport: { width, height: 1000 } });
+    const page = await ctx.newPage();
+    await page.goto(BASE + "/", { waitUntil: "networkidle", timeout: 60000 });
+    await page.waitForTimeout(500);
+    const tombolMenu = await page.locator('button[aria-label=\"Buka menu\"]').count();
+    cek("tombol menu tampil di lebar " + width, tombolMenu === 1, "tombol " + tombolMenu);
+    if (tombolMenu) {
+      await page.locator('button[aria-label=\"Buka menu\"]').click();
+      const menu = await page.locator('#menu-mobile').count();
+      cek("menu tablet terbuka di " + width, menu === 1, "menu " + menu);
+      const tautan = await page.locator('#menu-mobile a[href=\"/destinasi\"]').count();
+      cek("menu tablet punya tautan di " + width, tautan === 1, "tautan " + tautan);
+    }
+    await ctx.close();
+  }
+}
 /* ---------- 3. Ikon tab ---------- */
 {
   const res = await fetch(BASE + "/icon");

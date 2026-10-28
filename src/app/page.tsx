@@ -62,8 +62,7 @@ export default function Beranda() {
 
           <div className="mt-6 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
             <p className="baca-malam max-w-[38ch] text-[0.9375rem]">
-              Mari jelajahi Palembang: tempat menarik, usaha lokal, dan
-              kisahnya. Kami tulis apa yang kami tahu.
+              Tempat, usaha, kisah. Semua bersumber.
             </p>
 
             <div className="flex flex-wrap items-center gap-2.5 sm:gap-3">

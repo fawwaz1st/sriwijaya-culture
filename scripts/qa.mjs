@@ -31,9 +31,14 @@ const RUTE = [
 ];
 
 const LEBAR = [
+  { nama: "320", w: 320, h: 640 },
   { nama: "390", w: 390, h: 844 },
+  { nama: "414", w: 414, h: 896 },
   { nama: "768", w: 768, h: 1024 },
+  { nama: "820", w: 820, h: 1180 },
+  { nama: "1024", w: 1024, h: 768 },
   { nama: "1440", w: 1440, h: 900 },
+  { nama: "1920", w: 1920, h: 1080 },
 ];
 
 /** Kontras WCAG dari dua warna rgb. */

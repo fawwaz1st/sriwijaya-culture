@@ -49,15 +49,15 @@ export default function HalamanJelajah() {
           {[
             {
               k: "Kenapa peta, bukan daftar",
-              v: "Palembang tumbuh di dua sisi Sungai Musi. Letak menjelaskan banyak hal: mengapa jembatan jadi penting, mengapa kampung tua ada di tepi air, mengapa pusat kota bergeser ke utara.",
+              v: "Sungai Musi menjelaskan letak jembatan, kampung tua, dan pusat kota.",
             },
             {
               k: "Apa arti titiknya",
-              v: "Setiap titik berasal dari koordinat yang kami verifikasi. Tempat yang koordinatnya belum pasti tidak digambar, karena menebak posisi lebih buruk daripada tidak menampilkan apa pun.",
+              v: "Titik hanya dari koordinat terverifikasi. Tanpa koordinat, tidak ditebak.",
             },
             {
               k: "Cara memakainya",
-              v: "Pilih kategori untuk menyaring. Klik titik atau namanya di daftar samping. Peta bisa di-zoom dan digeser seperti peta biasa, termasuk melihat bangunan di sekitar.",
+              v: "Pilih kategori, klik titik, lalu buka halamannya.",
             },
           ].map((x) => (
             <div key={x.k}>
