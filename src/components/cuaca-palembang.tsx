@@ -65,7 +65,6 @@ export function CuacaPalembang({ ringkas = false }: { ringkas?: boolean }) {
       kendali.current?.abort();
     };
     // ambil bersifat stabil dalam komponen ini (tanpa dependensi state)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const r: RingkasanCuaca | null = data ? ringkasanKode(data.kode) : null;

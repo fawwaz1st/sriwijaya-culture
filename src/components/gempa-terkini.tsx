@@ -49,7 +49,6 @@ export function GempaTerkini({ ringkas = false }: { ringkas?: boolean }) {
       window.clearInterval(id);
       kendali.current?.abort();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (ringkas) {
