@@ -58,6 +58,26 @@ export function SiteHeader({ indeks }: { indeks: readonly ItemCari[] }) {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  /*
+   * Tutup menu saat layar melebar melewati breakpoint lg.
+   *
+   * Tanpa ini, pengunjung yang membuka menu di ponsel lalu memutar
+   * perangkat atau memperbesar jendela akan melihat tombol "tutup" di
+   * header desktop tanpa panel apa pun, dan body tetap terkunci
+   * (overflow: hidden) sehingga halaman tidak bisa digulir. Panel menu
+   * sendiri memang disembunyikan `lg:hidden`, jadi state harus ikut
+   * ditutup.
+   */
+  useEffect(() => {
+    const kueri = window.matchMedia("(min-width: 1024px)");
+    const onUbah = () => {
+      if (kueri.matches) setBuka(false);
+    };
+    onUbah();
+    kueri.addEventListener("change", onUbah);
+    return () => kueri.removeEventListener("change", onUbah);
+  }, []);
+
   useEffect(() => {
     if (!buka) return;
     const asal = document.body.style.overflow;
