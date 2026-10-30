@@ -73,15 +73,25 @@ export function SiteHeader({ indeks }: { indeks: readonly ItemCari[] }) {
   const aktif = (href: string) => pathname === href || pathname.startsWith(href + "/");
 
   return (
-    <header
-      className={cn(
-        "fixed inset-x-0 top-0 z-50 transition-colors duration-500",
-        gulir || buka
-          ? "border-b border-garis-malam bg-malam/90 backdrop-blur-md"
-          : "border-b border-transparent bg-transparent",
-      )}
-    >
-      <div className="mx-auto flex h-16 max-w-[1760px] items-center gap-3 px-5 sm:px-8 lg:px-12">
+    <header className="fixed inset-x-0 top-0 z-50">
+      {/*
+        Latar, garis, dan blur dipasang di bilah dalam, BUKAN di <header>.
+        Sebabnya konkret: backdrop-filter (dan transform/filter) membuat
+        elemen menjadi containing block untuk keturunan position: fixed.
+        Saat blur dipasang di <header>, panel menu yang memakai
+        `fixed top-16 bottom-0` dihitung terhadap kotak header setinggi
+        64px, bukan viewport, sehingga tingginya menjadi nol dan menu
+        tidak pernah terlihat walau state `buka` sudah true.
+      */}
+      <div
+        className={cn(
+          "transition-colors duration-500",
+          gulir || buka
+            ? "border-b border-garis-malam bg-malam/95 backdrop-blur-md"
+            : "border-b border-transparent bg-transparent",
+        )}
+      >
+        <div className="mx-auto flex h-16 max-w-[1760px] items-center gap-3 px-5 sm:px-8 lg:px-12">
         <Link href="/" className="group flex min-w-0 items-center gap-2.5" aria-label="Sriwijaya Culture">
           <svg viewBox="0 0 28 28" className="h-6 w-6 flex-none" aria-hidden="true">
             <path
@@ -164,6 +174,7 @@ export function SiteHeader({ indeks }: { indeks: readonly ItemCari[] }) {
               {buka ? <path d="M5 5l10 10M15 5L5 15" /> : <path d="M3 6h14M3 10h14M3 14h14" />}
             </svg>
           </button>
+          </div>
         </div>
       </div>
 

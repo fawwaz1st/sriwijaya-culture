@@ -26,8 +26,16 @@ const cek = (nama, lulus, detail = "") => {
    * periksa dengan toleransi waktu yang cukup.
    */
   await page.waitForFunction(() => document.readyState === "complete", undefined, { timeout: 20000 });
-  await page.waitForTimeout(250);
-  const adaAwal = await page.locator(".tirai-buka").count();
+  /*
+   * Tirai dipasang lewat requestAnimationFrame setelah hidrasi, jadi
+   * jeda tetap 250 ms pernah membuat pemeriksaan ini gagal secara acak
+   * saat hidrasi lambat. Yang benar: tunggu elemennya muncul dengan
+   * batas waktu, bukan menebak lama hidrasi.
+   */
+  const adaAwal = await page
+    .waitForSelector(".tirai-buka", { timeout: 5000 })
+    .then(() => 1)
+    .catch(() => 0);
   cek("tirai muncul saat muat pertama", adaAwal === 1, `ditemukan ${adaAwal}`);
 
   // Hilang setelah animasi
@@ -81,8 +89,29 @@ const cek = (nama, lulus, detail = "") => {
     cek("tombol menu tampil di lebar " + width, tombolMenu === 1, "tombol " + tombolMenu);
     if (tombolMenu) {
       await page.locator('button[aria-label=\"Buka menu\"]').click();
+      await page.waitForTimeout(300);
       const menu = await page.locator('#menu-mobile').count();
       cek("menu tablet terbuka di " + width, menu === 1, "menu " + menu);
+      /*
+       * Ada di DOM belum berarti terlihat. Bug nyata yang pernah lolos:
+       * <header> memakai backdrop-filter, sehingga menjadi containing
+       * block untuk keturunan position: fixed. Panel menu yang memakai
+       * fixed top-16 bottom-0 lalu dihitung terhadap header 64px dan
+       * tingginya menjadi 0 px: elemennya ada, tapi tidak terlihat.
+       * Karena itu tinggi dan posisinya diukur, bukan sekadar dihitung.
+       */
+      const kotak = await page.evaluate(() => {
+        const el = document.querySelector("#menu-mobile");
+        if (!el) return null;
+        const b = el.getBoundingClientRect();
+        const cs = getComputedStyle(el);
+        return { tinggi: Math.round(b.height), atas: Math.round(b.top), display: cs.display, posisi: cs.position };
+      });
+      cek(
+        "panel menu benar-benar terlihat di " + width,
+        Boolean(kotak) && kotak.tinggi > 300 && kotak.atas <= 80 && kotak.display !== "none" && kotak.posisi === "fixed",
+        JSON.stringify(kotak),
+      );
       const tautan = await page.locator('#menu-mobile a[href=\"/destinasi\"]').count();
       cek("menu tablet punya tautan di " + width, tautan === 1, "tautan " + tautan);
     }
