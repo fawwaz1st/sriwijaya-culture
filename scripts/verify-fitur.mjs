@@ -80,7 +80,7 @@ const cek = (nama, lulus, detail = "") => {
 
 /* ---------- 2b. Hamburger tetap jalan di tablet ---------- */
 {
-  for (const width of [768, 820, 1023]) {
+  for (const width of [320, 390, 412, 430, 440, 540, 768, 820, 1023]) {
     const ctx = await browser.newContext({ viewport: { width, height: 1000 } });
     const page = await ctx.newPage();
     await page.goto(BASE + "/", { waitUntil: "networkidle", timeout: 60000 });
@@ -112,6 +112,21 @@ const cek = (nama, lulus, detail = "") => {
         Boolean(kotak) && kotak.tinggi > 300 && kotak.atas <= 80 && kotak.display !== "none" && kotak.posisi === "fixed",
         JSON.stringify(kotak),
       );
+      /*
+       * Panel bisa punya ukuran benar tapi tetap tertutup elemen lain.
+       * Karena itu titik tengah layar diuji: elemen teratas di titik itu
+       * harus berada DI DALAM panel. Ini menangkap bug z-index dan bug
+       * panel yang tertinggal di belakang hero.
+       */
+      const hit = await page.evaluate(() => {
+        const el = document.querySelector("#menu-mobile");
+        if (!el) return { ok: false };
+        const x = Math.round(window.innerWidth / 2);
+        const y = Math.round(window.innerHeight / 2);
+        const top = document.elementFromPoint(x, y);
+        return { ok: Boolean(top && el.contains(top)), tag: top ? top.tagName.toLowerCase() : null };
+      });
+      cek("panel menu menutupi konten di " + width, hit.ok, JSON.stringify(hit));
       const tautan = await page.locator('#menu-mobile a[href=\"/destinasi\"]').count();
       cek("menu tablet punya tautan di " + width, tautan === 1, "tautan " + tautan);
     }

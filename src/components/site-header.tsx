@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { cn } from "@/lib/cn";
 import { CariCepat, type ItemCari } from "@/components/cari-cepat";
 
@@ -198,48 +199,96 @@ export function SiteHeader({ indeks }: { indeks: readonly ItemCari[] }) {
         </div>
       </div>
 
-      {buka && (
-        <div
-          id="menu-mobile"
-          className="fixed inset-x-0 bottom-0 top-16 z-40 overflow-y-auto bg-malam lg:hidden"
-        >
-          <nav aria-label="Navigasi seluler" className="px-5 py-8">
-            <ul>
-              {[{ href: "/", label: "Beranda" }, ...NAV].map((item) => (
-                <li key={item.href} className="border-b border-garis-malam">
-                  <Link
-                    href={item.href}
-                    onClick={() => setBuka(false)}
-                    aria-current={aktif(item.href) ? "page" : undefined}
-                    className="flex items-center gap-4 py-4"
-                  >
-                    <span
-                      className={cn(
-                        "flex items-center gap-4",
-                        aktif(item.href) ? "text-emas" : "text-terang",
-                      )}
+      {/*
+        Panel menu dirender lewat portal ke <body>, dengan gaya kritis
+        sebagai inline style.
+
+        Dua bug nyata yang pernah terjadi di sini:
+        1. Panel memakai `md:hidden`, jadi di 440 px ia hilang padahal
+           tombolnya tampil.
+        2. Panel adalah `position: fixed` di dalam <header> yang memakai
+           backdrop-filter. backdrop-filter menjadikan header sebagai
+           containing block, sehingga `top-16 bottom-0` dihitung
+           terhadap tinggi header (64 px) dan panel menjadi setinggi 0.
+
+        Portal memutus rantai itu sepenuhnya: tidak ada leluhur ber-filter,
+        ber-transform, atau ber-ukuran yang bisa mengubah kotak panel.
+        Inline style dipakai untuk properti yang menentukan terlihat atau
+        tidaknya panel, sehingga kegagalan memuat CSS tidak membuat menu
+        tak terlihat.
+      */}
+      {buka &&
+        typeof document !== "undefined" &&
+        createPortal(
+          <div
+            id="menu-mobile"
+            data-menu-version="portal-2"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Menu navigasi"
+            style={{
+              position: "fixed",
+              top: "4rem",
+              left: 0,
+              right: 0,
+              bottom: 0,
+              zIndex: 45,
+              overflowY: "auto",
+              overscrollBehavior: "contain",
+              backgroundColor: "#0b0d0c",
+            }}
+          >
+            <nav aria-label="Navigasi seluler" className="px-5 pb-10 pt-6 sm:px-8">
+              {/* Di tablet, daftar dua kolom supaya ruang lebar tidak jadi
+                  deretan panjang yang membuat ibu jari harus naik-turun jauh. */}
+              <ul className="grid grid-cols-1 gap-x-8 sm:grid-cols-2">
+                {[{ href: "/", label: "Beranda" }, ...NAV].map((item) => (
+                  <li key={item.href} className="border-b border-garis-malam">
+                    <Link
+                      href={item.href}
+                      onClick={() => setBuka(false)}
+                      aria-current={aktif(item.href) ? "page" : undefined}
+                      className="flex items-center gap-4 py-3.5"
                     >
-                      <IkonNav href={item.href} />
-                      <span className="font-display text-[1.75rem] leading-none">{item.label}</span>
-                    </span>
-                    {aktif(item.href) && (
-                      <span className="h-1.5 w-1.5 flex-none rounded-full bg-emas" aria-hidden="true" />
-                    )}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-            <Link
-              href="/asisten"
-              onClick={() => setBuka(false)}
-              className="mt-8 flex items-center justify-between border border-emas/40 px-4 py-3 text-emas"
-            >
-              <span className="font-mono text-[0.75rem] uppercase tracking-[0.12em]">Tanya Asisten Sari</span>
-              <span aria-hidden="true">→</span>
-            </Link>
-          </nav>
-        </div>
-      )}
+                      <span
+                        className={cn(
+                          "flex min-w-0 flex-1 items-center gap-4",
+                          aktif(item.href) ? "text-emas" : "text-terang",
+                        )}
+                      >
+                        <IkonNav href={item.href} />
+                        <span className="truncate font-display text-[1.5rem] leading-none sm:text-[1.75rem]">
+                          {item.label}
+                        </span>
+                      </span>
+                      {aktif(item.href) && (
+                        <span className="h-1.5 w-1.5 flex-none rounded-full bg-emas" aria-hidden="true" />
+                      )}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+
+              <Link
+                href="/asisten"
+                onClick={() => setBuka(false)}
+                className="mt-6 flex items-center justify-between border border-emas/40 px-4 py-3 text-emas"
+              >
+                <span className="font-mono text-[0.75rem] uppercase tracking-[0.12em]">Tanya Asisten Sari</span>
+                <span aria-hidden="true">→</span>
+              </Link>
+
+              <button
+                type="button"
+                onClick={() => setBuka(false)}
+                className="mt-3 flex w-full items-center justify-center gap-2 border border-garis-malam px-4 py-3 font-mono text-[0.75rem] uppercase tracking-[0.12em] text-terang-2"
+              >
+                Tutup menu
+              </button>
+            </nav>
+          </div>,
+          document.body,
+        )}
     </header>
   );
 }
