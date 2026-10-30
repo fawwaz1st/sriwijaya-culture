@@ -19,23 +19,22 @@ const cek = (nama, lulus, detail = "") => {
   await page.goto(BASE + "/", { waitUntil: "domcontentloaded", timeout: 60000 });
 
   /*
-   * Tirai dirender setelah hidrasi (butuh sessionStorage), bukan di HTML
-   * server. Diukur dengan `waitUntil: "commit"`: muncul pada ~150 ms
-   * setelah navigasi, tetapi `domcontentloaded` bisa terjadi sebelum
-   * hidrasi React selesai. Karena itu tunggu sampai DOM stabil, lalu
-   * periksa dengan toleransi waktu yang cukup.
+   * Tirai hanya muncul sekali per sesi, jadi uji ini harus membersihkan
+   * penandanya lebih dulu. Pembersihan dilakukan di origin yang sama
+   * (halaman sudah dibuka), lalu halaman dimuat ulang. Penantian
+   * memakai polling karena tirai hidup hanya sekitar 1,4 detik:
+   * waitForSelector bisa melewatkannya pada mesin yang lambat, dan
+   * jeda tetap bisa memeriksa terlalu dini.
    */
-  await page.waitForFunction(() => document.readyState === "complete", undefined, { timeout: 20000 });
-  /*
-   * Tirai dipasang lewat requestAnimationFrame setelah hidrasi, jadi
-   * jeda tetap 250 ms pernah membuat pemeriksaan ini gagal secara acak
-   * saat hidrasi lambat. Yang benar: tunggu elemennya muncul dengan
-   * batas waktu, bukan menebak lama hidrasi.
-   */
-  const adaAwal = await page
-    .waitForSelector(".tirai-buka", { timeout: 5000 })
-    .then(() => 1)
-    .catch(() => 0);
+  await page.evaluate(() => {
+    try { sessionStorage.clear(); } catch {}
+  });
+  await page.reload({ waitUntil: "domcontentloaded" });
+  let adaAwal = 0;
+  for (let i = 0; i < 40; i += 1) {
+    if ((await page.locator(".tirai-buka").count()) > 0) { adaAwal = 1; break; }
+    await page.waitForTimeout(100);
+  }
   cek("tirai muncul saat muat pertama", adaAwal === 1, `ditemukan ${adaAwal}`);
 
   // Hilang setelah animasi
@@ -263,6 +262,43 @@ const cek = (nama, lulus, detail = "") => {
     .then(() => true)
     .catch(() => false);
   cek("widget gempa menampilkan sumber atau pesan gagal", gempaSiap);
+  await ctx.close();
+}
+
+/* ---------- 11. Peta ringkas dari koordinat asli ---------- */
+{
+  const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+  const page = await ctx.newPage();
+  await page.goto(BASE + "/jelajah", { waitUntil: "networkidle", timeout: 60000 });
+  await page.waitForTimeout(1200);
+  const titik = await page.locator('svg[role="img"] circle').count();
+  cek("peta ringkas menggambar titik dari koordinat", titik >= 8, "lingkaran " + titik);
+  const label = await page.locator('svg[role="img"] text').count();
+  cek("peta ringkas memberi label nama", label >= 8, "teks " + label);
+  await ctx.close();
+}
+
+/* ---------- 12. Rencana kunjungan lokal ---------- */
+{
+  const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+  const page = await ctx.newPage();
+  await page.goto(BASE + "/jelajah", { waitUntil: "networkidle", timeout: 60000 });
+  await page.waitForTimeout(1200);
+  await page.selectOption("select", { index: 1 });
+  await page.waitForTimeout(400);
+  const tersimpan = await page.evaluate(() => {
+    try { return window.localStorage.getItem("sriwijaya-rencana-v1"); } catch { return null; }
+  });
+  cek("rencana tersimpan di peramban", Boolean(tersimpan) && String(tersimpan).includes("id"), String(tersimpan).slice(0, 60));
+  const baris = await page.locator("ol li").count();
+  cek("rencana menampilkan baris", baris >= 1, "baris " + baris);
+  if (baris >= 2) {
+    const sebelum = await page.locator("ol li a").first().innerText();
+    await page.locator('button[aria-label^="Turunkan"]').first().click();
+    await page.waitForTimeout(300);
+    const sesudah = await page.locator("ol li a").first().innerText();
+    cek("urutan rencana bisa diubah", sebelum !== sesudah, sebelum + " -> " + sesudah);
+  }
   await ctx.close();
 }
 

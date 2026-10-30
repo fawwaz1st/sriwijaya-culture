@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { JelajahPeta } from "@/components/jelajah-peta";
+import { PetaMini } from "@/components/peta-mini";
+import { RencanaKunjungan } from "@/components/rencana-kunjungan";
 import { CuacaPalembang } from "@/components/cuaca-palembang";
 import { GempaTerkini } from "@/components/gempa-terkini";
 import { DESTINASI, KATEGORI_DESTINASI, statistikArsip } from "@/lib/arsip";
@@ -36,10 +38,18 @@ export default function HalamanJelajah() {
       </header>
 
       <div className="mt-10">
+        <PetaMini daftar={DESTINASI} kategori={KATEGORI_DESTINASI} />
+      </div>
+
+      <div className="mt-6">
         <JelajahPeta daftar={DESTINASI} kategori={KATEGORI_DESTINASI} />
       </div>
 
-      <section className="mt-12 grid gap-4 sm:grid-cols-2">
+      <div className="mt-8">
+        <RencanaKunjungan />
+      </div>
+
+      <section className="mt-8 grid gap-4 sm:grid-cols-2">
         <CuacaPalembang />
         <GempaTerkini />
       </section>
