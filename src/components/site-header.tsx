@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { createPortal } from "react-dom";
 import { cn } from "@/lib/cn";
 import { CariCepat, type ItemCari } from "@/components/cari-cepat";
 
@@ -25,31 +24,8 @@ const NAV = [
   { href: "/favorit", label: "Favorit" },
 ] as const;
 
-/** Ikon sederhana untuk menu seluler. Garis tipis, satu bahasa visual. */
-const IKON_NAV: Record<string, string> = {
-  "/": "M3 10.5 10 4l7 6.5V16a1 1 0 0 1-1 1h-4v-5H9v5H4a1 1 0 0 1-1-1Z",
-  "/destinasi": "M10 17s6-5.2 6-9.2A6 6 0 1 0 4 7.8C4 11.8 10 17 10 17Z",
-  "/jelajah": "M10 2a8 8 0 1 0 0 16 8 8 0 0 0 0-16Zm3.5 4.5-2.2 4.7-4.7 2.2 2.2-4.7 4.7-2.2Z",
-  "/umkm": "M4 7h12l-1 10H5L4 7Zm2 0V5a4 4 0 0 1 8 0v2",
-  "/artikel": "M4 4h6a2 2 0 0 1 2 2v12a4 4 0 0 0-4-4H4V4Zm12 0h-4a2 2 0 0 0-2 2v12a4 4 0 0 1 4-4h2V4Z",
-  "/metodologi": "M9 15a6 6 0 1 1 0-12 6 6 0 0 1 0 12Zm4.5-1.5L17 17",
-  "/tentang": "M10 3a7 7 0 1 0 0 14 7 7 0 0 0 0-14Zm0 4v5m0 3h.01",
-  "/favorit": "M10 16s-6-3.8-6-7.2A3.2 3.2 0 0 1 10 7a3.2 3.2 0 0 1 6 1.8C16 12.2 10 16 10 16Z",
-};
-
-function IkonNav({ href }: { href: string }) {
-  const d = IKON_NAV[href];
-  if (!d) return null;
-  return (
-    <svg viewBox="0 0 20 20" className="h-5 w-5 flex-none" fill="none" stroke="currentColor" strokeWidth="1.4" aria-hidden="true">
-      <path d={d} strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
-
 export function SiteHeader({ indeks }: { indeks: readonly ItemCari[] }) {
   const pathname = usePathname();
-  const [buka, setBuka] = useState(false);
   const [gulir, setGulir] = useState(false);
 
   useEffect(() => {
@@ -59,55 +35,24 @@ export function SiteHeader({ indeks }: { indeks: readonly ItemCari[] }) {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  /*
-   * Tutup menu saat layar melebar melewati breakpoint lg.
-   *
-   * Tanpa ini, pengunjung yang membuka menu di ponsel lalu memutar
-   * perangkat atau memperbesar jendela akan melihat tombol "tutup" di
-   * header desktop tanpa panel apa pun, dan body tetap terkunci
-   * (overflow: hidden) sehingga halaman tidak bisa digulir. Panel menu
-   * sendiri memang disembunyikan `lg:hidden`, jadi state harus ikut
-   * ditutup.
-   */
-  useEffect(() => {
-    const kueri = window.matchMedia("(min-width: 1024px)");
-    const onUbah = () => {
-      if (kueri.matches) setBuka(false);
-    };
-    onUbah();
-    kueri.addEventListener("change", onUbah);
-    return () => kueri.removeEventListener("change", onUbah);
-  }, []);
-
-  useEffect(() => {
-    if (!buka) return;
-    const asal = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setBuka(false);
-    window.addEventListener("keydown", onKey);
-    return () => {
-      document.body.style.overflow = asal;
-      window.removeEventListener("keydown", onKey);
-    };
-  }, [buka]);
-
   const aktif = (href: string) => pathname === href || pathname.startsWith(href + "/");
 
   return (
     <header className="fixed inset-x-0 top-0 z-50">
       {/*
         Latar, garis, dan blur dipasang di bilah dalam, BUKAN di <header>.
-        Sebabnya konkret: backdrop-filter (dan transform/filter) membuat
-        elemen menjadi containing block untuk keturunan position: fixed.
-        Saat blur dipasang di <header>, panel menu yang memakai
-        `fixed top-16 bottom-0` dihitung terhadap kotak header setinggi
-        64px, bukan viewport, sehingga tingginya menjadi nol dan menu
-        tidak pernah terlihat walau state `buka` sudah true.
+        Sebabnya konkret: backdrop-filter membuat elemen menjadi containing
+        block untuk keturunan position: fixed. Bug yang pernah terjadi di
+        sini: panel menu seluler memakai `fixed top-16 bottom-0` di dalam
+        header ber-blur, sehingga kotaknya dihitung terhadap tinggi header
+        (64 px) dan panelnya menjadi setinggi nol. Navigasi seluler sekarang
+        memakai bottom nav, dan aturan ini tetap dipegang supaya bug yang
+        sama tidak kembali lewat elemen fixed lain.
       */}
       <div
         className={cn(
           "transition-colors duration-500",
-          gulir || buka
+          gulir
             ? "border-b border-garis-malam bg-malam/95 backdrop-blur-md"
             : "border-b border-transparent bg-transparent",
         )}
@@ -182,113 +127,9 @@ export function SiteHeader({ indeks }: { indeks: readonly ItemCari[] }) {
               Tanya Sari
             </span>
           </Link>
-
-          <button
-            type="button"
-            onClick={() => setBuka((v) => !v)}
-            aria-expanded={buka}
-            aria-controls="menu-mobile"
-            aria-label={buka ? "Tutup menu" : "Buka menu"}
-            className="grid h-9 w-9 place-items-center border border-malam-5 text-terang transition-colors hover:border-terang-3 lg:hidden"
-          >
-            <svg viewBox="0 0 20 20" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.5">
-              {buka ? <path d="M5 5l10 10M15 5L5 15" /> : <path d="M3 6h14M3 10h14M3 14h14" />}
-            </svg>
-          </button>
-          </div>
+        </div>
         </div>
       </div>
-
-      {/*
-        Panel menu dirender lewat portal ke <body>, dengan gaya kritis
-        sebagai inline style.
-
-        Dua bug nyata yang pernah terjadi di sini:
-        1. Panel memakai `md:hidden`, jadi di 440 px ia hilang padahal
-           tombolnya tampil.
-        2. Panel adalah `position: fixed` di dalam <header> yang memakai
-           backdrop-filter. backdrop-filter menjadikan header sebagai
-           containing block, sehingga `top-16 bottom-0` dihitung
-           terhadap tinggi header (64 px) dan panel menjadi setinggi 0.
-
-        Portal memutus rantai itu sepenuhnya: tidak ada leluhur ber-filter,
-        ber-transform, atau ber-ukuran yang bisa mengubah kotak panel.
-        Inline style dipakai untuk properti yang menentukan terlihat atau
-        tidaknya panel, sehingga kegagalan memuat CSS tidak membuat menu
-        tak terlihat.
-      */}
-      {buka &&
-        typeof document !== "undefined" &&
-        createPortal(
-          <div
-            id="menu-mobile"
-            data-menu-version="portal-2"
-            role="dialog"
-            aria-modal="true"
-            aria-label="Menu navigasi"
-            style={{
-              position: "fixed",
-              top: "4rem",
-              left: 0,
-              right: 0,
-              bottom: 0,
-              zIndex: 45,
-              overflowY: "auto",
-              overscrollBehavior: "contain",
-              backgroundColor: "#0b0d0c",
-            }}
-          >
-            <nav aria-label="Navigasi seluler" className="px-5 pb-10 pt-6 sm:px-8">
-              {/* Di tablet, daftar dua kolom supaya ruang lebar tidak jadi
-                  deretan panjang yang membuat ibu jari harus naik-turun jauh. */}
-              <ul className="grid grid-cols-1 gap-x-8 sm:grid-cols-2">
-                {[{ href: "/", label: "Beranda" }, ...NAV].map((item) => (
-                  <li key={item.href} className="border-b border-garis-malam">
-                    <Link
-                      href={item.href}
-                      onClick={() => setBuka(false)}
-                      aria-current={aktif(item.href) ? "page" : undefined}
-                      className="flex items-center gap-4 py-3.5"
-                    >
-                      <span
-                        className={cn(
-                          "flex min-w-0 flex-1 items-center gap-4",
-                          aktif(item.href) ? "text-emas" : "text-terang",
-                        )}
-                      >
-                        <IkonNav href={item.href} />
-                        <span className="truncate font-display text-[1.5rem] leading-none sm:text-[1.75rem]">
-                          {item.label}
-                        </span>
-                      </span>
-                      {aktif(item.href) && (
-                        <span className="h-1.5 w-1.5 flex-none rounded-full bg-emas" aria-hidden="true" />
-                      )}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-
-              <Link
-                href="/asisten"
-                onClick={() => setBuka(false)}
-                className="mt-6 flex items-center justify-between border border-emas/40 px-4 py-3 text-emas"
-              >
-                <span className="font-mono text-[0.75rem] uppercase tracking-[0.12em]">Tanya Asisten Sari</span>
-                <span aria-hidden="true">→</span>
-              </Link>
-
-              <button
-                type="button"
-                onClick={() => setBuka(false)}
-                className="mt-3 flex w-full items-center justify-center gap-2 border border-garis-malam px-4 py-3 font-mono text-[0.75rem] uppercase tracking-[0.12em] text-terang-2"
-              >
-                Tutup menu
-              </button>
-            </nav>
-          </div>,
-          document.body,
-        )}
     </header>
   );
 }

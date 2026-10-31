@@ -4,6 +4,7 @@ import "./globals.css";
 import "./komponen.css";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
+import { NavBawah } from "@/components/nav-bawah";
 import { TiraiBuka } from "@/components/tirai-buka";
 import { indeksCari } from "@/lib/arsip";
 
@@ -109,7 +110,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <TiraiBuka />
 
         <SiteHeader indeks={indeksCari()} />
-        <main id="konten">{children}</main>
+        <main id="konten" className="pb-[calc(3.5rem+env(safe-area-inset-bottom))] lg:pb-0">
+          {children}
+        </main>
+        <NavBawah />
         {/* Asisten berperilaku seperti aplikasi layar penuh (pola Claude.ai/
             ChatGPT): footer disembunyikan supaya percakapan menjadi
             satu-satunya yang menggulir. Ditandai lewat kelas di <main>. */}

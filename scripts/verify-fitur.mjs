@@ -12,6 +12,41 @@ const cek = (nama, lulus, detail = "") => {
   console.log(`${lulus ? "LULUS" : "GAGAL"}  ${nama}${detail ? "  :: " + detail : ""}`);
 };
 
+/* ---------- 0. Navigasi bawah di layar kecil ---------- */
+{
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+  const page = await ctx.newPage();
+  await page.goto(BASE + "/", { waitUntil: "networkidle", timeout: 60000 });
+  await page.waitForTimeout(800);
+  const nav = page.locator('nav[aria-label="Navigasi utama bawah"]');
+  cek("navigasi bawah tampil di ponsel", (await nav.count()) === 1);
+  const item = await nav.locator("a").count();
+  cek("navigasi bawah punya lima item", item === 5, "item " + item);
+  const kotak = await nav.evaluate((el) => {
+    const b = el.getBoundingClientRect();
+    return { tinggi: Math.round(b.height), lebar: Math.round(b.width), posisi: getComputedStyle(el).position };
+  });
+  cek("navigasi bawah menempel di bawah layar", kotak.posisi === "fixed" && kotak.tinggi > 50, JSON.stringify(kotak));
+  const label = await nav.innerText();
+  cek("label navigasi bawah terbaca", /BERANDA/.test(label) && /SARI/.test(label), label.replace(/\s+/g, " "));
+  await ctx.close();
+}
+
+/* ---------- 0b. Navigasi bawah hilang di layar lebar ---------- */
+{
+  const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+  const page = await ctx.newPage();
+  await page.goto(BASE + "/", { waitUntil: "networkidle", timeout: 60000 });
+  await page.waitForTimeout(600);
+  const nav = page.locator('nav[aria-label="Navigasi utama bawah"]');
+  const terlihat = await nav.evaluate((el) => {
+    const cs = getComputedStyle(el);
+    return cs.display !== "none" && el.getBoundingClientRect().height > 0;
+  });
+  cek("navigasi bawah disembunyikan di desktop", !terlihat);
+  await ctx.close();
+}
+
 /* ---------- 1. Tirai intro ---------- */
 {
   const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
@@ -77,61 +112,27 @@ const cek = (nama, lulus, detail = "") => {
   await ctx.close();
 }
 
-/* ---------- 2b. Hamburger tetap jalan di tablet ---------- */
+/* ---------- 2b. Navigasi bawah menggantikan hamburger ---------- */
 {
-  for (const width of [320, 390, 412, 430, 440, 540, 768, 820, 1023]) {
-    const ctx = await browser.newContext({ viewport: { width, height: 1000 } });
+  /*
+   * Hamburger drawer sudah dihapus. Navigasi utama di layar kecil
+   * sekarang memakai bottom nav, yang diuji di blok 0. Yang diperiksa
+   * di sini adalah konsekuensinya: tidak boleh ada tombol hamburger
+   * yang menggantung, dan header tidak boleh memuat panel apa pun.
+   */
+  for (const width of [320, 390, 440, 768, 1023]) {
+    const ctx = await browser.newContext({ viewport: { width, height: 900 } });
     const page = await ctx.newPage();
     await page.goto(BASE + "/", { waitUntil: "networkidle", timeout: 60000 });
     await page.waitForTimeout(500);
-    const tombolMenu = await page.locator('button[aria-label=\"Buka menu\"]').count();
-    cek("tombol menu tampil di lebar " + width, tombolMenu === 1, "tombol " + tombolMenu);
-    if (tombolMenu) {
-      await page.locator('button[aria-label=\"Buka menu\"]').click();
-      await page.waitForTimeout(300);
-      const menu = await page.locator('#menu-mobile').count();
-      cek("menu tablet terbuka di " + width, menu === 1, "menu " + menu);
-      /*
-       * Ada di DOM belum berarti terlihat. Bug nyata yang pernah lolos:
-       * <header> memakai backdrop-filter, sehingga menjadi containing
-       * block untuk keturunan position: fixed. Panel menu yang memakai
-       * fixed top-16 bottom-0 lalu dihitung terhadap header 64px dan
-       * tingginya menjadi 0 px: elemennya ada, tapi tidak terlihat.
-       * Karena itu tinggi dan posisinya diukur, bukan sekadar dihitung.
-       */
-      const kotak = await page.evaluate(() => {
-        const el = document.querySelector("#menu-mobile");
-        if (!el) return null;
-        const b = el.getBoundingClientRect();
-        const cs = getComputedStyle(el);
-        return { tinggi: Math.round(b.height), atas: Math.round(b.top), display: cs.display, posisi: cs.position };
-      });
-      cek(
-        "panel menu benar-benar terlihat di " + width,
-        Boolean(kotak) && kotak.tinggi > 300 && kotak.atas <= 80 && kotak.display !== "none" && kotak.posisi === "fixed",
-        JSON.stringify(kotak),
-      );
-      /*
-       * Panel bisa punya ukuran benar tapi tetap tertutup elemen lain.
-       * Karena itu titik tengah layar diuji: elemen teratas di titik itu
-       * harus berada DI DALAM panel. Ini menangkap bug z-index dan bug
-       * panel yang tertinggal di belakang hero.
-       */
-      const hit = await page.evaluate(() => {
-        const el = document.querySelector("#menu-mobile");
-        if (!el) return { ok: false };
-        const x = Math.round(window.innerWidth / 2);
-        const y = Math.round(window.innerHeight / 2);
-        const top = document.elementFromPoint(x, y);
-        return { ok: Boolean(top && el.contains(top)), tag: top ? top.tagName.toLowerCase() : null };
-      });
-      cek("panel menu menutupi konten di " + width, hit.ok, JSON.stringify(hit));
-      const tautan = await page.locator('#menu-mobile a[href=\"/destinasi\"]').count();
-      cek("menu tablet punya tautan di " + width, tautan === 1, "tautan " + tautan);
-    }
+    const hamburger = await page.locator('button[aria-label="Buka menu"]').count();
+    cek("tidak ada tombol hamburger di lebar " + width, hamburger === 0, "tombol " + hamburger);
+    const panel = await page.locator("#menu-mobile").count();
+    cek("tidak ada panel menu lama di lebar " + width, panel === 0, "panel " + panel);
     await ctx.close();
   }
 }
+
 /* ---------- 3. Ikon tab ---------- */
 {
   const res = await fetch(BASE + "/icon");
