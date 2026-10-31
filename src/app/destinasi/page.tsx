@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import { KatalogDestinasi } from "@/components/katalog-destinasi";
 import { AcakEntri } from "@/components/acak-entri";
+import { PitaFoto } from "@/components/pita-foto";
 import { DESTINASI, KATEGORI_DESTINASI } from "@/lib/arsip";
 
 export const metadata: Metadata = {
@@ -25,6 +26,10 @@ export default function HalamanDestinasi() {
           </p>
         </div>
       </header>
+
+      <div className="mt-8">
+        <PitaFoto daftar={DESTINASI} />
+      </div>
 
       <Suspense fallback={<p className="meta mt-10">Memuat katalog…</p>}>
         <KatalogDestinasi daftar={DESTINASI} kategori={KATEGORI_DESTINASI} />

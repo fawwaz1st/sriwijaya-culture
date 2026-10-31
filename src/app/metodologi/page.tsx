@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Angka, BadgeVerifikasi } from "@/components/ui";
+import { BatangVerifikasi } from "@/components/batang-verifikasi";
 import { ARTIKEL, DAFTAR_UMKM, DESTINASI, statistikArsip, statusVerifikasi } from "@/lib/arsip";
-import { persen } from "@/lib/format";
 
 export const metadata: Metadata = {
   title: "Metodologi dan Sumber",
@@ -62,30 +62,12 @@ export default function HalamanMetodologi() {
         </h2>
         <ol className="mt-8 grid gap-x-10 gap-y-6 md:grid-cols-2">
           {[
-            {
-              j: "Setiap klaim menunjuk sumber",
-              i: "Angka, tanggal, dan peristiwa punya tautan sumber yang bisa dibuka.",
-            },
-            {
-              j: "Perbedaan ditulis sebagai perbedaan",
-              i: "Dua sumber yang berbeda, keduanya dicatat. Bukan dipilih yang enak.",
-            },
-            {
-              j: "Legenda diberi label legenda",
-              i: "Cerita rakyat ditulis terpisah dan tidak disebut sejarah.",
-            },
-            {
-              j: "Tidak mengisi yang belum ada",
-              i: "Alamat, kontak, dan harga tidak diisi perkiraan. Kosong lebih baik daripada salah.",
-            },
-            {
-              j: "Contoh diberi label",
-              i: "Usaha contoh ditandai jelas supaya tidak dikira toko nyata.",
-            },
-            {
-              j: "Tidak ada tombol kosong",
-              i: "Tidak ada formulir palsu atau tombol yang tidak berfungsi.",
-            },
+            { j: "Setiap klaim menunjuk sumber", i: "Tautan yang bisa dibuka." },
+            { j: "Perbedaan ditulis sebagai perbedaan", i: "Dua angka, keduanya dicatat." },
+            { j: "Legenda diberi label legenda", i: "Dipisah dari catatan sejarah." },
+            { j: "Tidak mengisi yang belum ada", i: "Kosong lebih baik daripada salah." },
+            { j: "Contoh diberi label", i: "Tidak dikira toko nyata." },
+            { j: "Tidak ada tombol kosong", i: "Tidak ada formulir palsu." },
           ].map((r, i) => (
             <li key={r.j} className="border-t border-garis-malam pt-4">
               <p className="tabular font-mono text-[0.75rem] text-emas">{String(i + 1).padStart(2, "0")}</p>
@@ -101,36 +83,23 @@ export default function HalamanMetodologi() {
         <h2 className="display mt-2 max-w-[20ch] text-[clamp(1.9rem,4vw,3rem)] text-terang">
           Tiga tingkat, tiga arti.
         </h2>
-        <div className="mt-8 grid gap-8 sm:grid-cols-3">
-          {[
-            {
-              t: "tinggi",
-              j: "Terverifikasi",
-              i: "Didukung lebih dari satu sumber yang saling menguatkan, atau satu sumber resmi yang bisa diperiksa.",
-              n: v.tinggi,
-            },
-            {
-              t: "sedang",
-              j: "Satu sumber",
-              i: "Didukung satu sumber terpercaya, tetapi belum ada pembanding independen.",
-              n: v.sedang,
-            },
-            {
-              t: "perlu-konfirmasi",
-              j: "Perlu konfirmasi",
-              i: "Angka beredar di internet tanpa sumber resmi. Ditampilkan dengan peringatan, atau tidak sama sekali.",
-              n: v.perlu,
-            },
-          ].map((x) => (
-            <div key={x.t} className="border-t border-garis-malam pt-4">
-              <BadgeVerifikasi tingkat={x.t} />
-              <p className="mt-2 font-display text-lg leading-tight text-terang">{x.j}</p>
-              <p className="mt-1.5 text-[0.8125rem] leading-relaxed text-terang-2">{x.i}</p>
-              <p className="tabular mt-3 font-mono text-[0.75rem] text-terang-3">
-                {x.n} rujukan · {persen(x.n, v.total)}%
-              </p>
-            </div>
-          ))}
+        <div className="mt-8 grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)]">
+          <BatangVerifikasi tinggi={v.tinggi} sedang={v.sedang} perlu={v.perlu} />
+          <dl className="grid grid-cols-1 gap-4 self-end sm:grid-cols-3">
+            {[
+              { t: "tinggi", j: "Terverifikasi", n: v.tinggi },
+              { t: "sedang", j: "Satu sumber", n: v.sedang },
+              { t: "perlu-konfirmasi", j: "Perlu konfirmasi", n: v.perlu },
+            ].map((x) => (
+              <div key={x.t} className="border-t border-garis-malam pt-3">
+                <dt className="tabular font-display text-3xl leading-none text-terang">{x.n}</dt>
+                <dd className="mt-1.5 flex flex-col gap-1.5">
+                  <span className="font-display text-[0.9375rem] leading-tight text-terang">{x.j}</span>
+                  <BadgeVerifikasi tingkat={x.t} />
+                </dd>
+              </div>
+            ))}
+          </dl>
         </div>
       </section>
 

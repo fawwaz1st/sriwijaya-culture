@@ -278,6 +278,25 @@ const cek = (nama, lulus, detail = "") => {
   await ctx.close();
 }
 
+/* ---------- 13. Pita foto geser di katalog destinasi ---------- */
+{
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 } });
+  const page = await ctx.newPage();
+  await page.goto(BASE + "/destinasi", { waitUntil: "networkidle", timeout: 60000 });
+  await page.waitForTimeout(900);
+  const pita = page.locator('section[aria-label="Sorotan destinasi"]');
+  cek("pita foto tampil di katalog", (await pita.count()) === 1);
+  const wadah = pita.locator('div[role="group"]');
+  const geserAwal = await wadah.evaluate((el) => el.scrollLeft);
+  await pita.locator('button[aria-label="Gulir ke kanan"]').click();
+  await page.waitForTimeout(700);
+  const geserAkhir = await wadah.evaluate((el) => el.scrollLeft);
+  cek("tombol panah menggeser pita", geserAkhir > geserAwal, geserAwal + " -> " + geserAkhir);
+  const kananAwal = await pita.locator('button[aria-label="Gulir ke kanan"]').isDisabled();
+  cek("tombol kanan aktif saat masih ada isi", !kananAwal);
+  await ctx.close();
+}
+
 /* ---------- 12. Rencana kunjungan lokal ---------- */
 {
   const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });

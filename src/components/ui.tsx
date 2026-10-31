@@ -105,7 +105,9 @@ export function BadgeVerifikasi({ tingkat }: { tingkat: string }) {
       : tingkat === "sedang"
         ? "text-warn status-warn"
         : "text-bahaya status-bahaya";
-  return <span className={cn("status", warna)}>{labelVerifikasi(tingkat)}</span>;
+  // Badge tidak dipaksa satu baris: di kolom sempit, teks seperti
+  // "Perlu konfirmasi" lebih baik turun baris daripada terpotong.
+  return <span className={cn("status", warna, "whitespace-normal")}>{labelVerifikasi(tingkat)}</span>;
 }
 
 /** Angka besar dengan label, untuk pita statistik. */
