@@ -73,7 +73,7 @@ export function RencanaKunjungan() {
                     <Link href={`/destinasi/${d.id}`} className="block truncate text-[0.875rem] text-terang hover:text-emas">
                       {d.nama}
                     </Link>
-                    <span className="mt-0.5 block truncate font-mono text-[0.625rem] uppercase tracking-[0.08em] text-terang-3">
+                    <span className="mt-0.5 block truncate font-mono text-[0.75rem] uppercase tracking-[0.08em] text-terang-3">
                       {d.wilayah}
                       {d.koordinat ? " · berkoordinat" : " · tanpa koordinat"}
                     </span>
@@ -112,7 +112,7 @@ export function RencanaKunjungan() {
           )}
 
           {detail.length > 1 && (
-            <p className="mt-3 font-mono text-[0.625rem] uppercase tracking-[0.08em] text-terang-3">
+            <p className="mt-3 font-mono text-[0.75rem] uppercase tracking-[0.08em] text-terang-3">
               Urutan ini hanya catatan Anda, bukan rute jalan yang dihitung.
             </p>
           )}

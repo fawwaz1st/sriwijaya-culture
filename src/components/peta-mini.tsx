@@ -192,7 +192,7 @@ export function PetaMini({
                     <span className={cn("block truncate text-[0.8125rem] leading-tight", t.d.id === sorot ? "text-emas" : "text-terang-2")}>
                       {t.d.nama}
                     </span>
-                    <span className="mt-0.5 block truncate font-mono text-[0.625rem] uppercase tracking-[0.08em] text-terang-3">
+                    <span className="mt-0.5 block truncate font-mono text-[0.75rem] uppercase tracking-[0.08em] text-terang-3">
                       {String(i + 1).padStart(2, "0")} · {t.d.wilayah}
                     </span>
                   </span>
@@ -211,7 +211,7 @@ export function PetaMini({
               <p className="mt-1 line-clamp-2 text-[0.75rem] leading-relaxed text-terang-3">{dipilih.d.ringkas}</p>
               <Link
                 href={`/destinasi/${dipilih.d.id}`}
-                className="sentuh mt-2.5 inline-flex items-center gap-1.5 bg-emas px-2.5 py-1.5 font-mono text-[0.625rem] uppercase tracking-[0.1em] text-malam transition-colors hover:bg-emas-muda"
+                className="sentuh mt-2.5 inline-flex items-center gap-1.5 bg-emas px-2.5 py-1.5 font-mono text-[0.75rem] uppercase tracking-[0.1em] text-malam transition-colors hover:bg-emas-muda"
               >
                 Buka halaman
                 <span aria-hidden="true">→</span>

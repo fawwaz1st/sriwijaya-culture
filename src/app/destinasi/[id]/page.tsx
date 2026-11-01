@@ -226,7 +226,7 @@ export default async function DetailDestinasi({ params }: { params: Promise<{ id
                       key={i}
                       className="flex gap-3 rounded-md px-2 py-1.5 text-[0.875rem] leading-relaxed text-gelap-2 transition-colors -mx-2 hover:bg-emas/8 hover:text-gelap"
                     >
-                      <span className="tabular shrink-0 font-mono text-[0.625rem] text-emas-tinta">
+                      <span className="tabular shrink-0 font-mono text-[0.75rem] text-emas-tinta">
                         {String(i + 1).padStart(2, "0")}
                       </span>
                       {x}

@@ -62,7 +62,7 @@ export function NavBawah() {
                     <path d={x.ikon} strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
                 </span>
-                <span className="font-mono text-[0.625rem] uppercase tracking-[0.08em]">{x.label}</span>
+                <span className="font-mono text-[0.75rem] uppercase tracking-[0.08em]">{x.label}</span>
               </Link>
             </li>
           );

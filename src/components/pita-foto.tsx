@@ -90,7 +90,7 @@ export function PitaFoto({
                 <span className="block truncate font-display text-[0.9375rem] leading-tight text-terang">
                   {d.nama}
                 </span>
-                <span className="mt-0.5 block truncate font-mono text-[0.625rem] uppercase tracking-[0.1em] text-terang-3">
+                <span className="mt-0.5 block truncate font-mono text-[0.75rem] uppercase tracking-[0.1em] text-terang-3">
                   {d.wilayah}
                 </span>
               </span>

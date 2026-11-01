@@ -129,7 +129,7 @@ export function CariCepat({ indeks }: { indeks: readonly ItemCari[] }) {
         <span className="hidden font-mono text-[0.75rem] uppercase tracking-[0.1em] lg:inline">
           Cari
         </span>
-        <kbd className="hidden rounded-sm border border-garis-malam px-1 py-0.5 font-mono text-[0.625rem] text-terang-3 lg:inline">
+        <kbd className="hidden rounded-sm border border-garis-malam px-1 py-0.5 font-mono text-[0.75rem] text-terang-3 lg:inline">
           Ctrl K
         </kbd>
       </button>
@@ -173,7 +173,7 @@ export function CariCepat({ indeks }: { indeks: readonly ItemCari[] }) {
                 aria-label="Kata kunci pencarian"
                 className="min-h-12 flex-1 bg-transparent text-[0.9375rem] text-terang placeholder:text-terang-3 focus:outline-none"
               />
-              <kbd className="flex-none rounded-sm border border-garis-malam px-1.5 py-0.5 font-mono text-[0.625rem] text-terang-3">
+              <kbd className="flex-none rounded-sm border border-garis-malam px-1.5 py-0.5 font-mono text-[0.75rem] text-terang-3">
                 Esc
               </kbd>
             </div>
@@ -201,7 +201,7 @@ export function CariCepat({ indeks }: { indeks: readonly ItemCari[] }) {
                         i === sorotAman ? "bg-emas/10" : "hover:bg-malam-3",
                       )}
                     >
-                      <span className="w-14 flex-none font-mono text-[0.625rem] uppercase tracking-[0.08em] text-terang-3">
+                      <span className="w-14 flex-none font-mono text-[0.75rem] uppercase tracking-[0.08em] text-terang-3">
                         {item.jenis}
                       </span>
                       <span className="min-w-0 flex-1">
@@ -218,7 +218,7 @@ export function CariCepat({ indeks }: { indeks: readonly ItemCari[] }) {
               )}
             </ul>
 
-            <p className="border-t border-garis-malam px-4 py-2 font-mono text-[0.625rem] uppercase tracking-[0.1em] text-terang-3">
+            <p className="border-t border-garis-malam px-4 py-2 font-mono text-[0.75rem] uppercase tracking-[0.1em] text-terang-3">
               {indeks.length} entri di arsip · ↑↓ pilih · Enter buka
             </p>
           </div>

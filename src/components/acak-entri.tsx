@@ -61,7 +61,7 @@ export function AcakEntri({
           href={pilihan.href}
           className="group inline-flex min-w-0 items-center gap-2 text-[0.8125rem] text-terang-2 transition-colors hover:text-emas"
         >
-          <span className="font-mono text-[0.625rem] uppercase tracking-[0.1em] text-terang-3">
+          <span className="font-mono text-[0.75rem] uppercase tracking-[0.1em] text-terang-3">
             {pilihan.jenis}
           </span>
           <span className="truncate underline decoration-terang-3/40 underline-offset-4 group-hover:decoration-emas">

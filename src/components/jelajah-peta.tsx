@@ -95,7 +95,7 @@ export function JelajahPeta({
               onClick={() => setLapisan(v)}
               aria-pressed={lapisan === v}
               className={cn(
-                "sentuh px-2.5 py-2 font-mono text-[0.625rem] uppercase tracking-[0.1em] transition-colors",
+                "sentuh px-2.5 py-2 font-mono text-[0.75rem] uppercase tracking-[0.1em] transition-colors",
                 lapisan === v ? "bg-emas text-malam" : "text-terang-3 hover:text-terang",
               )}
             >
@@ -160,7 +160,7 @@ export function JelajahPeta({
                         >
                           {d.nama}
                         </span>
-                        <span className="mt-0.5 block truncate font-mono text-[0.625rem] uppercase tracking-[0.08em] text-terang-3">
+                        <span className="mt-0.5 block truncate font-mono text-[0.75rem] uppercase tracking-[0.08em] text-terang-3">
                           {String(i + 1).padStart(2, "0")} · {d.wilayah}
                         </span>
                       </span>
@@ -179,7 +179,7 @@ export function JelajahPeta({
               </p>
               <Link
                 href={`/destinasi/${tampil.id}`}
-                className="sentuh mt-2.5 inline-flex items-center gap-1.5 bg-emas px-2.5 py-1.5 font-mono text-[0.625rem] uppercase tracking-[0.1em] text-malam transition-colors hover:bg-emas-muda"
+                className="sentuh mt-2.5 inline-flex items-center gap-1.5 bg-emas px-2.5 py-1.5 font-mono text-[0.75rem] uppercase tracking-[0.1em] text-malam transition-colors hover:bg-emas-muda"
               >
                 Buka halaman
                 <span aria-hidden="true">→</span>

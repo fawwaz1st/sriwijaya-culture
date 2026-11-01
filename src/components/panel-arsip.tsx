@@ -39,7 +39,7 @@ export function PanelArsip({ r }: { r: RingkasArsip }) {
         <dl className="mt-3 grid grid-cols-2 gap-x-4 gap-y-3">
           {kolom.map((k) => (
             <Link key={k.label} href={k.href} className="group block">
-              <dt className="font-mono text-[0.625rem] uppercase tracking-[0.1em] text-terang-3 group-hover:text-terang-2">
+              <dt className="font-mono text-[0.75rem] uppercase tracking-[0.1em] text-terang-3 group-hover:text-terang-2">
                 {k.label}
               </dt>
               <dd className="tabular mt-0.5 font-display text-2xl leading-none text-terang group-hover:text-emas">
@@ -48,7 +48,7 @@ export function PanelArsip({ r }: { r: RingkasArsip }) {
             </Link>
           ))}
         </dl>
-        <p className="mt-3 font-mono text-[0.625rem] uppercase tracking-[0.1em] text-terang-3">
+        <p className="mt-3 font-mono text-[0.75rem] uppercase tracking-[0.1em] text-terang-3">
           {r.rentangTahun}
         </p>
       </div>
@@ -63,7 +63,7 @@ export function PanelArsip({ r }: { r: RingkasArsip }) {
                 className="group flex items-baseline justify-between gap-3 py-1 text-[0.75rem] text-terang-2 transition-colors hover:text-emas"
               >
                 <span className="truncate">{x.nama}</span>
-                <span className="shrink-0 font-mono text-[0.5625rem] uppercase tracking-[0.1em] text-terang-3">
+                <span className="shrink-0 font-mono text-[0.75rem] uppercase tracking-[0.1em] text-terang-3">
                   {x.tag}
                 </span>
               </Link>
