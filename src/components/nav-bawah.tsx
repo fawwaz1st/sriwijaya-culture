@@ -39,11 +39,11 @@ export function NavBawah() {
       className="fixed inset-x-0 bottom-0 z-40 border-t border-garis-malam bg-malam/95 backdrop-blur-md lg:hidden"
       style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
     >
-      <ul className="mx-auto flex max-w-[640px] items-stretch">
+      <ul className="mx-auto grid max-w-[640px] grid-cols-5 items-stretch">
         {ITEM.map((x) => {
           const on = aktif(x.href);
           return (
-            <li key={x.href} className="flex-1">
+            <li key={x.href} className="min-w-0">
               <Link
                 href={x.href}
                 aria-current={on ? "page" : undefined}
