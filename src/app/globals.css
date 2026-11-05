@@ -17,11 +17,11 @@
      beristirahat. Ritme terang-gelap itu yang membuat halaman bernapas.
 
    Kontras diukur terhadap permukaannya masing-masing (WCAG 2.2 AA):
-     tinta terang  #f2efe8 di #0b0d0c = 16.8:1
-     tinta-2       #b9b5ab di #0b0d0c =  9.4:1
-     tinta-3       #8a877f di #0b0d0c =  5.6:1
-     kertas tinta  #14170f di #f4f2ec = 15.9:1
-     emas-tinta    #6b4c05 di #f4f2ec =  6.4:1
+     tinta terang  #f2efe8 di #0b0d0c = 17.0:1
+     tinta-2       #b9b5ab di #0b0d0c =  9.5:1
+     tinta-3       #8a877f di #0b0d0c =  5.4:1
+     kertas tinta  #14170f di #f4f2ec = 16.2:1
+     emas-tinta    #6b4c05 di #f4f2ec =  7.1:1
    ========================================================================== */
 
 @theme {
@@ -260,11 +260,6 @@
     text-wrap: balance;
   }
 
-  /* Judul sangat besar butuh tracking lebih longgar, bukan lebih rapat.
-     Pada 112px, -0.018em masih menyisakan ruang antar huruf. */
-  .display-xl {
-    letter-spacing: -0.014em;
-  }
 
   /* Paragraf baca.
    *
@@ -554,24 +549,6 @@
   animation-range: entry 0% cover 20%;
 }
 
-/* Foto menyala dari hitam. Ini meniru lampu galeri yang dinyalakan,
-   bukan sekadar fade. Hanya untuk foto, tidak untuk teks. */
-@keyframes foto-nyala {
-  from {
-    filter: brightness(0.6) saturate(0.75);
-    transform: scale(1.03);
-  }
-  to {
-    filter: brightness(1) saturate(1);
-    transform: scale(1);
-  }
-}
-
-.foto-nyala {
-  animation: foto-nyala 900ms var(--ease-keluar) both;
-  animation-timeline: view();
-  animation-range: entry 0% cover 26%;
-}
 
 /* Label meta tumbuh dari kiri, seperti garis indeks di katalog cetak. */
 @keyframes label-masuk {
@@ -708,14 +685,6 @@ body:has(.asisten-halaman) #konten {
   }
 }
 
-/* Tablet potret (768-1023px): grid dua kolom untuk kartu membuat judul
-   terpotong di tengah kata. Di rentang ini kartu memakai satu kolom
-   penuh agar judul dan ringkasan utuh. */
-@media (min-width: 768px) and (max-width: 1023px) {
-  .kartu-padat {
-    grid-template-columns: minmax(0, 1fr);
-  }
-}
 
 /* Ponsel sangat kecil (<= 360px): jarak tepi dikurangi agar isi tidak
    terjepit, dan teks meta tidak lagi dipaksa huruf kapital berjarak
@@ -783,24 +752,6 @@ body:has(.asisten-halaman) #konten {
   }
 }
 
-/* 2. Nomor indeks besar di sudut bagian.
-
-   Katalog museum memberi nomor pada setiap bagian. Angka besar yang
-   sangat redup di belakang judul membuat halaman terasa seperti lembar
-   katalog, bukan halaman web biasa. */
-.nomor-bagian {
-  position: absolute;
-  top: -0.35em;
-  right: 0;
-  font-family: var(--font-display);
-  font-size: clamp(4rem, 12vw, 9rem);
-  line-height: 0.8;
-  color: var(--color-terang);
-  opacity: 0.045;
-  pointer-events: none;
-  user-select: none;
-  letter-spacing: -0.04em;
-}
 
 /* 3. Tekstur kertas halus untuk bagian terang.
 
@@ -820,34 +771,6 @@ body:has(.asisten-halaman) #konten {
   background-size: 7px 7px, 11px 11px;
 }
 
-/* 4. Garis bawah yang tumbuh saat disentuh.
-
-   Tautan teks di seluruh situs memakai garis yang tumbuh dari kiri.
-   Ini meniru cara pembaca menandai baris penting, dan memberi umpan
-   balik yang jelas tanpa mengubah warna teks. */
-.tautan-tumbuh {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-}
-
-.tautan-tumbuh::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: -2px;
-  height: 1px;
-  background: currentColor;
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform 380ms var(--ease-keluar);
-}
-
-.tautan-tumbuh:hover::after,
-.tautan-tumbuh:focus-visible::after {
-  transform: scaleX(1);
-}
 
 /* 5. Sorotan emas pada kartu yang difokus keyboard.
 

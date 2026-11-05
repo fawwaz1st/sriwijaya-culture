@@ -11,8 +11,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
-    "typecheck": "tsc --noEmit",
-    "data:export": "node scripts/export-data.mjs"
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@ai-sdk/groq": "4.0.67",

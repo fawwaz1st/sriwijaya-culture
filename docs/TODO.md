@@ -1,6 +1,6 @@
 # TODO, Sriwijaya Culture
 
-Status per 28 Oktober 2026. Dokumen ini mencatat apa yang sudah selesai,
+Status per 5 November 2026. Dokumen ini mencatat apa yang sudah selesai,
 apa yang sengaja tidak dikerjakan, dan apa yang tersisa. Diperbarui
 setiap kali ada perubahan yang mengubah keadaan proyek.
 
@@ -14,7 +14,7 @@ ditunda dengan alasan.
 ### Fungsional
 
 - [x] Migrasi penuh dari HTML statis ke Next.js 16 + TypeScript + Tailwind 4
-- [x] 38 rute statis, semuanya `200`
+- [x] 45 halaman statis (18 statis + 27 SSG) + 1 rute dinamis, semuanya `200`
 - [x] Asisten Sari: sitasi bernomor, rantai model berlapis, penjaga topik
 - [x] Peta Google Maps nyata di beranda dan detail destinasi (diukur: iframe 233 KB-1,4 MB, hidup)
 - [x] Atlas SVG dari geometri OpenStreetMap
@@ -88,9 +88,9 @@ ditunda dengan alasan.
 ### Konten baru
 
 - [x] Artikel: Kampung Arab Al Munawar, dan Kenapa Pempek Menjadi Identitas
-- [x] Destinasi: Masjid Ki Mas Adirojo (tahun pendirian ditandai belum terverifikasi, koordinat sengaja kosong)
+- [x] Destinasi Masjid Ki Mas Adirojo dicabut: satu-satunya sumbernya URL Wikipedia 404 dan srsearch Wikipedia tidak menemukan artikel yang menyebutnya. Entri tanpa sumber tidak dipertahankan, sesuai aturan data situs ini.
 - [x] Angka tetap ("Sepuluh tempat", "Delapan catatan") diganti nilai yang dihitung dari data
-- [x] Jumlah akhir: 11 destinasi, 10 artikel, 7 usaha (4 berstatus demonstrasi, tidak dipromosikan)
+- [x] Jumlah akhir: 10 destinasi, 10 artikel, 7 usaha (4 berstatus demonstrasi, tidak dipromosikan)
 
 ### Keamanan AI
 
@@ -203,7 +203,7 @@ ditunda dengan alasan.
   mengarang. Halaman detail tetap menampilkan status verifikasinya.
 - [~] **Ulasan dan rating pengunjung.** Tidak ada sumber. Membuatnya
   berarti mengarang pendapat orang.
-- [~] **Embedding vektor untuk retrieval.** Korpus 25 dokumen; 90 MB
+- [~] **Embedding vektor untuk retrieval.** Korpus 23 dokumen; 90 MB
   unduhan tidak sepadan dengan kenaikan kualitas.
 - [~] **Peta statis sebagai cadangan saat Google gagal.** Butuh kunci
   API berbayar. Yang dipakai sekarang: daftar titik di samping peta

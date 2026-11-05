@@ -71,14 +71,6 @@ function dalamBatas(alamat: string, kunciPengguna: boolean): boolean {
  * log, dan tidak pernah diteruskan ke mana pun selain penyedia yang
  * bentuk kuncinya cocok.
  */
-/**
- * Kunci milik pengguna (BYOK).
- *
- * Dikirim peramban sebagai header dan hanya dipakai di memori proses
- * ini. Bentuknya divalidasi sebelum dipakai, tidak pernah dicatat ke
- * log, dan tidak pernah diteruskan ke mana pun selain penyedia yang
- * bentuk kuncinya cocok.
- */
 function kunciPengguna(header: string | null): Penyedia | null {
   if (!header) return null;
   const k = header.trim();

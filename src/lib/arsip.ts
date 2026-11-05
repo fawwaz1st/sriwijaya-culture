@@ -118,7 +118,7 @@ export function statusVerifikasi() {
  * Indeks pencarian cepat.
  *
  * Dibentuk di server lalu dikirim ke komponen klien sebagai prop.
- * Ukurannya kecil (25 baris) sehingga tidak perlu endpoint sendiri,
+ * Ukurannya kecil (23 baris) sehingga tidak perlu endpoint sendiri,
  * dan pencarian berjalan seketika tanpa permintaan jaringan.
  *
  * `keterangan` sengaja memuat wilayah dan kategori, bukan ringkasan

@@ -7,7 +7,7 @@ import type { Artikel, Destinasi, UMKM } from "@/lib/types";
  * Pendekatan: pencarian kata kunci berbobot (TF-IDF sederhana) di
  * seluruh arsip, lalu hasil teratas dikirim sebagai konteks ke model.
  *
- * Kenapa bukan embedding: arsip ini hanya 25 dokumen dan 147 KB teks.
+ * Kenapa bukan embedding: arsip ini hanya 23 dokumen dan sekitar 66 KB teks.
  * Embedding akan menambah 90 MB unduhan model dan latensi, tanpa
  * kenaikan kualitas berarti pada korpus sekecil ini. Kata kunci
  * berbobot juga bisa dijelaskan ke juri dalam satu kalimat.

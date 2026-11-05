@@ -14,7 +14,7 @@ import { cn } from "@/lib/cn";
  * pencarian tersendiri: satu pintu, tanpa pindah halaman.
  *
  * Indeks dikirim dari server sebagai prop, bukan diambil lewat API.
- * Ukurannya kecil (25 baris) dan sudah tersedia saat halaman dirender,
+ * Ukurannya kecil (23 baris) dan sudah tersedia saat halaman dirender,
  * jadi pencarian berjalan seketika tanpa permintaan jaringan.
  */
 

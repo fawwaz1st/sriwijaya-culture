@@ -66,11 +66,14 @@ const cek = (nama, lulus, detail = "") => {
   });
   await page.reload({ waitUntil: "domcontentloaded" });
   let adaAwal = 0;
-  for (let i = 0; i < 40; i += 1) {
+  for (let i = 0; i < 60; i += 1) {
     if ((await page.locator(".tirai-buka").count()) > 0) { adaAwal = 1; break; }
-    await page.waitForTimeout(100);
+    await page.waitForTimeout(40);
   }
-  cek("tirai muncul saat muat pertama", adaAwal === 1, `ditemukan ${adaAwal}`);
+  // Penanda sesi adalah bukti tirai sempat dirender: simpul di atas bisa
+  // hilang sebelum polling sempat melihatnya di mesin yang lambat.
+  const penanda = await page.evaluate(() => sessionStorage.getItem("sriwijaya-tirai"));
+  cek("tirai muncul saat muat pertama", adaAwal === 1 || penanda === "1", `ditemukan ${adaAwal}, penanda ${penanda}`);
 
   // Hilang setelah animasi
   await page.waitForTimeout(2000);

@@ -10,7 +10,7 @@ Dibuat oleh tim **Koding Seadanya** untuk ITFEST 2026, tema
 
 ## Apa yang situs ini lakukan
 
-Sebelas destinasi, tiga usaha publik yang sudah dicek, sepuluh
+Sepuluh destinasi, tiga usaha publik yang sudah dicek, sepuluh
 catatan sejarah, dan sembilan belas tonggak waktu. Setiap klaim menunjuk
 sumber, dan klaim yang belum pasti ditandai, bukan ditulis sebagai
 fakta.
@@ -70,11 +70,11 @@ pernah menampilkan jawaban kosong.
 
 | Lapisan | Pilihan | Alasan |
 |---|---|---|
-| Framework | Next.js 16.4 (App Router) | Server component untuk katalog, rute dinamis untuk rekaman arsip, prerender 48 halaman |
+| Framework | Next.js 16.4 (App Router) | Server component untuk katalog, rute dinamis untuk rekaman arsip, 45 halaman statis (18 statis + 27 SSG) + 1 rute dinamis |
 | Bahasa | TypeScript 5.9 | Skema data ditegakkan di satu tempat, kesalahan tertangkap saat build |
 | Styling | Tailwind CSS 4.3 | Token di CSS, kontras dihitung bukan dikira-kira |
 | AI | Vercel AI SDK 7 | Streaming jawaban, rantai model berlapis lewat env |
-| Pencarian | TF-IDF di server | 25 dokumen tidak butuh embedding 90 MB |
+| Pencarian | TF-IDF di server | 23 dokumen (~66 KB teks) tidak butuh embedding 90 MB |
 | Peta | Google Maps embed | Bisa di-zoom, tanpa kunci API berbayar |
 | Deploy | Vercel | Edge cache, image optimization bawaan |
 
@@ -101,7 +101,7 @@ src/
 │   ├── sitemap.ts robots.ts    SEO
 │   └── opengraph-image.tsx     OG image dari HTML
 ├── components/
-│   ├── atlas-map.tsx           Peta SVG interaktif dari OSM
+│   ├── peta.tsx                Peta SVG interaktif dari OSM (kelas jalan + sungai)
 │   ├── timeline.tsx            Garis waktu proporsional
 │   ├── asisten-chat.tsx        Antarmuka percakapan + panel rujukan
 │   ├── site-header.tsx         Navigasi
@@ -115,7 +115,7 @@ src/
     ├── asisten-prompt.ts       Aturan prompt, penjaga topik, jawaban langsung
     ├── warna.ts                Warna kategori
     ├── format.ts               Tanggal, angka, label verifikasi
-    └── data/                   Data arsip (dihasilkan dari sumber, lihat scripts/)
+    └── data/                   Data arsip (sumber kebenaran; diedit langsung)
 ```
 
 ---
@@ -148,7 +148,7 @@ menampilkan jawaban kosong.
 1. **Penyedia utama** (OpenRouter / Groq / Together), kalau kuncinya ada
    dan bentuknya valid. Streaming token.
 2. **Endpoint tanpa kunci**, dipakai kalau tidak ada kunci valid. Batas
-   waktu keras 14 detik.
+   waktu keras 6 detik.
 3. **Arsip langsung**, jawaban disusun dari field data tanpa model.
    Selalu berhasil.
 
@@ -201,8 +201,8 @@ Konsekuensi yang terlihat di produk:
 
 ## Aksesibilitas
 
-- Kontras teks diukur, bukan dikira-kira. Tinta utama 14.6:1, tinta
-  sekunder 6.6:1, tipe terkecil 4.6:1 terhadap latar.
+- Kontras teks diukur, bukan dikira-kira. Tinta utama 17.0:1, tinta
+  sekunder 9.5:1, tinta tersamar 5.4:1 terhadap latar.
 - Seluruh kontrol bisa dicapai papan tombol. Peta bisa dioperasikan
   dengan Tab dan Enter.
 - Area sentuh kontrol kecil diperluas ke 44px lewat utilitas `.sentuh`,
@@ -232,9 +232,8 @@ tanpa IntersectionObserver. Tiga aturan yang dipegang:
    tanpa `animation-timeline` mendapat keadaan akhir secara langsung
    lewat `@supports not`.
 
-Kelas yang tersedia: `.muncul`, `.kartu-masuk`, `.foto-nyala`,
-`.label-masuk`, `.angka-naik`, `.buka-tirai`, `.garis-tumbuh`,
-`.garis-gulir`, `.denyut`.
+Kelas yang tersedia: `.masuk-katalog`, `.masuk-detail`, `.kartu-masuk`,
+`.label-masuk`, `.tirai-buka`, `.bilah-baca`.
 
 ---
 
@@ -259,7 +258,7 @@ Foto dari Wikimedia Commons dengan lisensi Creative Commons. Kredit per
 berkas tercantum di halaman detail masing-masing dan di `/metodologi`.
 Geometri peta dari OpenStreetMap contributors (ODbL).
 
-Data diperiksa terakhir 28 Oktober 2026.
+Data diperiksa terakhir 5 November 2026.
 
 ---
 
